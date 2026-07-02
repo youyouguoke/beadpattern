@@ -1,26 +1,201 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@custom-variant dark (&:is(.dark *));
+
+@font-face {
+  font-family: "Quicksand";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("https://fonts.gstatic.com/s/quicksand/v31/6xKtdSZaM9iE8KbpRA_hK1QN.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfAZ9hjp-Ek-_EeA.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuBWYAZ9hjp-Ek-_EeA.woff2") format("woff2");
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Brand colors from DESIGN.md */
+  --color-background: #f4fafd;
+  --color-on-background: #161d1f;
+  --color-surface: #f4fafd;
+  --color-surface-dim: #d4dbdd;
+  --color-surface-bright: #f4fafd;
+  --color-surface-variant: #dde4e6;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #eef5f7;
+  --color-surface-container: #e8eff1;
+  --color-surface-container-high: #e2e9ec;
+  --color-surface-container-highest: #dde4e6;
+  --color-on-surface: #161d1f;
+  --color-on-surface-variant: #584143;
+  --color-inverse-surface: #2b3234;
+  --color-inverse-on-surface: #ebf2f4;
+  --color-outline: #8b7072;
+  --color-outline-variant: #dfbfc1;
+  --color-surface-tint: #ad2d47;
+  --color-primary: #ad2d47;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #ff6b81;
+  --color-on-primary-container: #6e0021;
+  --color-inverse-primary: #ffb2b9;
+  --color-secondary: #75565f;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #fed5df;
+  --color-on-secondary-container: #795a63;
+  --color-tertiary: #006970;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #4fa9b2;
+  --color-on-tertiary-container: #003a3f;
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+  --color-primary-fixed: #ffdadc;
+  --color-primary-fixed-dim: #ffb2b9;
+  --color-on-primary-fixed: #400010;
+  --color-on-primary-fixed-variant: #8c1231;
+  --color-secondary-fixed: #ffd9e2;
+  --color-secondary-fixed-dim: #e4bcc6;
+  --color-on-secondary-fixed: #2b151c;
+  --color-on-secondary-fixed-variant: #5b3f47;
+  --color-tertiary-fixed: #99f1fa;
+  --color-tertiary-fixed-dim: #7cd4dd;
+  --color-on-tertiary-fixed: #002022;
+  --color-on-tertiary-fixed-variant: #004f55;
+
+  /* Typography */
+  --font-quicksand: "Quicksand", sans-serif;
+  --font-inter: "Inter", sans-serif;
+  --font-display-lg: "Quicksand", sans-serif;
+  --font-headline-md: "Quicksand", sans-serif;
+  --font-body-lg: "Inter", sans-serif;
+  --font-body-md: "Inter", sans-serif;
+  --font-label-sm: "Inter", sans-serif;
+  --font-sans: "Inter", sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+html, body {
+  background-color: #f4fafd;
+  color: #161d1f;
+  font-family: "Inter", sans-serif;
+  min-height: 100%;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Quicksand", sans-serif;
+  font-weight: 700;
+}
+
+/* Material symbols font */
+.material-symbols-outlined {
+  font-family: "Material Symbols Outlined";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: "liga";
+  font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+  vertical-align: middle;
+}
+
+/* Utility classes matching design tokens */
+.bead-shadow {
+  box-shadow: 0px 4px 20px rgba(255, 107, 129, 0.08);
+}
+
+.bead-shadow:hover {
+  box-shadow: 0px 12px 32px rgba(45, 52, 54, 0.12);
+}
+
+.glass-nav {
+  background: rgba(244, 250, 253, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Masonry grid */
+.masonry-grid {
+  column-count: 1;
+  column-gap: 24px;
+}
+
+@media (min-width: 768px) {
+  .masonry-grid {
+    column-count: 2;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@media (min-width: 1024px) {
+  .masonry-grid {
+    column-count: 4;
+  }
+}
+
+.masonry-item {
+  break-inside: avoid;
+  margin-bottom: 24px;
+}
+
+/* Bead grid background for generator */
+.bead-grid {
+  background-image: radial-gradient(circle, #dde4e6 1.5px, transparent 1.5px);
+  background-size: 16px 16px;
+}
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #ffb2b9;
+  border-radius: 10px;
+}
+
+/* Range slider accent */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ff6b81;
+  cursor: pointer;
+  margin-top: -7px;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 4px;
+  cursor: pointer;
+  background: #fed5df;
+  border-radius: 9999px;
+}
+
+/* Prose pink helper */
+.prose-pink p strong {
+  color: #ad2d47;
 }
