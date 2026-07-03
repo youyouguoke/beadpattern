@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 const showcasePatterns = [
   {
     title: "Cute Frog",
+    slug: "cute-frog",
     emoji: "🐸",
     rating: 5,
     grid: "32×32",
@@ -16,6 +17,7 @@ const showcasePatterns = [
   },
   {
     title: "Halloween Ghost",
+    slug: "ghost-pattern",
     emoji: "👻",
     rating: 5,
     grid: "16×16",
@@ -26,6 +28,7 @@ const showcasePatterns = [
   },
   {
     title: "Panda Ramen",
+    slug: "panda-ramen",
     emoji: "🐼",
     rating: 4,
     grid: "24×24",
@@ -36,6 +39,7 @@ const showcasePatterns = [
   },
   {
     title: "Bubble Tea Duck",
+    slug: "bubble-tea-duck",
     emoji: "🦆",
     rating: 5,
     grid: "24×24",
@@ -68,7 +72,6 @@ const popularSearches = [
 const trustBadges = [
   "Free PDF",
   "Instant",
-  "AI Generated",
   "Printable",
   "No Login",
 ];
@@ -190,7 +193,14 @@ export default function HeroSection() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div className="rounded-2xl overflow-hidden bg-surface-container border border-secondary-container">
+              <div
+                className="rounded-2xl overflow-hidden bg-surface-container border border-secondary-container relative"
+                style={{
+                  backgroundSize: "24px 24px",
+                  backgroundImage:
+                    "linear-gradient(#E7EAF008 1px, transparent 1px), linear-gradient(90deg, #E7EAF008 1px, transparent 1px)",
+                }}
+              >
                 <img
                   className="w-full h-full object-cover"
                   alt={activePattern.title}
@@ -224,7 +234,7 @@ export default function HeroSection() {
                   </div>
                 </div>
                 <button
-                  onClick={() => window.open(`/pattern/${activePattern.title.toLowerCase().replace(/\s+/g, "-")}`, "_blank")}
+                  onClick={() => window.open(`/pattern/${activePattern.slug}?tab=finished-photo`, "_blank")}
                   className="w-full mt-5 bg-primary-fixed text-on-primary-fixed px-4 py-3 rounded-xl font-medium text-sm flex items-center justify-center gap-2 hover:bg-primary-fixed-dim transition-colors"
                 >
                   <span className="material-symbols-outlined">download</span>

@@ -20,6 +20,26 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Quicksand:wght@700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
           rel="stylesheet"
         />
+
+        {/* Google tag (gtag.js) */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y34VHCG3N2"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-Y34VHCG3N2');
+            `,
+          }}
+        />
+
+        {/* Plausible Analytics */}
+        <script
+          defer
+          data-domain="beadpatternai.com"
+          src="https://plausible.shipsolo.io/js/script.js"
+        />
       </head>
       <body className="custom-scrollbar overflow-x-hidden bg-background text-on-background font-body-md">
         <Navigation />
