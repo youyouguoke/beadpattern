@@ -22,14 +22,21 @@ export default function RootLayout({
         />
 
         {/* Google tag (gtag.js) */}
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y34VHCG3N2"></script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-NKBPE63232"></script>
         <script
           dangerouslySetInnerHTML={{
             __html: `
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', 'G-Y34VHCG3N2');
+              gtag('config', 'G-NKBPE63232');
+              gtag('event', 'page_view', {
+                page_title: document.title,
+                page_location: window.location.href,
+              });
+              if (window.location.search.includes('ga-debug')) {
+                console.log('[GA] page_view sent to', 'G-NKBPE63232');
+              }
             `,
           }}
         />
@@ -38,6 +45,7 @@ export default function RootLayout({
         <script
           defer
           data-domain="beadpatternai.com"
+          data-api="https://plausible.shipsolo.io/api/event"
           src="https://plausible.shipsolo.io/js/script.js"
         />
       </head>
