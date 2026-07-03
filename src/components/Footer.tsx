@@ -2,6 +2,40 @@
 
 import Link from "next/link";
 
+const footerLinks = {
+  "Popular Patterns": [
+    { label: "Cute Frog", href: "/pattern/cute-frog" },
+    { label: "Kawaii Cat", href: "/pattern/kawaii-cat" },
+    { label: "Ghost Pattern", href: "/pattern/ghost-pattern" },
+    { label: "Flower Pattern", href: "/pattern/flower" },
+    { label: "Christmas Pattern", href: "/pattern/christmas-penguin" },
+  ],
+  "Popular Categories": [
+    { label: "Animals", href: "/category/animals" },
+    { label: "Kawaii", href: "/category/kawaii" },
+    { label: "Halloween", href: "/category/halloween" },
+    { label: "Christmas", href: "/category/christmas" },
+    { label: "Food", href: "/category/food" },
+    { label: "Gaming", href: "/category/gaming" },
+  ],
+  "Collections & Seasonal": [
+    { label: "Halloween", href: "/collection/halloween" },
+    { label: "Christmas", href: "/collection/christmas" },
+    { label: "Cute Animals", href: "/collection/cute-animals" },
+    { label: "Food Series", href: "/collection/food" },
+    { label: "Beginner Patterns", href: "/collection/beginner" },
+  ],
+  "Create & Learn": [
+    { label: "AI Pattern Generator", href: "/generate" },
+    { label: "How It Works", href: "#how-it-works" },
+    { label: "Printing Guide", href: "#seo" },
+    { label: "Blog", href: "/blog" },
+    { label: "About", href: "#" },
+    { label: "Contact", href: "#" },
+    { label: "Privacy", href: "/privacy" },
+  ],
+};
+
 export default function Footer() {
   return (
     <footer className="w-full py-16 px-4 md:px-12 bg-surface-container dark:bg-surface-container-highest">
@@ -14,7 +48,7 @@ export default function Footer() {
             <span className="font-display-lg text-headline-md text-primary">BeadPatternAI</span>
           </div>
           <p className="text-secondary font-body-md max-w-sm">
-            AI-generated Perler bead patterns for hobbyists, educators, and makers. Turn any idea into a printable PDF template in seconds.
+            The world&apos;s largest searchable library of printable Perler bead patterns. Browse, download, and create with AI.
           </p>
           <div className="flex gap-2">
             <input
@@ -28,38 +62,22 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="space-y-3">
-          <h4 className="font-headline-md text-body-md text-on-surface">Popular Patterns</h4>
-          <nav className="flex flex-col gap-2">
-            <Link href="/pattern/cute-frog" className="text-secondary hover:text-primary transition-colors font-body-md">Cute Frog</Link>
-            <Link href="/pattern/kawaii-cat" className="text-secondary hover:text-primary transition-colors font-body-md">Kawaii Cat</Link>
-            <Link href="/pattern/ghost-pattern" className="text-secondary hover:text-primary transition-colors font-body-md">Ghost Pattern</Link>
-            <Link href="/pattern/christmas-penguin" className="text-secondary hover:text-primary transition-colors font-body-md">Christmas Penguin</Link>
-          </nav>
-        </div>
-
-        <div className="space-y-3">
-          <h4 className="font-headline-md text-body-md text-on-surface">Popular Categories</h4>
-          <nav className="flex flex-col gap-2">
-            <Link href="/category/animals" className="text-secondary hover:text-primary transition-colors font-body-md">Animals</Link>
-            <Link href="/category/kawaii" className="text-secondary hover:text-primary transition-colors font-body-md">Kawaii</Link>
-            <Link href="/category/halloween" className="text-secondary hover:text-primary transition-colors font-body-md">Halloween</Link>
-            <Link href="/category/christmas" className="text-secondary hover:text-primary transition-colors font-body-md">Christmas</Link>
-            <Link href="/category/food" className="text-secondary hover:text-primary transition-colors font-body-md">Food</Link>
-          </nav>
-        </div>
-
-        <div className="space-y-3">
-          <h4 className="font-headline-md text-body-md text-on-surface">Resources</h4>
-          <nav className="flex flex-col gap-2">
-            <Link href="/guides" className="text-secondary hover:text-primary transition-colors font-body-md">Guides</Link>
-            <Link href="/color-palettes" className="text-secondary hover:text-primary transition-colors font-body-md">Color Palettes</Link>
-            <Link href="/seasonal" className="text-secondary hover:text-primary transition-colors font-body-md">Seasonal</Link>
-            <Link href="/about" className="text-secondary hover:text-primary transition-colors font-body-md">About</Link>
-            <Link href="/contact" className="text-secondary hover:text-primary transition-colors font-body-md">Contact</Link>
-            <Link href="/privacy" className="text-secondary hover:text-primary transition-colors font-body-md">Privacy</Link>
-          </nav>
-        </div>
+        {Object.entries(footerLinks).map(([title, links]) => (
+          <div className="space-y-3" key={title}>
+            <h4 className="font-headline-md text-body-md text-on-surface">{title}</h4>
+            <nav className="flex flex-col gap-2">
+              {links.map((link) => (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className="text-secondary hover:text-primary transition-colors font-body-md"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+        ))}
       </div>
 
       <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-surface-container-high flex flex-col md:flex-row justify-between items-center gap-4 text-secondary text-sm">

@@ -69,9 +69,6 @@ export default function TrendingPatterns() {
                   >
                     <span className="material-symbols-outlined">file_download</span> Download
                   </Link>
-                  <button className="bg-secondary-container text-primary px-4 py-2 rounded-lg font-label-sm flex items-center gap-2 hover:bg-primary-container hover:text-white transition-colors">
-                    <span className="material-symbols-outlined">auto_awesome</span> Generate Similar
-                  </button>
                 </div>
               )}
             </div>

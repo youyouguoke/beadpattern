@@ -139,19 +139,16 @@ h1, h2, h3, h4, h5, h6 {
   column-count: 1;
   column-gap: 24px;
 }
-
 @media (min-width: 768px) {
   .masonry-grid {
     column-count: 2;
   }
 }
-
 @media (min-width: 1024px) {
   .masonry-grid {
     column-count: 4;
   }
 }
-
 .masonry-item {
   break-inside: avoid;
   margin-bottom: 24px;
@@ -166,13 +163,14 @@ h1, h2, h3, h4, h5, h6 {
 /* Custom scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: #ffb2b9;
-  border-radius: 10px;
+  border-radius: 9999px;
 }
 
 /* Range slider accent */

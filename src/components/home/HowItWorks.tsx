@@ -2,57 +2,51 @@
 
 const steps = [
   {
-    number: "1",
-    title: "Describe Your Idea",
-    desc: "Type anything from a space cat to pixel art roses into our AI prompt box.",
-    before: "cute frog drinking bubble tea",
-    afterColor: "#74c69d",
+    icon: "search",
+    title: "Search",
+    description: "Type any idea — animals, holidays, characters, food. Browse thousands of ready-made patterns instantly.",
   },
   {
-    number: "2",
-    title: "AI Generates Template",
-    desc: "Our AI calculates the perfect bead placement and creates a detailed 1:1 grid pattern.",
-    before: "AI thinking...",
-    afterColor: "#52b788",
+    icon: "grid_view",
+    title: "Browse",
+    description: "Filter by difficulty, grid size, and color count. Preview each pattern before downloading.",
   },
   {
-    number: "3",
-    title: "Download & Print",
-    desc: "Get a high-quality PDF template you can place right under your pegboard.",
-    before: "PDF ready",
-    afterColor: "#48dbfb",
+    icon: "auto_awesome",
+    title: "Generate if needed",
+    description: "Can’t find the perfect match? Let AI create a new pattern. Download as PDF or PNG in seconds.",
   },
 ];
 
 export default function HowItWorks() {
   return (
-    <section className="px-4 md:px-12 py-16 bg-surface-container-low">
+    <section className="px-4 md:px-12 py-20 bg-white">
       <div className="max-w-6xl mx-auto">
-        <h2 className="font-headline-md text-headline-md text-center mb-4">How to Create Your Pattern</h2>
-        <p className="text-secondary text-center mb-16 max-w-2xl mx-auto">
-          From idea to printable bead template in three simple steps.
-        </p>
+        <div className="text-center mb-14">
+          <h2 className="font-display-lg text-[1.75rem] md:text-[2.25rem] text-primary-container mb-3">
+            How It Works
+          </h2>
+          <p className="text-secondary text-base md:text-lg">
+            Find, preview, and craft your favorite bead patterns in three simple steps.
+          </p>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {steps.map((step) => (
-            <div key={step.number} className="bg-white rounded-2xl p-6 bead-shadow text-center space-y-4">
-              <div className="w-12 h-12 bg-primary text-white font-display-lg text-body-md rounded-full flex items-center justify-center mx-auto">
-                {step.number}
+          {steps.map((step, i) => (
+            <div
+              key={step.title}
+              className="bg-surface-container-low rounded-3xl p-8 text-center transition-transform hover:-translate-y-1 bead-shadow"
+            >
+              <div className="w-16 h-16 rounded-2xl bg-primary-container text-white flex items-center justify-center mx-auto mb-6">
+                <span className="material-symbols-outlined text-3xl">{step.icon}</span>
               </div>
-              <div className="aspect-video rounded-xl bg-surface-container overflow-hidden flex items-center justify-center relative">
-                <div className="absolute inset-0 grid grid-cols-12 gap-px opacity-20">
-                  {Array.from({ length: 96 }).map((_, i) => (
-                    <div key={i} className="bg-secondary" />
-                  ))}
-                </div>
-                <div className="z-10 text-center space-y-2">
-                  <p className="text-label-sm text-secondary">Before</p>
-                  <p className="text-body-md text-primary font-headline-md">{step.before}</p>
-                  <div className="w-12 h-12 mx-auto rounded-lg border-2 border-white shadow-sm" style={{ backgroundColor: step.afterColor }} />
-                  <p className="text-label-sm text-secondary">After</p>
-                </div>
+              <div className="flex items-center justify-center gap-2 mb-3">
+                <span className="w-6 h-6 rounded-full bg-primary-fixed text-on-primary-fixed text-xs font-bold flex items-center justify-center">
+                  {i + 1}
+                </span>
+                <h3 className="font-headline-md text-body-lg text-on-surface">{step.title}</h3>
               </div>
-              <h3 className="font-headline-md text-headline-md">{step.title}</h3>
-              <p className="text-secondary">{step.desc}</p>
+              <p className="text-secondary font-body-md">{step.description}</p>
             </div>
           ))}
         </div>
