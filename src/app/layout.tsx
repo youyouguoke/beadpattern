@@ -17,25 +17,29 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth antialiased">
       <head>
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Quicksand:wght@700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap&family=Quicksand:wght@700&display=swap&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
           rel="stylesheet"
         />
 
         {/* Google tag (gtag.js) */}
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-NKBPE63232"></script>
         <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-NKBPE63232"
+        />
+        <script
+          id="ga-init"
           dangerouslySetInnerHTML={{
             __html: `
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', 'G-NKBPE63232');
+              gtag('config', 'G-NKBPE63232', { send_page_view: true });
               gtag('event', 'page_view', {
                 page_title: document.title,
                 page_location: window.location.href,
               });
               if (window.location.search.includes('ga-debug')) {
-                console.log('[GA] page_view sent to', 'G-NKBPE63232');
+                console.log('[GA] page_view sent to G-NKBPE63232');
               }
             `,
           }}
