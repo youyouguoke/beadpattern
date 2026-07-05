@@ -1,0 +1,33 @@
+name = "bead-pattern-ai"
+main = "src/index.ts"
+compatibility_date = "2026-01-21"
+account_id = "b183c58c7fa8b50d9a8a8e6ac8d42a31"
+
+# Static assets for the backend (optional, can be empty)
+[assets]
+directory = "./public"
+binding = "ASSETS"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "beadpatternai-db"
+database_id = "c21e9fb5-5b72-44d1-9aae-acd9a92a821f"
+migrations_dir = "./src/migrations"
+
+# R2 和 Queue 暂未开通；开通后取消注释并配置
+# [[r2_buckets]]
+# binding = "R2"
+# bucket_name = "beadpatternai-assets"
+
+# [[queues.producers]]
+# binding = "BULK_QUEUE"
+# queue = "beadpatternai-bulk-queue"
+
+# [[queues.consumers]]
+# queue = "beadpatternai-bulk-queue"
+# max_batch_size = 5
+# max_batch_timeout = 30
+
+[vars]
+APP_ORIGIN = "https://bead-pattern-ai.workers.dev"
+SITE_NAME = "BeadPatternAI"

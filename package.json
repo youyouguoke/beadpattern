@@ -1,0 +1,29 @@
+{
+  "name": "bead-pattern-ai-backend",
+  "version": "0.1.0",
+  "description": "CMS backend for BeadPatternAI on Cloudflare Workers",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --ip 0.0.0.0",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "db:local": "wrangler d1 execute beadpatternai-db --local",
+    "db:remote": "wrangler d1 execute beadpatternai-db --remote",
+    "db:migrate:local": "wrangler d1 migrations apply beadpatternai-db --local",
+    "db:migrate:remote": "wrangler d1 migrations apply beadpatternai-db --remote"
+  },
+  "dependencies": {
+    "@hono/zod-validator": "^0.8.0",
+    "hono": "^4.7.7",
+    "zod": "^3.25.42"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.8.15",
+    "@cloudflare/workers-types": "^4.20260702.1",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.2",
+    "wrangler": "^4.14.1"
+  }
+}
