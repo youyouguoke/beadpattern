@@ -182,12 +182,8 @@ pattern: {
 },
 opts?: { width?: number; height?: number; preferFinished?: boolean; preferGrid?: boolean }
 ): { type: "image" | "svg"; src: string; svg?: string } {
-
-
   const isRealImage = (src?: string | null) =>
     src && !src.includes("placehold.co") && !src.startsWith("data:image/svg+xml");
-  // When preferGrid is true, render the actual bead grid as the source of truth
-  // even if a placeholder cover image exists. This shows real pattern data.
   if (!opts?.preferGrid) {
     const finishedSrc = pattern.cover_image || pattern.finished || pattern.img;
     if (opts?.preferFinished && isRealImage(finishedSrc)) {
