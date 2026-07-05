@@ -1,11 +1,13 @@
-// =========================================================
-// Pattern Service
-// =========================================================
-// This is the single source of truth for all pattern data.
-// MVP: returns mock JSON data.
-// Later: swap in Supabase / PostgreSQL / API calls.
-// Pages must NEVER hold their own mock data arrays.
-// =========================================================
+export const API_BASE =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://bead-pattern-ai.youyouguoke.workers.dev";
+
+export interface PaletteColor {
+  hex: string;
+  name: string;
+  count: number;
+  code: string;
+}
 
 export interface Pattern {
   slug: string;
@@ -18,10 +20,20 @@ export interface Pattern {
   colors: number;
   beadCount: number;
   downloads: string;
-  palette: { hex: string; name: string; count: number; code: string }[];
+  palette: PaletteColor[];
   steps: string[];
   related: { title: string; beads: number; difficulty: string }[];
   author?: string;
+  description?: string;
+  views?: number;
+  status?: string;
+  gridData?: PatternGrid;
+  tags?: { name: string; slug: string }[];
+  likes?: number;
+  downloadsCount?: number;
+  colorPalette?: string[];
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Collection {
@@ -43,6 +55,323 @@ export interface Category {
 
 export interface TrendingPattern extends Pattern {
   rank?: number;
+}
+
+export type BackendColorItem =
+  | string
+  | { hex?: string; name?: string; code?: string; count?: number };
+
+export interface BackendPattern extends Record<string, unknown> {
+  id: string;
+  slug: string;
+  title: string;
+  description?: string;
+  difficulty: string;
+  status?: string;
+  cover_image?: string | null;
+  grid_size?: string;
+  grid_data?: PatternGrid | string | string[][];
+  created_at?: string;
+  updated_at?: string;
+  views?: number;
+  estimated_beads?: number;
+  color_count?: number;
+  color_palette?: BackendColorItem[];
+  likes?: number;
+  downloads?: number;
+}
+
+export interface BackendTag {
+  id: string;
+  name: string;
+  slug: string;
+  type?: string;
+  count?: number;
+}
+
+export interface BackendStep {
+  step_number: number;
+  description: string;
+  grid_data?: PatternGrid | string;
+  image?: string;
+}
+
+export interface BackendPatternDetail {
+  pattern: BackendPattern;
+  steps?: BackendStep[];
+  tags?: { name: string; slug: string }[];
+  analytics?: {
+    views?: number;
+    likes?: number;
+    downloads?: number;
+    updated_at?: string;
+  };
+}
+
+export interface BackendListResponse<T> {
+  success?: boolean;
+  data?: T;
+  meta?: {
+    page?: number;
+    limit?: number;
+    total?: number;
+    totalPages?: number;
+  };
+}
+
+export type PatternGrid = number[][];
+
+function generateCode(index: number): string {
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  if (index < letters.length) return letters[index];
+  return `${letters[Math.floor(index / letters.length) - 1] || "A"}${letters[index % letters.length]}`;
+}
+
+export function buildPalette(
+  palette?: BackendColorItem[] | null
+): PaletteColor[] {
+  if (!palette || palette.length === 0) {
+    return [
+      { hex: "#161D1F", name: "Black", count: 1, code: "A" },
+      { hex: "#FFFFFF", name: "White", count: 1, code: "B" },
+      { hex: "#FF6B6B", name: "Red", count: 1, code: "C" },
+    ];
+  }
+  return palette.map((item, index) => {
+    if (typeof item === "string") {
+      return {
+        hex: item,
+        name: `Color ${index + 1}`,
+        count: 1,
+        code: generateCode(index),
+      };
+    }
+    return {
+      hex: item.hex || "#000000",
+      name: item.name || `Color ${index + 1}`,
+      count: typeof item.count === "number" && item.count > 0 ? item.count : 1,
+      code: item.code || generateCode(index),
+    };
+  });
+}
+
+export function capitalizeDifficulty(difficulty?: string): "Easy" | "Medium" | "Hard" {
+  if (!difficulty) return "Easy";
+  const normalized = difficulty.trim().toLowerCase();
+  if (normalized === "hard") return "Hard";
+  if (normalized === "medium") return "Medium";
+  return "Easy";
+}
+
+export function generateEmoji(title: string): string {
+  const map: Record<string, string> = {
+    frog: "🐸",
+    cat: "🐱",
+    ghost: "👻",
+    panda: "🐼",
+    penguin: "🐧",
+    bear: "🐻",
+    duck: "🦆",
+    bunny: "🐰",
+    halloween: "🎃",
+    sunflower: "🌻",
+    shiba: "🐕",
+    controller: "🎮",
+    pancake: "🥞",
+    ocean: "🌊",
+    cherry: "🌸",
+    robot: "🤖",
+    rainbow: "🌈",
+    watermelon: "🍉",
+    cactus: "🌵",
+    moon: "🌙",
+    heart: "💖",
+    dog: "🐕",
+    game: "🎮",
+  };
+  const lower = title.toLowerCase();
+  for (const key of Object.keys(map)) {
+    if (lower.includes(key)) return map[key];
+  }
+  return "✨";
+}
+
+export function parseGridCount(grid?: string): number {
+  if (!grid) return 0;
+  const match = grid.match(/(\d+)\s*x\s*(\d+)/i);
+  if (!match) return 0;
+  return parseInt(match[1], 10) * parseInt(match[2], 10);
+}
+
+export function parseGrid(grid?: string): { width: number; height: number } {
+  const count = parseGridCount(grid);
+  if (!count) return { width: 24, height: 24 };
+  const match = grid!.match(/(\d+)\s*x\s*(\d+)/i);
+  return {
+    width: parseInt(match![1], 10),
+    height: parseInt(match![2], 10),
+  };
+}
+
+export function normalizeBackendPattern(bp: BackendPattern): Pattern {
+  const merged = mergePattern(bp, undefined);
+  return merged;
+}
+
+export function mergePattern(
+  backend: BackendPattern | Pattern,
+  mock?: Pattern | undefined
+): Pattern {
+  const bp = backend as BackendPattern;
+  const difficulty = capitalizeDifficulty(bp.difficulty);
+  const grid = bp.grid_size || mock?.grid || "24x24";
+  const beadCount =
+    typeof bp.estimated_beads === "number" && bp.estimated_beads > 0
+      ? bp.estimated_beads
+      : mock?.beadCount || parseGridCount(grid);
+  const downloadsValue =
+    typeof bp.downloads === "number" && bp.downloads > 0
+      ? bp.downloads
+      : mock?.downloads || "0";
+  const downloads =
+    typeof downloadsValue === "number"
+      ? downloadsValue >= 1000
+        ? `${(downloadsValue / 1000).toFixed(1)}k`
+        : String(downloadsValue)
+      : downloadsValue;
+  const palette = buildPalette(bp.color_palette as BackendColorItem[] | undefined);
+  const steps = mock?.steps || [bp.description || `Build ${bp.title}`];
+  return {
+    slug: bp.slug,
+    title: bp.title,
+    emoji: mock?.emoji || generateEmoji(bp.title),
+    img: bp.cover_image || mock?.img || "",
+    finished: bp.cover_image || mock?.finished || "",
+    difficulty,
+    grid,
+    colors: bp.color_count || palette.length || mock?.colors || 1,
+    beadCount,
+    downloads,
+    palette,
+    steps,
+    related: mock?.related || [],
+    description: bp.description || mock?.description,
+    views: bp.views || mock?.views,
+    status: bp.status || mock?.status,
+    tags: ((bp.tags as { name: string; slug: string }[] | undefined) || mock?.tags),
+    colorPalette: bp.color_palette
+      ? bp.color_palette.map((c) => (typeof c === "string" ? c : c.hex || "#000000"))
+      : mock?.colorPalette,
+    createdAt: bp.created_at || mock?.createdAt,
+    updatedAt: bp.updated_at || mock?.updatedAt,
+  };
+}
+
+export function mergeGridFromSteps(steps?: BackendStep[]): PatternGrid | undefined {
+  if (!steps || steps.length === 0) return undefined;
+  const stepWithGrid =
+    [...steps].reverse().find((s) => s.grid_data) ||
+    steps.find((s) => s.grid_data);
+  if (!stepWithGrid || !stepWithGrid.grid_data) return undefined;
+  const raw = stepWithGrid.grid_data;
+  if (Array.isArray(raw)) return raw as PatternGrid;
+  try {
+    const parsed = JSON.parse(raw as string);
+    if (Array.isArray(parsed)) return parsed as PatternGrid;
+  } catch {
+    return undefined;
+  }
+  return undefined;
+}
+
+export function mergePatternDetail(
+  detail: BackendPatternDetail,
+  mock?: Pattern
+): Pattern {
+  const pattern = mergePattern(detail.pattern, mock);
+  const gridData =
+    mergeGridFromSteps(detail.steps) ||
+    (detail.pattern.grid_data
+      ? Array.isArray(detail.pattern.grid_data)
+        ? (detail.pattern.grid_data as PatternGrid)
+        : parseJsonGrid(detail.pattern.grid_data as string)
+      : undefined);
+  const tags = detail.tags || pattern.tags;
+  const analytics = detail.analytics || {};
+  const likes =
+    analytics.likes ||
+    detail.pattern.likes ||
+    pattern.likes ||
+    0;
+  const downloadsCount =
+    analytics.downloads ||
+    detail.pattern.downloads ||
+    pattern.downloadsCount ||
+    0;
+  const views = analytics.views || detail.pattern.views || pattern.views || 0;
+  return {
+    ...pattern,
+    gridData,
+    tags,
+    likes,
+    downloadsCount,
+    views,
+  };
+}
+
+function parseJsonGrid(raw: string): PatternGrid | undefined {
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) return parsed as PatternGrid;
+  } catch {
+    return undefined;
+  }
+  return undefined;
+}
+
+async function fetchJson<T>(url: string, options?: RequestInit): Promise<T | null> {
+  try {
+    const res = await fetch(url, options);
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json as T;
+  } catch {
+    return null;
+  }
+}
+
+export async function fetchWithFallback<T>(
+  url: string,
+  options?: RequestInit,
+  fallback?: T
+): Promise<T | undefined> {
+  const json = await fetchJson<unknown>(url, options);
+  if (!json || typeof json !== "object") return fallback;
+  const obj = json as Record<string, unknown>;
+  if ("success" in obj && obj.success === true && "data" in obj && obj.data !== undefined) {
+    return obj.data as unknown as T;
+  }
+  if ("data" in obj && obj.data !== undefined) {
+    return obj.data as unknown as T;
+  }
+  return fallback;
+}
+
+function isBackendArrayResponse(
+  data: BackendPattern[] | { items?: BackendPattern[] }
+): data is { items?: BackendPattern[] } {
+  return !Array.isArray(data) && typeof data === "object" && data !== null;
+}
+
+function extractBackendItems<T>(
+  data: T[] | { items?: T[] } | undefined
+): T[] | undefined {
+  if (!data) return undefined;
+  if (Array.isArray(data)) return data;
+  if (typeof data === "object" && "items" in data && Array.isArray(data.items)) {
+    return data.items;
+  }
+  return undefined;
 }
 
 const basePatterns: Pattern[] = [
@@ -663,7 +992,16 @@ const basePatterns: Pattern[] = [
   },
 ];
 
-const collections: Collection[] = [
+function mockBySlugRecord(): Record<string, Pattern> {
+  return basePatterns.reduce((acc, p) => {
+    acc[p.slug] = p;
+    return acc;
+  }, {} as Record<string, Pattern>);
+}
+
+export const mockBySlug: Record<string, Pattern> = mockBySlugRecord();
+
+export const collections: Collection[] = [
   {
     title: "Halloween",
     slug: "halloween",
@@ -714,7 +1052,7 @@ const collections: Collection[] = [
   },
 ];
 
-const categories: Category[] = [
+export const categories: Category[] = [
   { name: "Animals", slug: "animals", icon: "pets", count: 1245, tag: "Popular" },
   { name: "Kawaii", slug: "kawaii", icon: "favorite", count: 892, tag: "Trending" },
   { name: "Halloween", slug: "halloween", icon: "dark_mode", count: 634, tag: "Seasonal" },
@@ -723,40 +1061,210 @@ const categories: Category[] = [
   { name: "Gaming", slug: "gaming", icon: "videogame_asset", count: 410, tag: "Trending" },
 ];
 
-// =========================================================
-// Public API
-// =========================================================
+function tagsToCollections(tags: BackendTag[]): Collection[] {
+  return tags
+    .filter((t) => !t.type || t.type.toLowerCase() !== "difficulty")
+    .map((t) => ({
+      title: t.name,
+      slug: t.slug,
+      emoji: generateEmoji(t.name),
+      count: t.count || 0,
+      desc: `${t.name} bead patterns`,
+      color: "bg-primary-container text-white",
+    }));
+}
+
+function tagsToCategories(tags: BackendTag[]): Category[] {
+  return tags
+    .filter((t) => !t.type || t.type.toLowerCase() !== "difficulty")
+    .map((t) => ({
+      name: t.name,
+      slug: t.slug,
+      icon: "label",
+      count: t.count || 0,
+      tag: "New" as Category["tag"],
+    }));
+}
+
+function normalizeBackendOrMock(input: unknown): Pattern {
+  if (!input || typeof input !== "object") {
+    return basePatterns[0];
+  }
+  const bp = input as BackendPattern;
+  if (bp.id && bp.slug && bp.title) {
+    return normalizeBackendPattern(bp);
+  }
+  return input as Pattern;
+}
+
+export async function getAllPatterns(): Promise<Pattern[]> {
+  const fallback = basePatterns.map((p) => ({ ...p, id: p.slug } as unknown as BackendPattern));
+  const data = await fetchWithFallback<BackendPattern[] | { items: BackendPattern[] }>(
+    `${API_BASE}/api/patterns`,
+    {},
+    fallback as unknown as BackendPattern[]
+  );
+  const items = extractBackendItems(data);
+  if (!items || items.length === 0) return basePatterns;
+  return items.map((bp) => {
+    const mock = mockBySlug[bp.slug];
+    return mock ? mergePattern(bp as unknown as Pattern, mock) : normalizeBackendPattern(bp);
+  });
+}
 
 export async function getPattern(slug: string): Promise<Pattern | null> {
-  // MVP: local mock. Later: fetch from DB/API.
-  const pattern = basePatterns.find((p) => p.slug === slug);
-  return pattern || null;
+  const detail = await fetchWithFallback<BackendPatternDetail>(
+    `${API_BASE}/api/patterns/${slug}`,
+    {},
+    undefined
+  );
+  if (!detail) {
+    return mockBySlug[slug] || null;
+  }
+  const mock = mockBySlug[slug];
+  return mergePatternDetail(detail, mock);
 }
 
 export async function getTrendingPatterns(): Promise<Pattern[]> {
-  // First 8 patterns as "trending today"
-  return basePatterns.slice(0, 8);
+  const fallback = basePatterns.slice(0, 8).map((p) => ({ ...p, id: p.slug } as unknown as BackendPattern));
+  const data = await fetchWithFallback<BackendPattern[] | { items: BackendPattern[]; meta?: unknown }>(
+    `${API_BASE}/api/patterns?sort=popular&limit=8`,
+    {},
+    fallback as unknown as BackendPattern[]
+  );
+  const items = extractBackendItems(data);
+  if (!items || items.length === 0) return basePatterns.slice(0, 8);
+  return items.map((bp) => {
+    const mock = mockBySlug[bp.slug];
+    return mock ? mergePattern(bp as unknown as Pattern, mock) : normalizeBackendPattern(bp);
+  }).slice(0, 8);
+}
+
+function extractTags(
+  data: BackendTag[] | { items?: BackendTag[] } | undefined
+): BackendTag[] | undefined {
+  if (!data) return undefined;
+  if (Array.isArray(data)) return data;
+  if (typeof data === "object" && "items" in data && Array.isArray(data.items)) {
+    return data.items;
+  }
+  return undefined;
 }
 
 export async function getCollections(): Promise<Collection[]> {
-  return collections;
+  const data = await fetchWithFallback<BackendTag[] | { items?: BackendTag[] }>(
+    `${API_BASE}/api/tags`,
+    {},
+    undefined
+  );
+  const tags = extractTags(data);
+  if (!tags || tags.length === 0) return collections;
+  return tagsToCollections(tags).length > 0 ? tagsToCollections(tags) : collections;
 }
 
 export async function getCategories(): Promise<Category[]> {
-  return categories;
+  const data = await fetchWithFallback<BackendTag[] | { items?: BackendTag[] }>(
+    `${API_BASE}/api/tags`,
+    {},
+    undefined
+  );
+  const tags = extractTags(data);
+  if (!tags || tags.length === 0) return categories;
+  const cats = tagsToCategories(tags);
+  return cats.length > 0 ? cats : categories;
+}
+
+export async function getCategoryBySlug(slug: string): Promise<Category | null> {
+  const data = await fetchWithFallback<BackendTag[] | { items?: BackendTag[] }>(
+    `${API_BASE}/api/tags`,
+    {},
+    undefined
+  );
+  const tags = extractTags(data);
+  const list = tags && tags.length > 0 ? tagsToCategories(tags) : categories;
+  return list.find((c) => c.slug === slug) || null;
+}
+
+export async function getRelatedPatterns(
+  slug: string,
+  limit = 4
+): Promise<Pattern[]> {
+  const fallback = basePatterns
+    .filter((p) => p.slug !== slug)
+    .slice(0, limit)
+    .map((p) => ({ ...p, id: p.slug } as unknown as BackendPattern));
+  const data = await fetchWithFallback<BackendPattern[]>(
+    `${API_BASE}/api/recommend?slug=${encodeURIComponent(slug)}&limit=${limit}`,
+    {},
+    fallback
+  );
+  if (!data || data.length === 0) {
+    return basePatterns.filter((p) => p.slug !== slug).slice(0, limit);
+  }
+  return data.map((bp) => {
+    const mock = mockBySlug[bp.slug];
+    return mock ? mergePattern(bp as unknown as Pattern, mock) : normalizeBackendPattern(bp);
+  });
+}
+
+export async function createPattern(body: unknown): Promise<{ id: string; slug: string } | null> {
+  const res = await fetchWithFallback<{ pattern: { id: string; slug: string } }>(
+    `${API_BASE}/api/patterns`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    },
+    undefined
+  );
+  if (!res || !res.pattern) return null;
+  return res.pattern;
 }
 
 export async function searchPatterns(query: string): Promise<Pattern[]> {
   const q = query.trim().toLowerCase();
-  if (!q) return basePatterns;
-  return basePatterns.filter(
-    (p) =>
-      p.title.toLowerCase().includes(q) ||
-      p.slug.toLowerCase().includes(q) ||
-      p.emoji.includes(q)
+  if (!q) return getAllPatterns();
+  const fallback = basePatterns
+    .filter(
+      (p) =>
+        p.title.toLowerCase().includes(q) ||
+        p.slug.toLowerCase().includes(q) ||
+        p.emoji.includes(q)
+    )
+    .map((p) => ({ ...p, id: p.slug } as unknown as BackendPattern));
+  const data = await fetchWithFallback<BackendPattern[] | { items: BackendPattern[]; meta?: unknown }>(
+    `${API_BASE}/api/patterns?q=${encodeURIComponent(q)}`,
+    {},
+    fallback as unknown as BackendPattern[]
   );
+  if (!data || (Array.isArray(data) && data.length === 0)) {
+    return basePatterns.filter(
+      (p) =>
+        p.title.toLowerCase().includes(q) ||
+        p.slug.toLowerCase().includes(q) ||
+        p.emoji.includes(q)
+    );
+  }
+  const items: BackendPattern[] = Array.isArray(data) ? data : (data as { items: BackendPattern[] }).items;
+  return items.map((bp) => {
+    const mock = mockBySlug[bp.slug];
+    return mock ? mergePattern(bp, mock) : normalizeBackendPattern(bp);
+  });
 }
 
-export async function getAllPatterns(): Promise<Pattern[]> {
-  return basePatterns;
+export async function getPatternImageData(
+  pattern: Pattern
+): Promise<{ type: "image" | "svg"; src: string; svg?: string }> {
+  const data = await fetchWithFallback<{ image?: string; svg?: string }>(
+    `${API_BASE}/api/patterns/${pattern.slug}/image`,
+    { method: "POST" },
+    undefined
+  );
+  if (data && data.image) {
+    return { type: "image", src: data.image };
+  }
+  if (data && data.svg) {
+    return { type: "svg", src: data.svg, svg: data.svg };
+  }
+  return { type: "image", src: pattern.finished || pattern.img };
 }

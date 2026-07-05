@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getTrendingPatterns, Pattern } from "@/lib/patternService";
+import { getPatternImage } from "@/components/BeadRenderer";
 
 function diffColor(diff: Pattern["difficulty"]) {
   switch (diff) {
@@ -14,9 +15,17 @@ function diffColor(diff: Pattern["difficulty"]) {
 
 export default function DiscoverToday() {
   const [patterns, setPatterns] = useState<Pattern[]>([]);
+  const [images, setImages] = useState<Record<string, { type: "image" | "svg"; src: string; svg?: string }>>({});
 
   useEffect(() => {
-    getTrendingPatterns().then(setPatterns);
+    getTrendingPatterns().then((ps) => {
+      setPatterns(ps);
+      const map: Record<string, { type: "image" | "svg"; src: string; svg?: string }> = {};
+      for (const p of ps) {
+        map[p.slug] = getPatternImage(p, { width: 208, height: 208, preferGrid: true });
+      }
+      setImages(map);
+    });
   }, []);
 
   return (
@@ -36,7 +45,13 @@ export default function DiscoverToday() {
             <Link key={p.slug} href={`/pattern/${p.slug}?tab=finished-photo`} className="group flex-shrink-0 w-52 snap-start">
               <div className="bg-white rounded-xl bead-shadow overflow-hidden transition-all hover:-translate-y-1 h-full flex flex-col">
                 <div className="aspect-square overflow-hidden bg-surface-container relative">
-                  <img className="w-full h-full object-cover" alt={p.title} src={p.img} />
+                  {images[p.slug]?.type === "svg" ? (
+                    <div className="w-full h-full" dangerouslySetInnerHTML={{ __html: images[p.slug]!.svg || "" }} />
+                  ) : images[p.slug]?.type === "image" ? (
+                    <img className="w-full h-full object-cover" alt={p.title} src={images[p.slug]!.src} />
+                  ) : (
+                    <div className="w-full h-full bg-surface-container" />
+                  )}
                   <div className="absolute top-2 left-2">
                     <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded ${diffColor(p.difficulty)}`}>
                       {p.difficulty}

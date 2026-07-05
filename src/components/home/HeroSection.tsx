@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
+import { getPattern, Pattern as ServicePattern } from "@/lib/patternService";
+import { getPatternImage } from "@/components/BeadRenderer";
 
 const showcasePatterns = [
   {
@@ -91,7 +93,49 @@ export default function HeroSection() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
-  const activePattern = showcasePatterns[active];
+  const [patterns, setPatterns] = useState<ServicePattern[]>([]);
+  const [patternImages, setPatternImages] = useState<Record<string, { type: "image" | "svg"; src: string; svg?: string }>>({});
+
+  useEffect(() => {
+    Promise.all(showcasePatterns.map((p) => getPattern(p.slug))).then((fetched) => {
+      const merged: ServicePattern[] = [];
+      for (let i = 0; i < showcasePatterns.length; i++) {
+        const mock = showcasePatterns[i];
+        const real = fetched[i];
+        merged.push(
+          real || {
+            slug: mock.slug,
+            title: mock.title,
+            emoji: mock.emoji,
+            img: mock.src,
+            finished: mock.src,
+            difficulty: mock.difficulty as ServicePattern["difficulty"],
+            grid: mock.grid.replace("×", "x"),
+            colors: mock.colors,
+            beadCount: mock.beads,
+            downloads: mock.downloads,
+            palette: mock.palette.map((hex) => ({ hex, name: "", count: 0, code: "" })),
+            steps: [],
+            related: [],
+          }
+        );
+      }
+      setPatterns(merged);
+      const imgMap: Record<string, { type: "image" | "svg"; src: string; svg?: string }> = {};
+      for (const p of merged) {
+        imgMap[p.slug] = getPatternImage(p, { width: 512, height: 512, preferGrid: true });
+      }
+      setPatternImages(imgMap);
+    });
+  }, []);
+
+  const activeMock = showcasePatterns[active];
+  const activePattern = patterns[active] || activeMock;
+  const activeImage = patternImages[activeMock?.slug] || { type: "image", src: activeMock?.src };
+
+  const activePalette = Array.isArray(activePattern?.palette)
+    ? activePattern.palette
+    : activeMock?.palette.map((hex) => ({ hex, name: "", count: 0, code: "" })) || [];
 
   const rotatingPlaceholders = ["Cute Frog", "Ghost", "Flower", "Pokemon", "Christmas"];
 
@@ -260,7 +304,11 @@ export default function HeroSection() {
                   backgroundSize: "16px 16px",
                 }}
               >
-                <img className="w-full h-full object-cover" alt={activePattern.title} src={activePattern.src} />
+                {activeImage.type === "svg" ? (
+                  <div className="w-full h-full" dangerouslySetInnerHTML={{ __html: activeImage.svg || "" }} />
+                ) : (
+                  <img className="w-full h-full object-cover" alt={activePattern.title} src={activeImage.src} />
+                )}
               </div>
 
               <div className="flex flex-col justify-between py-1">
@@ -281,7 +329,7 @@ export default function HeroSection() {
                     </div>
                     <div className="bg-surface-container rounded-xl px-1 py-2 text-center">
                       <p className="text-secondary text-[10px] uppercase tracking-wide">Beads</p>
-                      <p className="font-semibold text-on-surface text-xs">{activePattern.beads}</p>
+                      <p className="font-semibold text-on-surface text-xs">{activePattern.beadCount}</p>
                     </div>
                     <div className="bg-surface-container rounded-xl px-1 py-2 text-center">
                       <p className="text-secondary text-[10px] uppercase tracking-wide">Level</p>
@@ -289,11 +337,11 @@ export default function HeroSection() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    {activePattern.palette.slice(0, 6).map((c) => (
-                      <div key={c} className="w-8 h-8 rounded-lg border border-white shadow-sm" style={{ backgroundColor: c }} />
+                    {activePalette.slice(0, 6).map((c) => (
+                      <div key={c.hex} className="w-8 h-8 rounded-lg border border-white shadow-sm" style={{ backgroundColor: c.hex }} />
                     ))}
-                    {activePattern.palette.length > 6 && (
-                      <span className="text-xs text-secondary">+{activePattern.palette.length - 6}</span>
+                    {activePalette.length > 6 && (
+                      <span className="text-xs text-secondary">+{activePalette.length - 6}</span>
                     )}
                   </div>
                 </div>

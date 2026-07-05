@@ -3,13 +3,22 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { getAllPatterns, Pattern } from "@/lib/patternService";
+import { getPatternImage } from "@/components/BeadRenderer";
 
 export default function InspirationGallery() {
   const [images, setImages] = useState<Pattern[]>([]);
   const [visibleCount, setVisibleCount] = useState(8);
+  const [previews, setPreviews] = useState<Record<string, { type: "image" | "svg"; src: string; svg?: string }>>({});
 
   useEffect(() => {
-    getAllPatterns().then(setImages);
+    getAllPatterns().then((ps) => {
+      setImages(ps);
+      const map: Record<string, { type: "image" | "svg"; src: string; svg?: string }> = {};
+      for (const p of ps) {
+        map[p.slug] = getPatternImage(p, { width: 320, height: 320, preferGrid: true });
+      }
+      setPreviews(map);
+    });
   }, []);
 
   useEffect(() => {
@@ -41,7 +50,13 @@ export default function InspirationGallery() {
             className="masonry-item bg-white rounded-xl bead-shadow transition-all hover:-translate-y-1 overflow-hidden group block"
           >
             <div className="overflow-hidden bg-secondary-container relative">
-              <img className="w-full h-auto" alt={img.title} src={img.img} />
+              {previews[img.slug]?.type === "svg" ? (
+                <div className="w-full" dangerouslySetInnerHTML={{ __html: previews[img.slug]!.svg || "" }} />
+              ) : previews[img.slug]?.type === "image" ? (
+                <img className="w-full h-auto" alt={img.title} src={previews[img.slug]!.src} />
+              ) : (
+                <div className="w-full aspect-square bg-surface-container" />
+              )}
               <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center gap-2 transition-opacity opacity-0 group-hover:opacity-100 p-4">
                 <span className="bg-white text-primary px-4 py-2 rounded-lg font-label-sm flex items-center gap-2 pointer-events-none">
                   <span className="material-symbols-outlined">visibility</span> Quick View

@@ -1,81 +1,168 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { getPattern, Pattern } from "@/lib/patternService";
+import { getPattern, getRelatedPatterns, Pattern } from "@/lib/patternService";
+import SaveButton from "./SaveButton";
+import BeadRenderer, { getPatternImage, renderBeadGrid } from "@/components/BeadRenderer";
 
 interface PatternDetailProps {
-  params: Promise<{ slug: string }>;
+  slug: string;
 }
 
-export default function PatternDetail({ params }: PatternDetailProps) {
+export default function PatternDetail({ slug }: PatternDetailProps) {
   const [activeTab, setActiveTab] = useState("Finished Photo");
-  const [slug, setSlug] = useState<string>("cute-frog");
   const [pattern, setPattern] = useState<Pattern | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [finishedImage, setFinishedImage] = useState<{ type: "image" | "svg"; src: string; svg?: string } | null>(null);
+  const [related, setRelated] = useState<Pattern[]>([]);
+  const [relatedImages, setRelatedImages] = useState<Record<string, { type: "image" | "svg"; src: string; svg?: string }>>({});
   const searchParams = useSearchParams();
+  const printRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    params.then((p) => {
-      const s = p.slug || "cute-frog";
-      setSlug(s);
-      getPattern(s).then(setPattern);
+    let cancelled = false;
+    setLoading(true);
+    getPattern(slug).then((p) => {
+      if (cancelled) return;
+      if (p) {
+        setPattern(p);
+        setFinishedImage(getPatternImage(p, { width: 560, height: 560, preferGrid: true }));
+      }
+      setLoading(false);
+    }).catch(() => {
+      if (!cancelled) setLoading(false);
     });
-  }, [params]);
+
+    getRelatedPatterns(slug).then((items) => {
+      if (cancelled) return;
+      setRelated(items);
+      const map: Record<string, { type: "image" | "svg"; src: string; svg?: string }> = {};
+      for (const p of items) {
+        map[p.slug] = getPatternImage(p, { width: 240, height: 240, preferGrid: true });
+      }
+      setRelatedImages(map);
+    });
+
+    return () => { cancelled = true; };
+  }, [slug]);
 
   useEffect(() => {
     const tab = searchParams.get("tab");
-    if (tab) setActiveTab(tab === "finished-photo" ? "Finished Photo" : tab);
+    if (tab) {
+      const map: Record<string, string> = {
+        "finished-photo": "Finished Photo",
+        "finished_photo": "Finished Photo",
+        "finished": "Finished Photo",
+        pattern: "Pattern",
+        "color-chart": "Color Chart",
+        "color_chart": "Color Chart",
+        palette: "Color Chart",
+        guide: "Guide",
+        steps: "Guide",
+      };
+      setActiveTab(map[tab] || tab);
+    }
   }, [searchParams]);
 
-  if (!pattern) return <div className="pt-28 text-center">Loading pattern...</div>;
+  const patternGrid = useMemo(() => {
+    if (!pattern) return null;
+    if (pattern.gridData) {
+      return renderBeadGrid(pattern.gridData, pattern.colorPalette, { width: 560, height: 560, showGrid: true, gap: 1, beadRadius: 2 });
+    }
+    return null;
+  }, [pattern]);
 
-  const handleDownloadPNG = async () => {
-    const img = document.querySelector('[data-print-finished]') as HTMLImageElement | null;
-    if (!img || !img.src) return;
-    try {
-      const response = await fetch(img.src, { mode: 'cors', credentials: 'omit' });
-      if (!response.ok) throw new Error('Network response was not ok');
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${pattern.title.replace(/\s+/g, '-').toLowerCase()}.png`;
+  if (loading) return <div className="pt-28 text-center">Loading pattern...</div>;
+  if (!pattern) return <div className="pt-28 text-center">Pattern not found.</div>;
+
+  const handleDownloadPNG = () => {
+    const img = finishedImage?.type === "image" ? pattern.finished : finishedImage?.src;
+    if (!img) return;
+    if (img.startsWith("data:image/svg+xml")) {
+      const link = document.createElement("a");
+      link.href = img;
+      link.download = `${pattern.title.replace(/\s+/g, "-").toLowerCase()}.svg`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
-    } catch {
-      // fallback: open image in new tab if fetch fails due to CORS / network
-      window.open(img.src, '_blank');
+      return;
     }
+    fetch(img, { mode: "cors", credentials: "omit" })
+      .then((res) => res.blob())
+      .then((blob) => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `${pattern.title.replace(/\s+/g, "-").toLowerCase()}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      })
+      .catch(() => window.open(img, "_blank"));
   };
 
-  const handleDownload = () => {
-    const img = document.querySelector('[data-print-finished]') as HTMLImageElement | null;
-    if (img && img.src) {
-      const printWindow = window.open('', '_blank');
-      if (printWindow) {
-        printWindow.document.write(`
-          <html>
-            <head>
-              <title>${pattern.title} - BeadPatternAI</title>
-              <style>
-                @media print { body { margin: 0; } img { max-width: 100%; height: auto; page-break-inside: avoid; } }
-                body { display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: #fff; padding: 24px; box-sizing: border-box; }
-                img { max-width: 100%; max-height: 100vh; height: auto; object-fit: contain; }
-              </style>
-            </head>
-            <body>
-              <img src="${img.src}" alt="Finished bead pattern" />
-              <script>window.onload = function() { setTimeout(function() { window.print(); }, 200); };</script>
-            </body>
-          </html>
-        `);
-        printWindow.document.close();
-      }
-    }
+  const handleDownloadPDF = async () => {
+    if (typeof window === "undefined") return;
+    const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
+      import("jspdf"),
+      import("html2canvas"),
+    ]);
+    const el = printRef.current;
+    if (!el) return;
+    const canvas = await html2canvas(el, { scale: 2, useCORS: true, backgroundColor: "#ffffff" });
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF({ orientation: "portrait", unit: "px", format: [canvas.width / 2, canvas.height / 2] });
+    pdf.addImage(imgData, "PNG", 0, 0, canvas.width / 2, canvas.height / 2);
+    pdf.save(`${pattern.title.replace(/\s+/g, "-").toLowerCase()}.pdf`);
   };
+
+  const printContent = (
+    <div
+      ref={printRef}
+      className="bg-white p-8 w-[800px]"
+      style={{ position: "fixed", top: 0, left: "-9999px", zIndex: -1 }}
+    >
+      <div className="text-center mb-6">
+        <h1 className="text-2xl font-bold text-primary mb-2">{pattern.title}</h1>
+        <p className="text-secondary">{pattern.difficulty} • {pattern.grid} • {pattern.beadCount.toLocaleString()} beads</p>
+      </div>
+      <div className="flex justify-center mb-6">
+        {patternGrid ? (
+          <div dangerouslySetInnerHTML={{ __html: patternGrid.svg }} />
+        ) : (
+          <img src={pattern.finished} alt={pattern.title} className="max-w-md rounded-xl" crossOrigin="anonymous" />
+        )}
+      </div>
+      <div className="mb-6">
+        <h2 className="text-lg font-bold mb-3">Color Chart</h2>
+        <div className="grid grid-cols-2 gap-3">
+          {pattern.palette.map((c, i) => (
+            <div key={c.hex + i} className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded border" style={{ backgroundColor: c.hex }} />
+              <div className="text-sm">
+                <p className="font-semibold">{c.name || `Color ${i + 1}`}</p>
+                <p className="text-secondary">{c.code || c.hex} • {c.count} beads</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div>
+        <h2 className="text-lg font-bold mb-3">Step-by-Step Guide</h2>
+        <ol className="list-decimal list-inside space-y-2">
+          {pattern.steps.map((step, i) => (
+            <li key={i} className="text-secondary">{step}</li>
+          ))}
+        </ol>
+      </div>
+      <div className="mt-8 text-center text-xs text-secondary">
+        Generated by BeadPatternAI • beadpatternai.com
+      </div>
+    </div>
+  );
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -111,27 +198,29 @@ export default function PatternDetail({ params }: PatternDetailProps) {
             {activeTab === "Pattern" && (
               <div className="flex justify-center">
                 <div className="bg-surface-container p-4 rounded-xl inline-block">
-                  <div className="grid grid-cols-16 gap-px">
-                    {Array.from({ length: 256 }).map((_, i) => {
-                      const colorMap = pattern.palette.map((c) => c.hex).concat(["#f4fafd"]);
-                      const color = colorMap[i % colorMap.length];
-                      return (
-                        <div key={i} className="w-4 h-4 border border-white/20" style={{ backgroundColor: color }} />
-                      );
-                    })}
-                  </div>
+                  {patternGrid ? (
+                    <div dangerouslySetInnerHTML={{ __html: patternGrid.svg }} />
+                  ) : (
+                    <BeadRenderer
+                      grid={undefined}
+                      palette={pattern.colorPalette}
+                      width={400}
+                      height={400}
+                      title={pattern.title}
+                    />
+                  )}
                 </div>
               </div>
             )}
 
             {activeTab === "Color Chart" && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {pattern.palette.map((c) => (
-                  <div key={c.hex} className="flex items-center gap-4 p-3 bg-surface-container rounded-lg">
+                {pattern.palette.map((c, i) => (
+                  <div key={c.hex + i} className="flex items-center gap-4 p-3 bg-surface-container rounded-lg">
                     <div className="w-12 h-12 rounded-lg border border-secondary" style={{ backgroundColor: c.hex }} />
                     <div className="flex-1">
-                      <p className="font-label-sm">{c.name}</p>
-                      <p className="text-secondary text-sm">Code: {c.code} &bull; {c.count} beads</p>
+                      <p className="font-label-sm">{c.name || `Color ${i + 1}`}</p>
+                      <p className="text-secondary text-sm">Code: {c.code || c.hex} • {c.count} beads</p>
                     </div>
                     <span className="font-mono text-sm text-secondary">{c.hex}</span>
                   </div>
@@ -141,12 +230,18 @@ export default function PatternDetail({ params }: PatternDetailProps) {
 
             {activeTab === "Finished Photo" && (
               <div className="text-center">
-                <img
-                  data-print-finished
-                  className="w-full max-w-lg mx-auto rounded-xl"
-                  alt={`Finished perler bead ${pattern.title}`}
-                  src={pattern.finished}
-                />
+                {finishedImage?.type === "image" ? (
+                  <img
+                    data-print-finished
+                    className="w-full max-w-lg mx-auto rounded-xl"
+                    alt={`Finished perler bead ${pattern.title}`}
+                    src={pattern.finished}
+                  />
+                ) : (
+                  <div className="w-full max-w-lg mx-auto rounded-xl overflow-hidden">
+                    <div dangerouslySetInnerHTML={{ __html: finishedImage?.svg || "" }} />
+                  </div>
+                )}
                 <p className="mt-4 text-secondary">Example finished project using the bead template above.</p>
               </div>
             )}
@@ -243,8 +338,9 @@ export default function PatternDetail({ params }: PatternDetailProps) {
           </div>
 
           <div className="pt-4 border-t border-secondary-container space-y-3">
+            <SaveButton patternSlug={pattern.slug} />
             <button
-              onClick={handleDownload}
+              onClick={handleDownloadPDF}
               className="w-full bg-primary text-white py-3 rounded-xl font-label-sm flex items-center justify-center gap-2 hover:bg-primary-container transition-colors"
             >
               <span className="material-symbols-outlined">file_download</span> Download PDF
@@ -255,12 +351,11 @@ export default function PatternDetail({ params }: PatternDetailProps) {
             >
               <span className="material-symbols-outlined">download</span> Download PNG
             </button>
-            <button className="w-full bg-surface-container text-secondary py-3 rounded-xl font-label-sm flex items-center justify-center gap-2 hover:bg-secondary-container transition-colors">
-              <span className="material-symbols-outlined">favorite</span> Save
-            </button>
           </div>
         </div>
       </aside>
+
+      {printContent}
 
       <div className="lg:col-span-12">
         <div className="flex items-center justify-between mb-6">
@@ -270,12 +365,22 @@ export default function PatternDetail({ params }: PatternDetailProps) {
           </Link>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {pattern.related.map((p) => (
-            <div key={p.title} className="bg-white rounded-2xl p-3 border border-secondary-container hover:-translate-y-1 transition-transform cursor-pointer">
-              <div className="aspect-square rounded-xl bg-surface-container mb-3" />
-              <p className="font-label-sm">{p.title}</p>
-              <p className="text-secondary text-sm">{p.difficulty} &bull; {p.beads} beads</p>
-            </div>
+          {related.map((p) => (
+            <Link key={p.slug} href={`/pattern/${p.slug}`} className="group">
+              <div className="bg-white rounded-2xl p-3 border border-secondary-container hover:-translate-y-1 transition-transform">
+                <div className="aspect-square rounded-xl overflow-hidden mb-3 bg-surface-container">
+                  {relatedImages[p.slug]?.type === "svg" ? (
+                    <div className="w-full h-full" dangerouslySetInnerHTML={{ __html: relatedImages[p.slug]!.svg || "" }} />
+                  ) : relatedImages[p.slug]?.type === "image" ? (
+                    <img className="w-full h-full object-cover" alt={p.title} src={relatedImages[p.slug]!.src} />
+                  ) : (
+                    <div className="w-full h-full bg-surface-container" />
+                  )}
+                </div>
+                <p className="font-label-sm truncate">{p.title}</p>
+                <p className="text-secondary text-sm">{p.difficulty} &bull; {p.beadCount.toLocaleString()} beads</p>
+              </div>
+            </Link>
           ))}
         </div>
       </div>
