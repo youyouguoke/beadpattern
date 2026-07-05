@@ -28,6 +28,8 @@ export const CreateTagSchema = z.object({
   display_order: z.number().int().optional().default(0),
 });
 
+export const UpdateTagSchema = CreateTagSchema.partial();
+
 export const ColorSchema = z.object({
   name: z.string().min(1).max(100),
   code: z.string().min(1).max(100).optional(),
@@ -122,4 +124,104 @@ export const BulkImportRowSchema = z.object({
   color_palette: z.string().optional(), // comma-separated hex
   tags: z.string().optional(), // comma-separated tag slugs
   tag_slugs: z.string().optional(),
+});
+
+export const AdminPatternQuerySchema = z.object({
+  status: z.enum(['draft', 'published', 'archived']).optional(),
+  difficulty: DifficultySchema.optional(),
+  collection: z.string().optional(),
+  category: z.string().optional(),
+  tag: z.string().optional(),
+  q: z.string().max(200).optional(),
+  sort: z.enum(['latest', 'updated', 'views', 'downloads']).optional().default('latest'),
+  page: z.coerce.number().int().min(1).optional().default(1),
+  limit: z.coerce.number().int().min(1).max(100).optional().default(20),
+});
+
+export const BulkPublishSchema = z.object({
+  ids: z.array(z.string().uuid()).optional(),
+  all: z.boolean().optional().default(false),
+  slugs: z.array(z.string().min(1)).optional(),
+});
+
+export const BulkArchiveSchema = z.object({
+  ids: z.array(z.string().uuid()).optional(),
+  all: z.boolean().optional().default(false),
+  slugs: z.array(z.string().min(1)).optional(),
+});
+
+export const BulkDeleteSchema = z.object({
+  ids: z.array(z.string().uuid()).optional(),
+});
+
+export const UpdateStatusSchema = z.object({
+  status: z.enum(['draft', 'published', 'archived']),
+});
+
+export const CreateCollectionSchema = z.object({
+  title: z.string().min(1).max(200),
+  slug: z.string().min(1).max(200).optional(),
+  description: z.string().max(5000).optional(),
+  banner: z.string().url().max(1000).optional(),
+  display_order: z.number().int().optional().default(0),
+  published: z.boolean().optional().default(false),
+});
+
+export const UpdateCollectionSchema = CreateCollectionSchema.partial();
+
+export const CreateCategorySchema = z.object({
+  name: z.string().min(1).max(100),
+  slug: z.string().min(1).max(120).optional(),
+  description: z.string().max(5000).optional(),
+  display_order: z.number().int().optional().default(0),
+});
+
+export const UpdateCategorySchema = CreateCategorySchema.partial();
+
+export const CreateMediaSchema = z.object({
+  url: z.string().url().max(1000),
+  r2_key: z.string().max(500).optional(),
+  type: z.enum(['cover', 'finished', 'step', 'gallery', 'banner']).optional(),
+  size: z.number().int().nonnegative().optional(),
+  width: z.number().int().nonnegative().optional(),
+  height: z.number().int().nonnegative().optional(),
+  folder: z.string().max(200).optional(),
+  used_by: z.record(z.number().int().nonnegative()).optional(),
+});
+
+export const UpdateMediaSchema = CreateMediaSchema.partial();
+
+export const CreateRedirectSchema = z.object({
+  old_path: z.string().min(1).max(500),
+  new_path: z.string().min(1).max(500),
+  code: z.number().int().refine((v) => v === 301 || v === 302).optional().default(301),
+});
+
+export const UpdateRedirectSchema = CreateRedirectSchema.partial();
+
+export const CreateSettingSchema = z.object({
+  key: z.string().min(1).max(100),
+  value: z.string().optional(),
+});
+
+export const UpdateSettingSchema = z.object({
+  values: z.record(z.string().optional()),
+});
+
+export const SeoMetadataUpdateSchema = z.object({
+  pattern_template: z.string().max(500).optional(),
+  collection_template: z.string().max(500).optional(),
+  tag_template: z.string().max(500).optional(),
+});
+
+export const RobotsUpdateSchema = z.object({
+  allow: z.array(z.string()).optional(),
+  disallow: z.array(z.string()).optional(),
+  noindex: z.boolean().optional(),
+});
+
+export const AdminListQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).optional().default(1),
+  limit: z.coerce.number().int().min(1).max(100).optional().default(20),
+  q: z.string().max(200).optional(),
 });

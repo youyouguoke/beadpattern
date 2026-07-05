@@ -14,6 +14,7 @@ import media from './routes/media';
 import bulk from './routes/bulk';
 import sitemap from './routes/sitemap';
 import newsletter from './routes/newsletter';
+import admin from './routes/admin';
 
 const app = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
@@ -30,10 +31,11 @@ app.route('/api/tags', tags);
 app.route('/api/difficulty', difficulty);
 app.route('/api/search', search);
 app.route('/api/recommend', recommend);
-app.route('/api/admin', media);
+app.route('/api/media', media);
 app.route('/api/bulk', bulk);
 app.route('/api/sitemap', sitemap);
 app.route('/api/newsletter', newsletter);
+app.route('/api/admin', admin);
 
 // Fallback 404
 app.notFound((c) => c.json({ success: false, error: { code: 'NOT_FOUND', message: 'Not found' } }, 404));

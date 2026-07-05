@@ -47,6 +47,8 @@ export interface PatternSeo {
   updated_at: string;
 }
 
+export type MinimalSeo = Pick<PatternSeo, 'title' | 'description'>;
+
 export interface Color {
   id: string;
   hex: string;
@@ -123,4 +125,88 @@ export interface PatternWithDetails extends Pattern {
 export interface PatternListItem extends Pattern {
   tags: string[];
   views: number;
+}
+
+export interface Collection {
+  id: string;
+  title: string;
+  slug: string;
+  description: string | null;
+  banner: string | null;
+  display_order: number;
+  published: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  display_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export type MediaType = 'cover' | 'finished' | 'step' | 'gallery' | 'banner';
+
+export interface Media {
+  id: string;
+  r2_key: string | null;
+  url: string;
+  type: MediaType | null;
+  size: number | null;
+  width: number | null;
+  height: number | null;
+  used_by: string | null; // JSON object
+  folder: string | null;
+  created_at: string;
+}
+
+export interface Redirect {
+  id: string;
+  old_path: string;
+  new_path: string;
+  code: 301 | 302;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Setting {
+  key: string;
+  value: string | null;
+  updated_at: string;
+}
+
+export interface PatternCollection {
+  pattern_id: string;
+  collection_id: string;
+  display_order: number;
+}
+
+export interface PatternCategory {
+  pattern_id: string;
+  category_id: string;
+}
+
+export interface NewsletterSubscriber {
+  id: string;
+  email: string;
+  source: string | null;
+  subscribed_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface HealthCheck {
+  name: string;
+  passed: boolean;
+  weight: number;
+  detail?: string;
+}
+
+export interface HealthResult {
+  score: number;
+  checks: HealthCheck[];
 }
