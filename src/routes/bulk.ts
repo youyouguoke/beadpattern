@@ -3,7 +3,7 @@ import { getDB } from '../lib/db';
 import { normalizeSlug, generateId } from '../lib/slug';
 import { success } from '../lib/response';
 import { AppError } from '../lib/errors';
-import { BulkImportRowSchema } from '../lib/schemas';
+import { BulkImportRowSchema, difficultyStringToId } from '../lib/schemas';
 import type { Bindings } from '../lib/env';
 import type { ZodError } from 'zod';
 
@@ -112,7 +112,8 @@ bulk.post('/create', async (c) => {
       slug,
       title: data.title,
       description: data.description ?? null,
-      difficulty: data.difficulty,
+      difficulty: typeof data.difficulty === 'string' ? data.difficulty : 'easy',
+      difficulty_id: difficultyStringToId(data.difficulty),
       status: 'draft',
       cover_image: data.cover_image ?? null,
       grid_size: data.grid_size ?? null,

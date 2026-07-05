@@ -3,7 +3,16 @@ export const initSchema = `CREATE TABLE IF NOT EXISTS tags (
   name TEXT NOT NULL UNIQUE,
   slug TEXT NOT NULL UNIQUE,
   type TEXT NOT NULL,
+  display_order INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS difficulties (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  slug TEXT NOT NULL UNIQUE,
+  level INTEGER NOT NULL,
+  display_order INTEGER NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS patterns (
@@ -12,6 +21,7 @@ CREATE TABLE IF NOT EXISTS patterns (
   title TEXT NOT NULL,
   description TEXT,
   difficulty TEXT NOT NULL CHECK (difficulty IN ('easy','medium','hard')),
+  difficulty_id INTEGER DEFAULT 1 REFERENCES difficulties(id) ON DELETE SET DEFAULT,
   status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft','published','archived')),
   version INTEGER NOT NULL DEFAULT 1,
   published_at TEXT,
@@ -56,11 +66,47 @@ CREATE TABLE IF NOT EXISTS analytics (
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
+CREATE TABLE IF NOT EXISTS pattern_seo (
+  id TEXT PRIMARY KEY,
+  pattern_id TEXT NOT NULL UNIQUE REFERENCES patterns(id) ON DELETE CASCADE,
+  title TEXT,
+  description TEXT,
+  keywords TEXT,
+  canonical TEXT,
+  robots TEXT,
+  og_image TEXT,
+  twitter_title TEXT,
+  twitter_description TEXT,
+  twitter_image TEXT,
+  structured_data TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS colors (
+  id TEXT PRIMARY KEY,
+  hex TEXT NOT NULL UNIQUE,
+  name TEXT,
+  family TEXT
+);
+
+CREATE TABLE IF NOT EXISTS pattern_colors (
+  id TEXT PRIMARY KEY,
+  pattern_id TEXT NOT NULL REFERENCES patterns(id) ON DELETE CASCADE,
+  color_id TEXT NOT NULL REFERENCES colors(id) ON DELETE CASCADE,
+  count INTEGER NOT NULL DEFAULT 0,
+  UNIQUE (pattern_id, color_id)
+);
+
 CREATE INDEX IF NOT EXISTS idx_patterns_status ON patterns(status);
 CREATE INDEX IF NOT EXISTS idx_patterns_difficulty ON patterns(difficulty);
+CREATE INDEX IF NOT EXISTS idx_patterns_difficulty_id ON patterns(difficulty_id);
+CREATE INDEX IF NOT EXISTS idx_patterns_difficulty_id_published_at ON patterns(difficulty_id, published_at DESC);
 CREATE INDEX IF NOT EXISTS idx_patterns_created_at ON patterns(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_pattern_tags_tag_id ON pattern_tags(tag_id);
 CREATE INDEX IF NOT EXISTS idx_pattern_steps_pattern_id ON pattern_steps(pattern_id);
+CREATE INDEX IF NOT EXISTS idx_pattern_colors_color_id ON pattern_colors(color_id);
+CREATE INDEX IF NOT EXISTS idx_tags_display_order ON tags(display_order ASC, name ASC);
 
 CREATE VIRTUAL TABLE IF NOT EXISTS pattern_search USING fts5(title, description, content='patterns', content_rowid='rowid');
 
@@ -80,7 +126,12 @@ INSERT OR IGNORE INTO tags (id, name, slug, type) VALUES
 ('tag_medium', 'Medium', 'medium', 'difficulty'),
 ('tag_hard', 'Hard', 'hard', 'difficulty'),
 ('tag_kawaii', 'Kawaii', 'kawaii', 'style'),
-('tag_cute', 'Cute', 'cute', 'style');`;
+('tag_cute', 'Cute', 'cute', 'style');
+
+INSERT OR IGNORE INTO difficulties (id, name, slug, level, display_order) VALUES
+(1, 'Easy', 'easy', 1, 1),
+(2, 'Medium', 'medium', 2, 2),
+(3, 'Hard', 'hard', 3, 3);`;
 
 export const actionLogsSchema = `CREATE TABLE IF NOT EXISTS action_logs (
   id TEXT PRIMARY KEY,

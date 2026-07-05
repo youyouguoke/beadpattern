@@ -20,11 +20,9 @@ sitemap.get('/tags', async (c) => {
 });
 
 sitemap.get('/difficulty', async (c) => {
-  return c.json(success([
-    { slug: 'easy' },
-    { slug: 'medium' },
-    { slug: 'hard' },
-  ]));
+  const db = getDB(c.env);
+  const rows = await db.query<{ slug: string }>('SELECT slug FROM difficulties ORDER BY display_order');
+  return c.json(success(rows));
 });
 
 export default sitemap;

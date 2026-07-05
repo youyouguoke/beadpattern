@@ -48,12 +48,12 @@ recommend.get('/:slug', zValidator('param', z.object({ slug: z.string().min(1) }
      WHERE p.status = 'published' AND p.id != ?
      GROUP BY p.id
      ORDER BY shared_tags DESC,
-              CASE WHEN p.difficulty = ? THEN 1 ELSE 0 END DESC,
+              CASE WHEN p.difficulty_id = ? THEN 1 ELSE 0 END DESC,
               views DESC,
               likes DESC,
               p.created_at DESC
      LIMIT ?`,
-    [...tagIds, pattern.id, pattern.difficulty, limit]
+    [...tagIds, pattern.id, pattern.difficulty_id, limit]
   );
 
   // If no shared tags, same-difficulty patterns are already promoted by the ORDER BY.

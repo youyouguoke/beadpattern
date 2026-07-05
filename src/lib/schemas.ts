@@ -41,11 +41,37 @@ export const PatternStepSchema = z.object({
   grid_data: z.record(z.unknown()).optional(),
 });
 
+export const difficultyStringToId = (difficulty: string | number): 1 | 2 | 3 => {
+  if (typeof difficulty === 'number') {
+    if (difficulty === 1 || difficulty === 2 || difficulty === 3) return difficulty as 1 | 2 | 3;
+    return 1;
+  }
+  switch (difficulty) {
+    case 'easy':
+      return 1;
+    case 'medium':
+      return 2;
+    case 'hard':
+      return 3;
+    default:
+      return 1;
+  }
+};
+
+export const DifficultySchema = z.preprocess(
+  (val) => {
+    if (typeof val === 'number') return val;
+    if (typeof val === 'string') return val.toLowerCase();
+    return val;
+  },
+  z.union([z.enum(['easy', 'medium', 'hard']), z.number().int().min(1).max(3)])
+);
+
 export const CreatePatternSchema = z.object({
   title: z.string().min(1).max(200),
   slug: z.string().min(1).max(200).optional(),
   description: z.string().max(5000).optional(),
-  difficulty: z.enum(['easy', 'medium', 'hard']),
+  difficulty: DifficultySchema,
   cover_image: z.string().url().max(1000).optional(),
   finished_image: z.string().url().max(1000).optional(),
   cover_image_r2_key: z.string().max(500).optional(),
@@ -61,6 +87,13 @@ export const CreatePatternSchema = z.object({
   seo_title: z.string().max(200).optional(),
   seo_description: z.string().max(1000).optional(),
   seo_keywords: z.string().max(1000).optional(),
+  canonical: z.string().max(1000).optional(),
+  robots: z.string().max(100).optional(),
+  og_image: z.string().url().max(1000).optional(),
+  twitter_title: z.string().max(200).optional(),
+  twitter_description: z.string().max(1000).optional(),
+  twitter_image: z.string().url().max(1000).optional(),
+  structured_data: z.string().max(5000).optional(),
 });
 
 export const UpdatePatternSchema = CreatePatternSchema.partial().extend({
@@ -69,7 +102,7 @@ export const UpdatePatternSchema = CreatePatternSchema.partial().extend({
 
 export const ListPatternsQuerySchema = z.object({
   tag: z.string().optional(),
-  difficulty: z.enum(['easy', 'medium', 'hard']).optional(),
+  difficulty: DifficultySchema.optional(),
   status: z.enum(['draft', 'published', 'archived']).optional(),
   sort: z.enum(['latest', 'popular', 'views']).optional().default('latest'),
   page: z.coerce.number().int().nonnegative().optional().default(1),
@@ -81,7 +114,7 @@ export const BulkImportRowSchema = z.object({
   title: z.string().min(1),
   slug: z.string().optional(),
   description: z.string().optional(),
-  difficulty: z.enum(['easy', 'medium', 'hard']).optional().default('easy'),
+  difficulty: DifficultySchema.optional().default('easy'),
   cover_image: z.string().url().optional(),
   grid_size: z.string().max(50).optional(),
   estimated_beads: z.coerce.number().int().nonnegative().optional(),

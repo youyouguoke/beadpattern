@@ -3,13 +3,14 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { getDB } from '../lib/db';
 import { success, paginated } from '../lib/response';
+import { difficultyStringToId } from '../lib/schemas';
 import type { Bindings } from '../lib/env';
 
 const search = new Hono<{ Bindings: Bindings }>();
 
 search.get('/', zValidator('query', z.object({
   q: z.string().max(200).optional(),
-  difficulty: z.enum(['easy', 'medium', 'hard']).optional(),
+  difficulty: z.union([z.enum(['easy', 'medium', 'hard']), z.coerce.number().int().min(1).max(3)]).optional(),
   tag: z.string().max(100).optional(),
   sort: z.enum(['newest', 'popular', 'views', 'likes']).optional(),
   page: z.coerce.number().min(1).optional(),
@@ -41,8 +42,9 @@ search.get('/', zValidator('query', z.object({
   }
 
   if (difficulty) {
-    where.push('p.difficulty = ?');
-    params.push(difficulty);
+    const diffId = difficultyStringToId(difficulty);
+    where.push('p.difficulty_id = ?');
+    params.push(diffId);
   }
 
   if (tag) {

@@ -4,11 +4,12 @@ import { getDB } from '../lib/db';
 import { generateId, normalizeSlug } from '../lib/slug';
 import { success, paginated } from '../lib/response';
 import { AppError } from '../lib/errors';
-import { CreatePatternSchema, UpdatePatternSchema, ListPatternsQuerySchema } from '../lib/schemas';
+import { CreatePatternSchema, UpdatePatternSchema, ListPatternsQuerySchema, difficultyStringToId } from '../lib/schemas';
 import { generateSEO } from '../lib/seo';
 import { normalizeColorPalette, enrichPaletteFromGrid, computeStats } from '../lib/colors';
 import type { Bindings } from '../lib/env';
-import type { Pattern, PatternStep, Tag, PatternColor } from '../types';
+import type { Pattern, PatternStep, Tag, PatternColor, Color } from '../types';
+import { generateId as colorGenerateId } from '../lib/slug';
 
 const patterns = new Hono<{ Bindings: Bindings }>();
 
@@ -29,6 +30,66 @@ function parseJsonField<T>(value: string | null | undefined, fallback: T): T {
   } catch {
     return fallback;
   }
+}
+
+async function resolveDifficultySlug(db: ReturnType<typeof getDB>, difficultyId: number): Promise<string> {
+  const row = await db.queryOne<{ slug: string }>('SELECT slug FROM difficulties WHERE id = ?', [difficultyId]);
+  return row?.slug ?? 'easy';
+}
+
+async function upsertPatternColors(
+  db: ReturnType<typeof getDB>,
+  patternId: string,
+  palette: PatternColor[],
+  grid: (string | number)[][] | null
+) {
+  if (palette.length === 0) {
+    await db.execute('DELETE FROM pattern_colors WHERE pattern_id = ?', [patternId]);
+    return;
+  }
+
+  const enriched = grid ? enrichPaletteFromGrid(palette, grid) : palette;
+
+  // Upsert colors table entries
+  for (const c of enriched) {
+    const hex = c.hex.toLowerCase();
+    const existing = await db.queryOne<Color>('SELECT id FROM colors WHERE hex = ?', [hex]);
+    if (!existing) {
+      await db.insert('colors', { id: colorGenerateId(), hex, name: c.name ?? null, family: null });
+    }
+  }
+
+  // Remove stale pattern_colors rows
+  await db.execute('DELETE FROM pattern_colors WHERE pattern_id = ?', [patternId]);
+
+  // Insert pattern_colors
+  const colorRows = await db.query<Color>('SELECT id, hex FROM colors WHERE hex IN (' + enriched.map(() => '?').join(',') + ')', enriched.map((c) => c.hex.toLowerCase()));
+  const colorMap = new Map(colorRows.map((r) => [r.hex.toLowerCase(), r.id]));
+
+  for (const c of enriched) {
+    const hex = c.hex.toLowerCase();
+    const colorId = colorMap.get(hex);
+    if (!colorId) continue;
+    await db.insert('pattern_colors', {
+      id: colorGenerateId(),
+      pattern_id: patternId,
+      color_id: colorId,
+      count: c.count ?? 0,
+    });
+  }
+}
+
+async function getPatternColors(db: ReturnType<typeof getDB>, patternId: string) {
+  return db.query<
+    { hex: string; name: string | null; family: string | null; count: number }
+  >(
+    `SELECT c.hex, c.name, c.family, pc.count
+     FROM pattern_colors pc
+     JOIN colors c ON c.id = pc.color_id
+     WHERE pc.pattern_id = ?
+     ORDER BY pc.count DESC, c.hex`,
+    [patternId]
+  );
 }
 
 async function getPatternWithDetails(db: ReturnType<typeof getDB>, slug: string) {
@@ -52,6 +113,8 @@ async function getPatternWithDetails(db: ReturnType<typeof getDB>, slug: string)
     [pattern.id]
   );
 
+  const patternColors = await getPatternColors(db, pattern.id);
+
   const rawPalette = parseJsonField<string[] | PatternColor[] | null>(pattern.color_palette as string | null, []);
   const grid = parseJsonField<(string | number)[][] | null>(pattern.grid_data as string | null, null);
   const palette = enrichPaletteFromGrid(normalizeColorPalette(rawPalette ?? []), grid);
@@ -59,7 +122,10 @@ async function getPatternWithDetails(db: ReturnType<typeof getDB>, slug: string)
   return {
     pattern: {
       ...pattern,
+      difficulty: pattern.difficulty,
+      difficulty_id: pattern.difficulty_id,
       color_palette: palette,
+      pattern_colors: patternColors,
       grid_data: grid,
       color_count: palette.length,
       estimated_beads: grid ? grid.flat().length : (pattern.estimated_beads ?? 0),
@@ -91,8 +157,9 @@ patterns.get('/', zValidator('query', ListPatternsQuerySchema), async (c) => {
   }
 
   if (difficulty) {
-    where.push('p.difficulty = ?');
-    params.push(difficulty);
+    const diffId = difficultyStringToId(difficulty);
+    where.push('p.difficulty_id = ?');
+    params.push(diffId);
   }
 
   if (tag) {
@@ -162,19 +229,19 @@ patterns.post('/', zValidator('json', CreatePatternSchema), async (c) => {
   const existing = await db.queryOne<Pattern>('SELECT id FROM patterns WHERE slug = ?', [slug]);
   if (existing) throw new AppError('Pattern slug already exists', 'PATTERN_DUPLICATE', 409);
 
-  const seo = generateSEO({ title: body.title, description: body.description ?? null, tags: [] });
-
   const grid = body.grid_data as (string | number)[][] | undefined;
   const palette = normalizeColorPalette(body.color_palette as string[] | PatternColor[] | undefined);
   const enrichedPalette = grid ? enrichPaletteFromGrid(palette, grid) : palette;
   const stats = grid ? computeStats(grid) : { color_count: body.color_count, estimated_beads: body.estimated_beads };
+  const seo = generateSEO({ title: body.title, description: body.description ?? null, tags: [] });
 
   await db.insert('patterns', {
     id,
     slug,
     title: body.title,
     description: body.description ?? null,
-    difficulty: body.difficulty,
+    difficulty: typeof body.difficulty === 'string' ? body.difficulty : await resolveDifficultySlug(db, body.difficulty as number),
+    difficulty_id: difficultyStringToId(body.difficulty),
     status: 'draft',
     cover_image: body.cover_image ?? null,
     grid_size: body.grid_size ?? null,
@@ -208,6 +275,30 @@ patterns.post('/', zValidator('json', CreatePatternSchema), async (c) => {
     await db.insert('pattern_tags', { pattern_id: id, tag_id: tagId });
   }
 
+  // Pattern colors from palette and grid
+  await upsertPatternColors(db, id, enrichedPalette, grid ?? null);
+
+  // SEO
+  const seoId = generateId();
+  const seoForInsert = generateSEO({ title: body.title, description: body.description ?? null, tags: [] });
+  await db.insert('pattern_seo', {
+    id: seoId,
+    pattern_id: id,
+    title: body.seo_title ?? seoForInsert.title,
+    description: body.seo_description ?? seoForInsert.description,
+    keywords: body.seo_keywords ?? seoForInsert.keywords,
+    canonical: body.canonical ?? null,
+    robots: body.robots ?? null,
+    og_image: body.og_image ?? null,
+    twitter_title: body.twitter_title ?? null,
+    twitter_description: body.twitter_description ?? null,
+    twitter_image: body.twitter_image ?? null,
+    structured_data: body.structured_data ?? null,
+  });
+
+  // Pattern colors from palette and grid
+  await upsertPatternColors(db, id, enrichedPalette, grid ?? null);
+
   // Analytics
   await db.insert('analytics', { pattern_id: id });
 
@@ -237,7 +328,11 @@ patterns.put('/:id', zValidator('json', UpdatePatternSchema), async (c) => {
 
   if (body.title !== undefined) updates.title = body.title;
   if (body.description !== undefined) updates.description = body.description;
-  if (body.difficulty !== undefined) updates.difficulty = body.difficulty;
+  const difficultyVal = body.difficulty;
+  if (difficultyVal !== undefined) {
+    updates.difficulty_id = difficultyStringToId(difficultyVal);
+    updates.difficulty = typeof difficultyVal === 'string' ? difficultyVal : await resolveDifficultySlug(db, difficultyVal);
+  }
   if (body.cover_image !== undefined) updates.cover_image = body.cover_image;
   if (body.finished_image !== undefined) updates.finished_image = body.finished_image;
   if (body.cover_image_r2_key !== undefined) updates.cover_image_r2_key = body.cover_image_r2_key;
@@ -259,24 +354,10 @@ patterns.put('/:id', zValidator('json', UpdatePatternSchema), async (c) => {
     if (body.color_count === undefined) updates.color_count = stats.color_count;
     if (body.estimated_beads === undefined) updates.estimated_beads = stats.estimated_beads;
   }
+
   if (body.color_count !== undefined) updates.color_count = body.color_count;
   if (body.estimated_beads !== undefined) updates.estimated_beads = body.estimated_beads;
   if (body.status !== undefined) updates.status = body.status;
-
-  // Recompute SEO if needed
-  const tags = await db.query<Tag>(
-    `SELECT t.* FROM tags t JOIN pattern_tags pt ON pt.tag_id = t.id WHERE pt.pattern_id = ?`,
-    [id]
-  );
-  if (body.title !== undefined || body.description !== undefined) {
-    const seo = generateSEO({ title: (body.title ?? existing.title) as string, description: body.description ?? existing.description, tags });
-    if (body.seo_title === undefined) updates.seo_title = seo.title;
-    if (body.seo_description === undefined) updates.seo_description = seo.description;
-    if (body.seo_keywords === undefined) updates.seo_keywords = seo.keywords;
-  }
-  if (body.seo_title !== undefined) updates.seo_title = body.seo_title;
-  if (body.seo_description !== undefined) updates.seo_description = body.seo_description;
-  if (body.seo_keywords !== undefined) updates.seo_keywords = body.seo_keywords;
 
   // Update image fields before persisting
   if (body.finished_image !== undefined) updates.finished_image = body.finished_image;
@@ -287,6 +368,58 @@ patterns.put('/:id', zValidator('json', UpdatePatternSchema), async (c) => {
   }
 
   await db.update('patterns', updates, { id });
+
+  // Update pattern_colors if palette or grid changed
+  if (body.color_palette !== undefined || body.grid_data !== undefined) {
+    const updatedPattern = await db.queryOne<Pattern>('SELECT * FROM patterns WHERE id = ?', [id]);
+    if (updatedPattern) {
+      const updatedRawPalette = parseJsonField<string[] | PatternColor[] | null>(updatedPattern.color_palette as string | null, []);
+      const updatedGrid = parseJsonField<(string | number)[][] | null>(updatedPattern.grid_data as string | null, null);
+      const updatedPalette = normalizeColorPalette(updatedRawPalette ?? []);
+      const updatedEnrichedPalette = updatedGrid ? enrichPaletteFromGrid(updatedPalette, updatedGrid) : updatedPalette;
+      await upsertPatternColors(db, id, updatedEnrichedPalette, updatedGrid);
+    }
+  }
+
+  // Update SEO metadata if provided or if title/description changed
+  if (body.seo_title !== undefined || body.seo_description !== undefined || body.seo_keywords !== undefined ||
+      body.canonical !== undefined || body.robots !== undefined || body.og_image !== undefined ||
+      body.twitter_title !== undefined || body.twitter_description !== undefined || body.twitter_image !== undefined ||
+      body.structured_data !== undefined || body.title !== undefined || body.description !== undefined) {
+    const existingSeo = await db.queryOne<{ id: string }>('SELECT id FROM pattern_seo WHERE pattern_id = ?', [id]);
+    const seoRecord: Record<string, unknown> = {
+      updated_at: new Date().toISOString(),
+    };
+    if (body.seo_title !== undefined) seoRecord.title = body.seo_title;
+    if (body.seo_description !== undefined) seoRecord.description = body.seo_description;
+    if (body.seo_keywords !== undefined) seoRecord.keywords = body.seo_keywords;
+    if (body.canonical !== undefined) seoRecord.canonical = body.canonical;
+    if (body.robots !== undefined) seoRecord.robots = body.robots;
+    if (body.og_image !== undefined) seoRecord.og_image = body.og_image;
+    if (body.twitter_title !== undefined) seoRecord.twitter_title = body.twitter_title;
+    if (body.twitter_description !== undefined) seoRecord.twitter_description = body.twitter_description;
+    if (body.twitter_image !== undefined) seoRecord.twitter_image = body.twitter_image;
+    if (body.structured_data !== undefined) seoRecord.structured_data = body.structured_data;
+    if (existingSeo) {
+      await db.update('pattern_seo', seoRecord, { id: existingSeo.id });
+    } else {
+      const newSeo = generateSEO({ title: updates.title as string ?? existing.title, description: (updates.description ?? existing.description) as string | null, tags: [] });
+      await db.insert('pattern_seo', {
+        id: generateId(),
+        pattern_id: id,
+        title: body.seo_title ?? newSeo.title,
+        description: body.seo_description ?? newSeo.description,
+        keywords: body.seo_keywords ?? newSeo.keywords,
+        canonical: body.canonical ?? null,
+        robots: body.robots ?? null,
+        og_image: body.og_image ?? null,
+        twitter_title: body.twitter_title ?? null,
+        twitter_description: body.twitter_description ?? null,
+        twitter_image: body.twitter_image ?? null,
+        structured_data: body.structured_data ?? null,
+      });
+    }
+  }
 
   // update tags
   if (body.tag_ids !== undefined || body.tag_slugs !== undefined) {

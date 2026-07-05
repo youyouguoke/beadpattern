@@ -1,4 +1,5 @@
 export type Difficulty = 'easy' | 'medium' | 'hard';
+export type DifficultyLevel = 1 | 2 | 3;
 export type PatternStatus = 'draft' | 'published' | 'archived';
 export type TagType = 'style' | 'theme' | 'difficulty' | 'animal' | 'object' | 'color' | 'season' | 'character';
 export type JobStatus = 'pending' | 'processing' | 'done' | 'failed';
@@ -29,12 +30,44 @@ export interface PatternColor {
   count?: number;
 }
 
+export interface PatternSeo {
+  id: string;
+  pattern_id: string;
+  title: string | null;
+  description: string | null;
+  keywords: string | null;
+  canonical: string | null;
+  robots: string | null;
+  og_image: string | null;
+  twitter_title: string | null;
+  twitter_description: string | null;
+  twitter_image: string | null;
+  structured_data: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Color {
+  id: string;
+  hex: string;
+  name: string | null;
+  family: string | null;
+}
+
+export interface PatternColorRow {
+  id: string;
+  pattern_id: string;
+  color_id: string;
+  count: number;
+}
+
 export interface Pattern {
   id: string;
   slug: string;
   title: string;
   description: string | null;
   difficulty: Difficulty;
+  difficulty_id: number;
   status: PatternStatus;
   version: number;
   published_at: string | null;
