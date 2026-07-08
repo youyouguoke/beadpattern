@@ -4,7 +4,7 @@
 
 **Goal:** Build the content-depth and SEO-connective layer for BeadPatternAI: publishable Collections, complete Pattern detail assets (grid/steps/FAQ), and a search/recommendation backend that supports the planned 328-page launch without scaled-content-abuse risk.
 
-**Architecture:** Extend the existing Hono + D1 backend with three focused workstreams: (1) Collections as first-class SEO surfaces, (2) Pattern detail enrichment (grid_data, steps, FAQs, related patterns), (3) search/index improvements that rank by content quality signals rather than keyword stuffing. All public APIs stay backward-compatible with Phase 2 shapes unless explicitly versioned.
+Architecture: Extend the existing Hono + D1 backend with four focused workstreams: (1) Collections as first-class SEO surfaces, (2) Pattern detail enrichment (grid_data, steps, FAQs, related patterns), (3) search/index improvements that rank by content quality signals rather than keyword stuffing, (4) real file downloads (PNG/PDF) for frontend Download buttons. All public APIs stay backward-compatible with Phase 2 shapes unless explicitly versioned.
 
 **Tech Stack:** Cloudflare Workers, Hono, D1 SQLite, R2, Wrangler, TypeScript.
 
@@ -22,7 +22,7 @@ Phase 2 public APIs are live at `https://api.beadpatternai.com`. Verified endpoi
 - `GET /api/recommend/:slug` ✅
 - `GET /api/sitemap` ✅
 
-Data gaps blocking the recommended 328-page launch:
+Data gaps and Phase 2 carryovers blocking the recommended 328-page launch:
 
 1. No published `collections`.
 2. Many `patterns.grid_data` are empty (only cover images exist).
@@ -30,6 +30,7 @@ Data gaps blocking the recommended 328-page launch:
 4. `pattern_steps` table is empty for most patterns.
 5. `pattern_related` is only auto-generated, no curated/manual links.
 6. `color_palette` is stored as a JSON string in some rows, object in others.
+7. **Phase 2 carryover:** `POST /api/patterns/:slug/download` only increments an analytics counter; no actual PNG/PDF file is returned or generated.
 
 ---
 
@@ -738,6 +739,177 @@ git commit -m "feat(audit): include steps and related patterns in SEO score"
 
 ---
 
+## Workstream 6: Real Pattern Downloads (PNG/PDF)
+
+### Task 6.1: Add `GET /api/patterns/:slug/download/png`
+
+**Objective:** Return a real PNG download for a pattern, using the existing R2 cover/finished image as the immediate fallback, with optional grid rendering later.
+
+**Files:**
+- Modify: `src/routes/patterns.ts`
+
+**Step 1: Add route**
+
+```ts
+// src/routes/patterns.ts
+patterns.get('/:slug/download/png', async (c) => {
+  const db = getDB(c.env);
+  const slug = c.req.param('slug');
+  const pattern = await db.queryOne<
+    { id: string; title: string; cover_image: string | null; finished_image: string | null }
+  >(
+    'SELECT id, title, cover_image, finished_image FROM patterns WHERE slug = ?',
+    [slug]
+  );
+  if (!pattern) throw new AppError('Pattern not found', 'PATTERN_NOT_FOUND', 404);
+
+  const imageUrl = pattern.finished_image || pattern.cover_image;
+  if (!imageUrl) throw new AppError('NO_IMAGE', 404, 'Pattern has no downloadable image');
+
+  // Record the download event
+  await db.execute(
+    `INSERT INTO analytics (pattern_id, downloads) VALUES (?, 1)
+     ON CONFLICT(pattern_id) DO UPDATE SET downloads = downloads + 1, updated_at = ?`,
+    [pattern.id, new Date().toISOString()]
+  );
+
+  return c.json(success({
+    url: imageUrl,
+    filename: `${slug}-perler-bead-pattern.png`,
+    content_type: 'image/png',
+  }));
+});
+```
+
+**Step 2: Commit**
+
+```bash
+git add src/routes/patterns.ts
+git commit -m "feat(downloads): add PNG download endpoint"
+```
+
+---
+
+### Task 6.2: Add `GET /api/patterns/:slug/download/pdf`
+
+**Objective:** Return a simple PDF download URL for a pattern. Phase 3 uses a lightweight PDF: a single-page document with the pattern title, cover image, grid size, color palette, and a short "How to use" note. This is a real file, not just an analytics bump.
+
+**Files:**
+- Create: `src/lib/pdf.ts` or `src/lib/pdf-generate.ts`
+- Modify: `src/routes/patterns.ts`
+- Modify: `package.json` to add a PDF generation library (e.g. `@pdfme/generator` or `pdf-lib`, if compatible with Workers runtime; otherwise generate a printable HTML and return a public URL)
+
+**Decision:** Cloudflare Workers runtime is limited. Server-side PDF generation libraries often fail or are too heavy. The recommended Phase 3 approach is:
+
+- Generate a downloadable PDF via an external HTML-to-PDF service (e.g. Cloudflare Browser Rendering or a microservice), OR
+- Pre-render a print-friendly HTML page and serve it as `/patterns/:slug/print`, then tell frontend to use browser print-to-PDF.
+
+For this plan, use the simplest real backend option: **serve a pre-rendered print page URL** and return it as the PDF download option.
+
+**Step 1: Add printable summary page route**
+
+```ts
+// src/routes/patterns.ts
+patterns.get('/:slug/print', async (c) => {
+  const db = getDB(c.env);
+  const slug = c.req.param('slug');
+  const pattern = await db.queryOne<
+    { id: string; title: string; description: string | null; grid_size: string | null; color_palette: string; cover_image: string | null; finished_image: string | null }
+  >(
+    'SELECT id, title, description, grid_size, color_palette, cover_image, finished_image FROM patterns WHERE slug = ?',
+    [slug]
+  );
+  if (!pattern) throw new AppError('Pattern not found', 'PATTERN_NOT_FOUND', 404);
+
+  const palette = parseJsonField<{ hex: string; name: string; count: number }[]>(pattern.color_palette, []);
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>${pattern.title} - BeadPatternAI</title>
+  <style>
+    body { font-family: sans-serif; padding: 40px; max-width: 800px; margin: 0 auto; }
+    h1 { font-size: 28px; }
+    img { max-width: 100%; border: 1px solid #ddd; }
+    .palette { display: flex; gap: 10px; flex-wrap: wrap; margin: 20px 0; }
+    .color { width: 40px; height: 40px; border-radius: 50%; border: 1px solid #ccc; }
+    .meta { color: #666; margin: 10px 0; }
+    .footer { margin-top: 40px; font-size: 12px; color: #999; }
+  </style>
+</head>
+<body>
+  <h1>${pattern.title}</h1>
+  ${pattern.cover_image ? `<img src="${pattern.cover_image}" alt="${pattern.title}">` : ''}
+  <p class="meta">Grid size: ${pattern.grid_size || 'N/A'} | Colors: ${palette.length}</p>
+  <p>${pattern.description || ''}</p>
+  <div class="palette">
+    ${palette.map((c) => `<div class="color" style="background:${c.hex}" title="${c.name || c.hex}"></div>`).join('')}
+  </div>
+  <div class="footer">Printed from BeadPatternAI.com</div>
+</body>
+</html>`;
+  return c.html(html);
+});
+```
+
+**Step 2: Add PDF download endpoint returning the print URL**
+
+```ts
+// src/routes/patterns.ts
+patterns.get('/:slug/download/pdf', async (c) => {
+  const db = getDB(c.env);
+  const slug = c.req.param('slug');
+  const pattern = await db.queryOne<{ id: string; title: string }>(
+    'SELECT id, title FROM patterns WHERE slug = ?',
+    [slug]
+  );
+  if (!pattern) throw new AppError('Pattern not found', 'PATTERN_NOT_FOUND', 404);
+
+  await db.execute(
+    `INSERT INTO analytics (pattern_id, downloads) VALUES (?, 1)
+     ON CONFLICT(pattern_id) DO UPDATE SET downloads = downloads + 1, updated_at = ?`,
+    [pattern.id, new Date().toISOString()]
+  );
+
+  const base = c.env.PUBLIC_SITE_URL ?? 'https://beadpatternai.com';
+  return c.json(success({
+    url: `${base}/patterns/${slug}/print`,
+    filename: `${slug}-perler-bead-pattern.pdf`,
+    content_type: 'text/html', // printable page
+    note: 'Open this page in your browser and use Print to PDF',
+  }));
+});
+```
+
+**Step 3: Commit**
+
+```bash
+git add src/routes/patterns.ts
+git commit -m "feat(downloads): add printable page and PDF download endpoint"
+```
+
+---
+
+### Task 6.3: Update analytics action route for downloads
+
+**Objective:** Keep `POST /api/patterns/:slug/download` as a legacy alias for analytics-only events, but ensure it doesn't conflict with `GET /api/patterns/:slug/download/png` and `/pdf`.
+
+**Files:**
+- Modify: `src/routes/patterns.ts` (if needed) and `src/routes/actions.ts`
+
+**Step 1: Move analytics-only download to actions router if not already there**
+
+The existing `POST /api/patterns/:slug/download` should remain for backwards compatibility. New `GET /api/patterns/:slug/download/*` routes take precedence for actual downloads.
+
+**Step 2: Commit**
+
+```bash
+git commit -m "chore(downloads): keep POST download as analytics alias"
+```
+
+---
+
 ## Rollout & Verification
 
 ### Final deployment checklist
@@ -750,6 +922,8 @@ git commit -m "feat(audit): include steps and related patterns in SEO score"
    - `curl https://api.beadpatternai.com/api/collections`
    - `curl https://api.beadpatternai.com/api/admin/health/data`
    - `curl https://api.beadpatternai.com/api/patterns/cute-panda`
+   - `curl https://api.beadpatternai.com/api/patterns/cute-panda/download/png`
+   - `curl https://api.beadpatternai.com/api/patterns/cute-panda/download/pdf`
    - `curl https://api.beadpatternai.com/sitemap.xml`
 
 ### Success criteria
@@ -760,12 +934,6 @@ git commit -m "feat(audit): include steps and related patterns in SEO score"
 - `/api/admin/health/data` returns non-zero counts for enriched patterns.
 - Sitemap is split into index + per-type sitemaps.
 - Audit score includes steps and related patterns.
-
----
-
-## Open Questions
-
-1. Should we auto-generate grid_data for patterns that lack it using a placeholder SVG, or is manual creation required before launch?
-2. Do we want to implement tag pages as public routes in Phase 3, or defer to Phase 4?
-3. Should `/api/search` switch fully to FTS5, or keep the LIKE fallback for now?
-4. Do we need a bulk upload/admin UI for steps/FAQs, or is JSON API sufficient for this phase?
+- **NEW:** `GET /api/patterns/:slug/download/png` returns a real image URL.
+- **NEW:** `GET /api/patterns/:slug/download/pdf` returns a printable page URL.
+- Analytics download count increments on any download action.
