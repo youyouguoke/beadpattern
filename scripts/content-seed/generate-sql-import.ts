@@ -40,6 +40,7 @@ sql += `DELETE FROM pattern_seo_variants;\n`;
 sql += `DELETE FROM pattern_seo;\n`;
 sql += `DELETE FROM pattern_audit;\n`;
 sql += `DELETE FROM analytics;\n`;
+sql += `DELETE FROM pattern_steps;\n`;
 
 for (const item of patterns) {
   const slug = item.slug ?? item.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -95,6 +96,33 @@ for (const item of patterns) {
 
   sql += `INSERT INTO patterns (${columns.join(', ')}) VALUES (${values.map(quote).join(', ')});\n`;
   sql += `INSERT OR IGNORE INTO analytics (pattern_id, views, likes, shares, downloads, updated_at) VALUES (${quote(values[0])}, 0, 0, 0, 0, ${quote(now)});\n`;
+
+  // FAQs
+  for (const faq of (item.faqs || [])) {
+    sql += `INSERT OR IGNORE INTO pattern_faqs (id, pattern_id, question, answer, display_order, created_at, updated_at) VALUES (${quote(crypto.randomUUID())}, ${quote(values[0])}, ${quote(faq.question)}, ${quote(faq.answer)}, ${faq.display_order ?? 0}, ${quote(now)}, ${quote(now)});\n`;
+  }
+
+  // Related patterns
+  for (const relatedSlug of (item.related_slugs || [])) {
+    const relatedPattern = patterns.find((p: any) => p.slug === relatedSlug);
+    if (relatedPattern) {
+      sql += `INSERT OR IGNORE INTO pattern_related (id, pattern_id, related_pattern_id, related_type, score, display_order, created_at) VALUES (${quote(crypto.randomUUID())}, ${quote(values[0])}, ${quote(relatedPattern.id)}, 'manual', 1, 0, ${quote(now)});\n`;
+    }
+  }
+
+  // SEO variants
+  for (const variant of (item.seo_variants || [])) {
+    sql += `INSERT OR IGNORE INTO pattern_seo_variants (id, pattern_id, variant, landing_slug, search_intent, display_order, created_at) VALUES (${quote(crypto.randomUUID())}, ${quote(values[0])}, ${quote(variant.variant)}, ${quote(variant.landing_slug)}, ${quote(variant.search_intent)}, ${variant.display_order ?? 0}, ${quote(now)});\n`;
+  }
+
+  // Steps
+  const stepCount = item.steps?.length ?? 0;
+  if (stepCount > 0) {
+    for (let i = 0; i < item.steps.length; i++) {
+      const s = item.steps[i];
+      sql += `INSERT OR IGNORE INTO pattern_steps (id, pattern_id, step_number, description, image, grid_data, created_at, updated_at) VALUES (${quote(crypto.randomUUID())}, ${quote(values[0])}, ${i + 1}, ${quote(s.description ?? null)}, ${quote(s.image ?? null)}, ${s.grid_data ? quote(JSON.stringify(s.grid_data)) : 'NULL'}, ${quote(now)}, ${quote(now)});\n`;
+    }
+  }
 }
 
 fs.writeFileSync(OUTPUT_FILE, sql);

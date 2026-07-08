@@ -10,6 +10,8 @@ import { normalizeColorPalette, enrichPaletteFromGrid, computeStats } from '../l
 import { parseMediaIds, stringifyMediaIds, expandMediaIds, syncPatternMediaUsedBy } from '../lib/media';
 import type { Bindings } from '../lib/env';
 import type { Pattern, PatternStep, Tag, PatternColor, Color } from '../types';
+import { generatePatternPdf } from '../lib/pdf';
+import { generateSvgPattern } from '../lib/svg';
 
 
 const patterns = new Hono<{ Bindings: Bindings }>();
@@ -105,6 +107,27 @@ async function getPatternWithDetails(db: ReturnType<typeof getDB>, slug: string)
     [pattern.id]
   );
 
+  const faqs = await db.query<{ id: string; pattern_id: string; question: string; answer: string; display_order: number; created_at: string; updated_at: string }>(
+    'SELECT * FROM pattern_faqs WHERE pattern_id = ? ORDER BY display_order ASC, created_at ASC',
+    [pattern.id]
+  );
+
+  const related = await db.query<
+    { id: string; pattern_id: string; related_pattern_id: string; related_type: string; score: number; display_order: number; created_at: string }
+  >(
+    'SELECT * FROM pattern_related WHERE pattern_id = ? ORDER BY score DESC, display_order ASC',
+    [pattern.id]
+  );
+
+  const relatedIds = related.map((r) => r.related_pattern_id).filter(Boolean);
+  const relatedPatterns = relatedIds.length > 0
+    ? await db.query<Pattern>(
+        `SELECT id, slug, title, description, difficulty, status, cover_image, grid_size, color_palette, estimated_beads, color_count, created_at, updated_at
+         FROM patterns WHERE id IN (${relatedIds.map(() => '?').join(',')})`,
+        relatedIds
+      )
+    : [];
+
   const patternColors = await getPatternColors(db, pattern.id);
 
   const rawPalette = parseJsonField<string[] | PatternColor[] | null>(pattern.color_palette as string | null, []);
@@ -130,6 +153,11 @@ async function getPatternWithDetails(db: ReturnType<typeof getDB>, slug: string)
       grid_data: grid,
       color_count: palette.length,
       estimated_beads: grid ? grid.flat().length : (pattern.estimated_beads ?? 0),
+      related_patterns: relatedPatterns.map((rp) => ({
+        ...rp,
+        color_palette: parseJsonField<string[] | PatternColor[] | null>(rp.color_palette as string | null, []),
+        grid_data: parseJsonField<(string | number)[][] | null>(rp.grid_data as string | null, null),
+      })),
     },
     steps: steps.map((s) => ({
       ...s,
@@ -137,6 +165,8 @@ async function getPatternWithDetails(db: ReturnType<typeof getDB>, slug: string)
     })),
     tags,
     analytics,
+    faqs,
+    related,
     cover_media: coverMedia,
     finished_media: finishedMedia,
     gallery: galleryMedia,
@@ -351,6 +381,20 @@ patterns.post('/', zValidator('json', CreatePatternSchema), async (c) => {
 
   // Analytics
   await db.insert('analytics', { pattern_id: id });
+
+  // FAQs
+  if (body.faqs && body.faqs.length > 0) {
+    for (let i = 0; i < body.faqs.length; i++) {
+      const f = body.faqs[i];
+      await db.insert('pattern_faqs', {
+        id: generateId(),
+        pattern_id: id,
+        question: f.question,
+        answer: f.answer,
+        display_order: i,
+      });
+    }
+  }
 
   const result = await getPatternWithDetails(db, slug);
   return c.json(success(result), 201);
@@ -655,7 +699,7 @@ patterns.post('/:slug/like', async (c) => {
   return c.json(success({ liked: true }));
 });
 
-// Download
+// Download analytics endpoint
 patterns.post('/:slug/download', async (c) => {
   const db = getDB(c.env);
   const slug = c.req.param('slug');
@@ -668,6 +712,120 @@ patterns.post('/:slug/download', async (c) => {
     [pattern.id, new Date().toISOString()]
   );
   return c.json(success({ downloaded: true }));
+});
+
+// PNG download: generate printable SVG from grid data, upload to R2, and return URL
+patterns.get('/:slug/download/png', async (c) => {
+  const env = c.env;
+  if (!env.R2) throw new AppError('R2 storage is not configured', 'R2_NOT_CONFIGURED', 503);
+
+  const db = getDB(env);
+  const slug = c.req.param('slug');
+  const pattern = await db.queryOne<Pattern>(
+    'SELECT id, title, description, grid_data, color_palette, color_count, estimated_beads, grid_size FROM patterns WHERE slug = ?',
+    [slug]
+  );
+  if (!pattern) throw new AppError('Pattern not found', 'PATTERN_NOT_FOUND', 404);
+
+  const key = `patterns/${slug}/pattern.svg`;
+  let svgUrl: string | undefined;
+
+  try {
+    const head = await env.R2.head(key);
+    if (head) {
+      svgUrl = env.R2_PUBLIC_URL ? `${env.R2_PUBLIC_URL}/${key}` : `/media/${key}`;
+    }
+  } catch {
+    // Object may not exist; continue to generate
+  }
+
+  if (!svgUrl) {
+    const svg = generateSvgPattern({
+      title: pattern.title,
+      grid_data: parseJsonField<(string | number)[][] | null>(pattern.grid_data as string | null, null),
+      color_palette: parseJsonField<{ hex?: string; name?: string }[] | string[] | null>(pattern.color_palette as string | null, []),
+      grid_size: pattern.grid_size,
+      estimated_beads: pattern.estimated_beads,
+      color_count: pattern.color_count,
+    });
+
+    const svgBuffer = new TextEncoder().encode(svg);
+    await env.R2.put(key, svgBuffer, {
+      httpMetadata: { contentType: 'image/svg+xml' },
+    });
+
+    svgUrl = env.R2_PUBLIC_URL ? `${env.R2_PUBLIC_URL}/${key}` : `/media/${key}`;
+  }
+
+  await db.execute(
+    `INSERT INTO analytics (pattern_id, downloads) VALUES (?, 1)
+     ON CONFLICT(pattern_id) DO UPDATE SET downloads = downloads + 1, updated_at = ?`,
+    [pattern.id, new Date().toISOString()]
+  );
+
+  return c.json(success({
+    url: svgUrl,
+    filename: `${pattern.title.replace(/\s+/g, '-').toLowerCase()}.svg`,
+    content_type: 'image/svg+xml',
+  }));
+});
+
+// PDF download: generate printable PDF from grid data, upload to R2, and return URL
+patterns.get('/:slug/download/pdf', async (c) => {
+  const env = c.env;
+  if (!env.R2) throw new AppError('R2 storage is not configured', 'R2_NOT_CONFIGURED', 503);
+
+  const db = getDB(env);
+  const slug = c.req.param('slug');
+  const pattern = await db.queryOne<Pattern>(
+    'SELECT id, title, description, grid_data, color_palette, color_count, estimated_beads, grid_size FROM patterns WHERE slug = ?',
+    [slug]
+  );
+  if (!pattern) throw new AppError('Pattern not found', 'PATTERN_NOT_FOUND', 404);
+
+  const key = `pdfs/${slug}.pdf`;
+  let pdfUrl: string | undefined;
+
+  try {
+    const head = await env.R2.head(key);
+    if (head) {
+      pdfUrl = env.R2_PUBLIC_URL ? `${env.R2_PUBLIC_URL}/${key}` : `/media/${key}`;
+    }
+  } catch {
+    // Object may not exist; continue to generate
+  }
+
+  if (!pdfUrl) {
+    const pdfBytes = await generatePatternPdf({
+      id: pattern.id,
+      slug,
+      title: pattern.title,
+      description: pattern.description,
+      grid_data: pattern.grid_data,
+      color_palette: pattern.color_palette,
+      color_count: pattern.color_count ?? 0,
+      estimated_beads: pattern.estimated_beads ?? 0,
+      grid_size: pattern.grid_size,
+    });
+
+    await env.R2.put(key, pdfBytes, {
+      httpMetadata: { contentType: 'application/pdf' },
+    });
+
+    pdfUrl = env.R2_PUBLIC_URL ? `${env.R2_PUBLIC_URL}/${key}` : `/media/${key}`;
+  }
+
+  await db.execute(
+    `INSERT INTO analytics (pattern_id, downloads) VALUES (?, 1)
+     ON CONFLICT(pattern_id) DO UPDATE SET downloads = downloads + 1, updated_at = ?`,
+    [pattern.id, new Date().toISOString()]
+  );
+
+  return c.json(success({
+    url: pdfUrl,
+    filename: `${pattern.title.replace(/\s+/g, '-').toLowerCase()}.pdf`,
+    content_type: 'application/pdf',
+  }));
 });
 
 // Share

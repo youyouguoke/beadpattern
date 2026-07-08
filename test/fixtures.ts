@@ -34,3 +34,13 @@ export const testPatternLegacyPalette = {
   ],
   color_palette: ['#FF0000', '#00FF00'],
 };
+
+export const testPatternWithFaq = {
+  ...testPattern,
+  slug: 'test-pixel-faq',
+  title: 'Test Pixel with FAQ',
+  faqs: [
+    { question: 'What size is this?', answer: '3x3 beads.' },
+    { question: 'How many colors?', answer: 'Three colors.' },
+  ],
+};

@@ -1,4 +1,6 @@
-node_modules/
+# Generated seed data SQL files
+scripts/content-seed/data/*.sql
+
 .wrangler/
 .open-next/
 .env

@@ -27,6 +27,10 @@ recommend.get('/:slug', zValidator('param', z.object({ slug: z.string().min(1) }
     title: string;
     cover_image: string | null;
     difficulty: string;
+    grid_size: string | null;
+    color_count: number;
+    estimated_beads: number;
+    color_palette: string | null;
     created_at: string;
     shared_tags: number;
     views: number;
@@ -38,6 +42,10 @@ recommend.get('/:slug', zValidator('param', z.object({ slug: z.string().min(1) }
        p.title,
        p.cover_image,
        p.difficulty,
+       p.grid_size,
+       p.color_count,
+       p.estimated_beads,
+       p.color_palette,
        p.created_at,
        COUNT(pt.tag_id) as shared_tags,
        COALESCE(a.views, 0) as views,
@@ -58,7 +66,11 @@ recommend.get('/:slug', zValidator('param', z.object({ slug: z.string().min(1) }
 
   // If no shared tags, same-difficulty patterns are already promoted by the ORDER BY.
   // Just fill to the limit if needed (should already be limited).
-  return c.json(success(rows));
+  const formatted = rows.map((r) => ({
+    ...r,
+    color_palette: r.color_palette ? JSON.parse(r.color_palette) : null,
+  }));
+  return c.json(success(formatted));
 });
 
 export default recommend;

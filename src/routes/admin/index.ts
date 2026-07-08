@@ -13,6 +13,7 @@ import analytics from './analytics';
 import newsletter from './newsletter';
 import settings from './settings';
 import seedImport from './seed-import';
+import repair from './repair';
 import type { Bindings } from '../../lib/env';
 
 const admin = new Hono<{ Bindings: Bindings }>();
@@ -37,5 +38,6 @@ admin.route('/analytics', analytics);
 admin.route('/newsletter', newsletter);
 admin.route('/settings', settings);
 admin.route('/seed-import', seedImport);
+admin.route('/repair', repair);
 
 export default admin;

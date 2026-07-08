@@ -31,4 +31,4 @@ bucket_name = "beadpatternai"
 APP_ORIGIN = "http://localhost:3000"
 SITE_NAME = "BeadPatternAI"
 # ADMIN_API_KEY should be set via `wrangler secret put ADMIN_API_KEY` for production.
-R2_PUBLIC_URL = "https://pub-beadpatternai.r2.dev"
+R2_PUBLIC_URL = "https://pub-98e050954fa34ccebe6d2e8911f520a3.r2.dev"

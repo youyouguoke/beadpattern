@@ -378,6 +378,7 @@ export async function applyMigrations(db: D1Database) {
   }
   await db.exec(minifySql(categoriesSeed));
   await db.exec(minifySql(collectionsSeed));
+  await db.exec(minifySql(phase1TagsSeed));
 }
 
 // Phase 1 seed-pack taxonomy (collections + tags) used by frontend sample data.

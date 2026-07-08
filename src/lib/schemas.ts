@@ -90,6 +90,7 @@ export const CreatePatternSchema = z.object({
   tag_ids: z.array(z.string().uuid()).optional(),
   tag_slugs: z.array(z.string().min(1)).optional(),
   steps: z.array(PatternStepSchema).max(50).optional(),
+  faqs: z.array(z.object({ question: z.string().min(1), answer: z.string().min(1) })).max(20).optional(),
   seo_title: z.string().max(200).optional(),
   seo_description: z.string().max(1000).optional(),
   seo_keywords: z.string().max(1000).optional(),
@@ -182,9 +183,14 @@ export const CreateCollectionSchema = z.object({
   banner: z.string().url().max(1000).optional(),
   display_order: z.number().int().optional().default(0),
   published: z.boolean().optional().default(false),
+  pattern_slugs: z.array(z.string().min(1)).optional(),
 });
 
 export const UpdateCollectionSchema = CreateCollectionSchema.partial();
+
+export const CollectionAssignPatternsSchema = z.object({
+  pattern_slugs: z.array(z.string().min(1)),
+});
 
 export const CreateCategorySchema = z.object({
   name: z.string().min(1).max(100),

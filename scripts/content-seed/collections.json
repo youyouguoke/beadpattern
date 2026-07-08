@@ -1,0 +1,162 @@
+[
+  {
+    "title": "Animal Perler Bead Patterns",
+    "slug": "animal-perler-bead-patterns",
+    "description": "A curated collection of animal-themed perler bead patterns, from cute pandas to safari lions. Perfect for wildlife lovers and beginner crafters.",
+    "display_order": 1,
+    "published": true,
+    "pattern_filters": { "category": "animals" }
+  },
+  {
+    "title": "Easy Perler Bead Patterns",
+    "slug": "easy-perler-bead-patterns",
+    "description": "Beginner-friendly perler bead patterns with small grids and simple color palettes. Great for kids and first-time beaders.",
+    "display_order": 2,
+    "published": true,
+    "pattern_filters": { "difficulty": "easy" }
+  },
+  {
+    "title": "Kawaii Perler Bead Patterns",
+    "slug": "kawaii-perler-bead-patterns",
+    "description": "Adorable kawaii-style bead patterns perfect for cute crafts, accessories, and gifts.",
+    "display_order": 3,
+    "published": true,
+    "pattern_filters": { "tag": "kawaii" }
+  },
+  {
+    "title": "Cat Perler Bead Patterns",
+    "slug": "cat-perler-bead-patterns",
+    "description": "Cute, sleepy, and playful cat perler bead patterns for feline fans of all skill levels.",
+    "display_order": 4,
+    "published": true,
+    "pattern_filters": { "tag": "cat" }
+  },
+  {
+    "title": "Panda Perler Bead Patterns",
+    "slug": "panda-perler-bead-patterns",
+    "description": "Adorable panda bead patterns in kawaii and realistic styles. Easy and fun to make.",
+    "display_order": 5,
+    "published": true,
+    "pattern_filters": { "tag": "panda" }
+  },
+  {
+    "title": "Christmas Perler Bead Patterns",
+    "slug": "christmas-perler-bead-patterns",
+    "description": "Festive perler bead patterns for Christmas ornaments, gifts, and holiday decorations.",
+    "display_order": 6,
+    "published": true,
+    "pattern_filters": { "tag": "christmas" }
+  },
+  {
+    "title": "Halloween Perler Bead Patterns",
+    "slug": "halloween-perler-bead-patterns",
+    "description": "Spooky and fun Halloween perler bead patterns featuring ghosts, pumpkins, and more.",
+    "display_order": 7,
+    "published": true,
+    "pattern_filters": { "tag": "halloween" }
+  },
+  {
+    "title": "Pixel Art Perler Bead Patterns",
+    "slug": "pixel-art-perler-bead-patterns",
+    "description": "Retro pixel art style perler bead patterns for gamers and 8-bit art lovers.",
+    "display_order": 8,
+    "published": true,
+    "pattern_filters": { "tag": "pixel-art" }
+  },
+  {
+    "title": "Flower Perler Bead Patterns",
+    "slug": "flower-perler-bead-patterns",
+    "description": "Beautiful flower and floral perler bead patterns for spring crafts and decorations.",
+    "display_order": 9,
+    "published": true,
+    "pattern_filters": { "tag": "flower" }
+  },
+  {
+    "title": "Gaming Perler Bead Patterns",
+    "slug": "gaming-perler-bead-patterns",
+    "description": "Gaming-inspired perler bead patterns featuring characters, icons, and sprites from classic and modern games.",
+    "display_order": 10,
+    "published": true,
+    "pattern_filters": { "category": "gaming" }
+  },
+  {
+    "title": "Food & Drink Perler Bead Patterns",
+    "slug": "food-drink-perler-bead-patterns",
+    "description": "Delicious food and drink themed perler bead patterns, from sweet treats to savory snacks.",
+    "display_order": 11,
+    "published": true,
+    "pattern_filters": { "category": "food-drink" }
+  },
+  {
+    "title": "Character Perler Bead Patterns",
+    "slug": "character-perler-bead-patterns",
+    "description": "Pop culture, mascots, and original character perler bead designs.",
+    "display_order": 12,
+    "published": true,
+    "pattern_filters": { "category": "characters" }
+  },
+  {
+    "title": "Nature Perler Bead Patterns",
+    "slug": "nature-perler-bead-patterns",
+    "description": "Nature-inspired perler bead patterns including plants, landscapes, and outdoor themes.",
+    "display_order": 13,
+    "published": true,
+    "pattern_filters": { "category": "nature" }
+  },
+  {
+    "title": "Fantasy & Mythical Perler Bead Patterns",
+    "slug": "fantasy-mythical-perler-bead-patterns",
+    "description": "Magical fantasy and mythical creature perler bead patterns for imaginative crafters.",
+    "display_order": 14,
+    "published": true,
+    "pattern_filters": { "category": "fantasy-mythical" }
+  },
+  {
+    "title": "Heart Perler Bead Patterns",
+    "slug": "heart-perler-bead-patterns",
+    "description": "Lovely heart-shaped perler bead patterns for Valentine's Day, gifts, and romantic crafts.",
+    "display_order": 15,
+    "published": true,
+    "pattern_filters": { "tag": "heart" }
+  },
+  {
+    "title": "Insect Perler Bead Patterns",
+    "slug": "insect-perler-bead-patterns",
+    "description": "Cute insect perler bead patterns including bees, butterflies, ladybugs, and more.",
+    "display_order": 16,
+    "published": true,
+    "pattern_filters": { "tag": "insect" }
+  },
+  {
+    "title": "Medium Difficulty Perler Bead Patterns",
+    "slug": "medium-perler-bead-patterns",
+    "description": "Intermediate perler bead patterns for crafters ready for a bit more challenge.",
+    "display_order": 17,
+    "published": true,
+    "pattern_filters": { "difficulty": "medium" }
+  },
+  {
+    "title": "Retro Perler Bead Patterns",
+    "slug": "retro-perler-bead-patterns",
+    "description": "Retro and vintage-inspired perler bead patterns with nostalgic charm.",
+    "display_order": 18,
+    "published": true,
+    "pattern_filters": { "tag": "retro" }
+  },
+  {
+    "title": "Rainbow Perler Bead Patterns",
+    "slug": "rainbow-perler-bead-patterns",
+    "description": "Colorful rainbow perler bead patterns full of bright, cheerful colors.",
+    "display_order": 19,
+    "published": true,
+    "pattern_filters": { "tag": "rainbow" }
+  },
+  {
+    "title": "Seasonal & Holiday Perler Bead Patterns",
+    "slug": "seasonal-holiday-perler-bead-patterns",
+    "description": "Perler bead patterns for every season and holiday, from spring flowers to winter celebrations.",
+    "display_order": 20,
+    "published": true,
+    "pattern_filters": { "category": "seasonal-holidays" }
+  }
+]
