@@ -4,7 +4,6 @@ import { z } from 'zod';
 import { getDB } from '../lib/db';
 import { success } from '../lib/response';
 import { AppError } from '../lib/errors';
-import { difficultyStringToId } from '../lib/schemas';
 import type { Bindings } from '../lib/env';
 
 const collections = new Hono<{ Bindings: Bindings }>();

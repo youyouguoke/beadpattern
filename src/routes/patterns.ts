@@ -144,6 +144,15 @@ async function getPatternWithDetails(db: ReturnType<typeof getDB>, slug: string)
   };
 }
 
+function parseJsonField<T>(value: string | null | undefined, fallback: T): T {
+  if (!value) return fallback;
+  try {
+    return JSON.parse(value) as T;
+  } catch {
+    return fallback;
+  }
+}
+
 // List patterns
 patterns.get('/', zValidator('query', ListPatternsQuerySchema), async (c) => {
   const db = getDB(c.env);
@@ -188,18 +197,22 @@ patterns.get('/', zValidator('query', ListPatternsQuerySchema), async (c) => {
     params.push(like, like, like);
   }
 
-  let orderBy = 'p.created_at DESC';
+  let orderBy: string;
   if (sort === 'popular' || sort === 'views') {
-    orderBy = 'COALESCE(a.views, 0) DESC';
+    orderBy = 'COALESCE(a.views, 0) DESC, p.created_at DESC';
+  } else if (sort === 'likes') {
+    orderBy = 'COALESCE(a.likes, 0) DESC, p.created_at DESC';
   } else if (sort === 'newest') {
     orderBy = 'p.created_at DESC';
   } else if (sort === 'recommended') {
-    orderBy = 'COALESCE(a.likes, 0) DESC, COALESCE(a.views, 0) DESC';
+    orderBy = 'COALESCE(a.likes, 0) DESC, COALESCE(a.views, 0) DESC, p.created_at DESC';
   } else if (sort === 'publish_order') {
     orderBy = 'p.publish_order ASC, p.created_at DESC';
+  } else {
+    orderBy = 'p.created_at DESC';
   }
 
-  let countSql = `SELECT COUNT(*) as count FROM patterns p LEFT JOIN analytics a ON a.pattern_id = p.id`;
+  let countSql = `SELECT COUNT(*) as count FROM patterns p`;
   let dataSql = `SELECT p.id, p.slug, p.title, p.description, p.difficulty, p.status, p.cover_image, p.grid_size, p.color_palette, p.color_count, p.estimated_beads, p.created_at, p.updated_at, COALESCE(a.views, 0) as views, COALESCE(a.likes, 0) as likes, COALESCE(a.downloads, 0) as downloads FROM patterns p LEFT JOIN analytics a ON a.pattern_id = p.id`;
 
   if (where.length > 0) {
@@ -207,11 +220,6 @@ patterns.get('/', zValidator('query', ListPatternsQuerySchema), async (c) => {
     countSql += clause;
     dataSql += clause;
   }
-
-  countSql = countSql.replace('LEFT JOIN analytics a ON a.pattern_id = p.id', '');
-  countSql = countSql.replace('FROM patterns p', 'FROM patterns p LEFT JOIN analytics a ON a.pattern_id = p.id');
-  // Simpler count: just use patterns table
-  countSql = `SELECT COUNT(*) as count FROM patterns p` + (where.length > 0 ? ' WHERE ' + where.join(' AND ') : '');
 
   const countRow = await db.queryOne<{ count: number }>(countSql, params);
   const total = countRow?.count ?? 0;

@@ -106,17 +106,19 @@ export const UpdatePatternSchema = CreatePatternSchema.partial().extend({
   status: z.enum(['draft', 'published', 'archived']).optional(),
 });
 
-export const ListPatternsQuerySchema = z.object({
+const ListPatternsQuerySchema = z.object({
   tag: z.string().optional(),
   category: z.string().optional(),
   collection: z.string().optional(),
-  difficulty: DifficultySchema.optional(),
-  status: z.enum(['draft', 'published', 'archived']).optional(),
-  sort: z.enum(['latest', 'popular', 'views', 'newest', 'recommended', 'publish_order']).optional().default('latest'),
-  page: z.coerce.number().int().nonnegative().optional().default(1),
+  difficulty: z.string().optional(),
+  status: z.enum(['draft', 'published', 'archived']).optional().default('published'),
+  q: z.string().optional(),
+  sort: z.enum(['newest', 'popular', 'views', 'likes', 'recommended', 'publish_order', 'latest']).optional().default('newest'),
+  page: z.coerce.number().int().min(1).optional().default(1),
   limit: z.coerce.number().int().min(1).max(100).optional().default(20),
-  q: z.string().max(200).optional(),
 });
+
+export { ListPatternsQuerySchema };
 
 export const ActionTypeSchema = z.enum(['view', 'like', 'download', 'share']);
 export const ActionPayloadSchema = z.object({
