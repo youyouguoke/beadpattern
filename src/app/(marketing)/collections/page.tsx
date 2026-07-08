@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getCollections } from "@/lib/patternService";
+import { getCollections } from "@/lib/publicApiService";
 
 export const dynamic = "force-dynamic";
 
@@ -29,15 +29,15 @@ export default async function CollectionsPage() {
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="w-12 h-12 rounded-xl bg-secondary-container text-on-secondary-container flex items-center justify-center text-2xl">
-                  {(col as { emoji?: string }).emoji ?? "🗂️"}
+                  {col.emoji ?? "🗂️"}
                 </div>
                 <span className="text-label-sm text-on-surface-variant">
-                {(col as { count?: number }).count ?? 0} patterns
+                {col.patternCount ?? col.count ?? 0} patterns
               </span>
             </div>
             <h3 className="font-headline-md text-headline-md text-on-surface mb-1">{col.title}</h3>
             <p className="text-body-md text-on-surface-variant line-clamp-2">
-              {`Explore the ${col.title} collection.`}
+              {col.description || `Explore the ${col.title} collection.`}
             </p>
             </Link>
           ))}

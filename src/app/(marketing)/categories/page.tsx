@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getCategories } from "@/lib/patternService";
+import { getCategories } from "@/lib/publicApiService";
 
 export const dynamic = "force-dynamic";
 
@@ -32,12 +32,12 @@ export default async function CategoriesPage() {
                   <span className="material-symbols-outlined">{cat.icon ?? "label"}</span>
                 </div>
                 <span className="text-label-sm text-on-surface-variant">
-                {cat.count ?? 0} patterns
+                {cat.patternCount ?? cat.count ?? 0} patterns
               </span>
             </div>
             <h3 className="font-headline-md text-headline-md text-on-surface mb-1">{cat.name}</h3>
             <p className="text-body-md text-on-surface-variant line-clamp-2">
-              {`Explore ${cat.name} bead patterns.`}
+              {cat.description || `Explore ${cat.name} bead patterns.`}
             </p>
             </Link>
           ))}

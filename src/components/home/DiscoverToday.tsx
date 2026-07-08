@@ -2,15 +2,20 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { getTrendingPatterns, Pattern } from "@/lib/patternService";
+import { getPublishedPatterns, Pattern } from "@/lib/publicApiService";
 import { getPatternImage } from "@/components/BeadRenderer";
 
-function diffColor(diff: Pattern["difficulty"]) {
-  switch (diff) {
-    case "Easy": return "bg-tertiary-container text-white";
-    case "Medium": return "bg-secondary-container text-on-secondary-container";
-    case "Hard": return "bg-error-container text-on-error-container";
+function diffColor(diff: string) {
+  const normalized = diff?.toLowerCase();
+  switch (normalized) {
+    case "easy": return "bg-tertiary-container text-white";
+    case "medium": return "bg-secondary-container text-on-secondary-container";
+    case "hard": return "bg-error-container text-on-error-container";
   }
+}
+
+function difficultyLabel(diff: string) {
+  return diff ? diff.charAt(0).toUpperCase() + diff.slice(1).toLowerCase() : "";
 }
 
 export default function DiscoverToday() {
@@ -18,7 +23,7 @@ export default function DiscoverToday() {
   const [images, setImages] = useState<Record<string, { type: "image" | "svg"; src: string; svg?: string }>>({});
 
   useEffect(() => {
-    getTrendingPatterns().then((ps) => {
+    getPublishedPatterns({ sort: "popular", limit: 8 }).then((ps) => {
       setPatterns(ps);
       const map: Record<string, { type: "image" | "svg"; src: string; svg?: string }> = {};
       for (const p of ps) {
@@ -27,6 +32,8 @@ export default function DiscoverToday() {
       setImages(map);
     });
   }, []);
+
+  if (!patterns.length) return null;
 
   return (
     <section className="px-4 md:px-12 py-16 bg-surface-container-low">
@@ -54,7 +61,7 @@ export default function DiscoverToday() {
                   )}
                   <div className="absolute top-2 left-2">
                     <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded ${diffColor(p.difficulty)}`}>
-                      {p.difficulty}
+                      {difficultyLabel(p.difficulty)}
                     </span>
                   </div>
                   <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center gap-2 transition-opacity opacity-0 group-hover:opacity-100">
@@ -71,9 +78,9 @@ export default function DiscoverToday() {
                     <span className="mr-1">{p.emoji}</span>{p.title}
                   </p>
                   <div className="flex items-center justify-between text-xs text-secondary mt-2">
-                    <span>{p.grid}</span>
+                    <span>{p.gridSize}</span>
                     <span className="flex items-center gap-1">
-                      <span className="material-symbols-outlined text-sm">download</span> {p.downloads}
+                      <span className="material-symbols-outlined text-sm">download</span> {p.downloads ?? 0}
                     </span>
                   </div>
                 </div>

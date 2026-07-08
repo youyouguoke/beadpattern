@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { getPattern, getRelatedPatterns, Pattern } from "@/lib/patternService";
+import type { Pattern, PatternDetail as PatternDetailType } from "@/types";
+import { getPatternBySlug, getRecommendedPatterns, recordAnalytics } from "@/lib/publicApiService";
 import { getPatternImage } from "@/components/BeadRenderer";
 import PatternHero from "./PatternHero";
 import PatternGallery from "./PatternGallery";
@@ -10,9 +11,12 @@ import PatternSidebar from "./PatternSidebar";
 import PatternAbout from "./PatternAbout";
 import PatternFaq from "./PatternFaq";
 import RelatedPatterns from "./RelatedPatterns";
+import ShareCard from "./ShareCard";
+import GenerateSimilar from "./GenerateSimilar";
 
 interface PatternDetailProps {
   slug: string;
+  initialPattern?: PatternDetailType | null;
 }
 
 const TAB_MAP: Record<string, string> = {
@@ -27,9 +31,9 @@ const TAB_MAP: Record<string, string> = {
   steps: "Guide",
 };
 
-export default function PatternDetail({ slug }: PatternDetailProps) {
-  const [pattern, setPattern] = useState<Pattern | null>(null);
-  const [loading, setLoading] = useState(true);
+export default function PatternDetail({ slug, initialPattern }: PatternDetailProps) {
+  const [pattern, setPattern] = useState<PatternDetailType | null>(initialPattern || null);
+  const [loading, setLoading] = useState(!initialPattern);
   const [finishedImage, setFinishedImage] = useState<{ type: "image" | "svg"; src: string; svg?: string } | null>(null);
   const [related, setRelated] = useState<Pattern[]>([]);
   const [relatedImages, setRelatedImages] = useState<Record<string, { type: "image" | "svg"; src: string; svg?: string }>>({});
@@ -38,23 +42,20 @@ export default function PatternDetail({ slug }: PatternDetailProps) {
 
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
-    getPattern(slug)
-      .then((p) => {
+    if (!initialPattern) {
+      setLoading(true);
+      getPatternBySlug(slug).then((p) => {
         if (cancelled) return;
-        if (p) {
-          setPattern(p);
-          setFinishedImage(getPatternImage(p, { width: 560, height: 560, preferGrid: true }));
-        }
+        setPattern(p);
         setLoading(false);
-      })
-      .catch(() => {
-        if (!cancelled) setLoading(false);
-      });
+      }).catch(() => setLoading(false));
+    }
 
-    getRelatedPatterns(slug).then((items) => {
+    getRecommendedPatterns(slug).then((res) => {
       if (cancelled) return;
-      setRelated(items);
+      const items = [...res.related, ...res.sameCollection, ...res.sameCategory, ...res.sameTag]
+        .filter((p, i, arr) => arr.findIndex((x) => x.slug === p.slug) === i);
+      setRelated(items.slice(0, 8));
       const map: Record<string, { type: "image" | "svg"; src: string; svg?: string }> = {};
       for (const p of items) {
         map[p.slug] = getPatternImage(p, { width: 240, height: 240, preferGrid: true });
@@ -62,20 +63,25 @@ export default function PatternDetail({ slug }: PatternDetailProps) {
       setRelatedImages(map);
     });
 
-    return () => {
-      cancelled = true;
-    };
-  }, [slug]);
+    // Record view (5-minute dedupe on backend)
+    recordAnalytics(slug, "view").catch(() => null);
+
+    return () => { cancelled = true; };
+  }, [slug, initialPattern]);
+
+  useEffect(() => {
+    if (pattern) {
+      setFinishedImage(getPatternImage(pattern, { width: 560, height: 560, preferGrid: true }));
+    }
+  }, [pattern]);
 
   useEffect(() => {
     const tab = searchParams.get("tab");
-    if (tab) {
-      setActiveTab(TAB_MAP[tab] || tab);
-    }
+    if (tab) setActiveTab(TAB_MAP[tab] || tab);
   }, [searchParams]);
 
   const handleDownloadPNG = () => {
-    const img = finishedImage?.type === "image" ? pattern?.finished : finishedImage?.src;
+    const img = finishedImage?.type === "image" ? pattern?.finishedImage || pattern?.coverImage : finishedImage?.src;
     if (!img || !pattern) return;
     if (img.startsWith("data:image/svg+xml")) {
       const link = document.createElement("a");
@@ -130,7 +136,9 @@ export default function PatternDetail({ slug }: PatternDetailProps) {
           onTabChange={setActiveTab}
         />
         <PatternAbout pattern={pattern} />
-        <PatternFaq />
+        <PatternFaq faqs={pattern.faqs} />
+        <GenerateSimilar title={pattern.title} />
+        <ShareCard pattern={pattern} />
       </div>
 
       <PatternSidebar

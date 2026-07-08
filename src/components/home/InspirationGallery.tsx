@@ -2,17 +2,17 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { getAllPatterns, Pattern } from "@/lib/patternService";
+import { getPublishedPatterns, Pattern } from "@/lib/publicApiService";
 import { getPatternImage } from "@/components/BeadRenderer";
 
 export default function InspirationGallery() {
-  const [images, setImages] = useState<Pattern[]>([]);
+  const [patterns, setPatterns] = useState<Pattern[]>([]);
   const [visibleCount, setVisibleCount] = useState(8);
   const [previews, setPreviews] = useState<Record<string, { type: "image" | "svg"; src: string; svg?: string }>>({});
 
   useEffect(() => {
-    getAllPatterns().then((ps) => {
-      setImages(ps);
+    getPublishedPatterns({ limit: 20 }).then((ps) => {
+      setPatterns(ps);
       const map: Record<string, { type: "image" | "svg"; src: string; svg?: string }> = {};
       for (const p of ps) {
         map[p.slug] = getPatternImage(p, { width: 320, height: 320, preferGrid: true });
@@ -24,12 +24,14 @@ export default function InspirationGallery() {
   useEffect(() => {
     const handle = () => {
       if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 600) {
-        setVisibleCount((prev) => Math.min(prev + 4, images.length));
+        setVisibleCount((prev) => Math.min(prev + 4, patterns.length));
       }
     };
     window.addEventListener("scroll", handle);
     return () => window.removeEventListener("scroll", handle);
-  }, [images]);
+  }, [patterns]);
+
+  if (!patterns.length) return null;
 
   return (
     <section className="px-4 md:px-12 py-16 bg-surface-container-low" id="gallery">
@@ -43,7 +45,7 @@ export default function InspirationGallery() {
         </button>
       </div>
       <div className="masonry-grid">
-        {images.slice(0, visibleCount).map((img) => (
+        {patterns.slice(0, visibleCount).map((img) => (
           <Link
             key={img.slug}
             href={`/pattern/${img.slug}`}
@@ -72,7 +74,7 @@ export default function InspirationGallery() {
               </div>
               <div className="flex items-center justify-between text-label-sm text-secondary">
                 <span className="flex items-center gap-1">
-                  <span className="material-symbols-outlined text-sm">person</span> {img.author}
+                  <span className="material-symbols-outlined text-sm">grid_4x4</span> {img.gridSize}
                 </span>
                 <span className="group-hover:text-primary transition-colors">View →</span>
               </div>
@@ -80,10 +82,10 @@ export default function InspirationGallery() {
           </Link>
         ))}
       </div>
-      {visibleCount < images.length && (
+      {visibleCount < patterns.length && (
         <div className="flex justify-center mt-10">
           <button
-            onClick={() => setVisibleCount((prev) => Math.min(prev + 4, images.length))}
+            onClick={() => setVisibleCount((prev) => Math.min(prev + 4, patterns.length))}
             className="px-6 py-3 rounded-xl bg-white border border-secondary-container text-secondary hover:bg-primary-container hover:text-white transition-colors"
           >
             Load More

@@ -103,14 +103,13 @@ export default function HeroSearch({
 
           <p className="px-3 py-2 text-xs text-secondary uppercase tracking-wide">Trending Searches</p>
           <div className="flex flex-wrap gap-2 px-3 pb-2">
-            {trendingSearches.map((s) => (
+            {rotatingPlaceholders.map((p) => (
               <Link
-                key={s}
-                href={`/search?q=${encodeURIComponent(s)}`}
+                key={p}
+                href={`/search?q=${encodeURIComponent(p)}`}
                 className="text-sm px-3 py-1.5 rounded-full bg-surface-container text-secondary hover:bg-primary-container hover:text-white transition-colors"
-                onClick={() => setShowSuggestions(false)}
               >
-                {s}
+                {p}
               </Link>
             ))}
           </div>

@@ -7,7 +7,7 @@ import HeroTrending from "./HeroTrending";
 import HeroPreview from "./HeroPreview";
 import HeroPopular from "./HeroPopular";
 
-const rotatingPlaceholders = ["Cute Frog", "Ghost", "Flower", "Pokemon", "Christmas"];
+const rotatingPlaceholders = ["Cute Frog", "Christmas Tree", "Ghost", "Panda", "Flower"];
 
 export default function HeroSection() {
   const [active, setActive] = useState(0);

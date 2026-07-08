@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Pattern } from "@/lib/patternService";
+import type { Pattern } from "@/types";
 import BeadRenderer, { renderBeadGrid } from "@/components/BeadRenderer";
 
 interface PatternGalleryProps {
@@ -26,8 +26,12 @@ export default function PatternGallery({
     onTabChange?.(tab);
   };
 
+  const paletteHex: string[] = (pattern.colorPalette || []).map((c) => c.hex);
+  const palette = pattern.colorPalette || [];
+  const steps = pattern.steps || [];
+
   const patternGrid = pattern.gridData
-    ? renderBeadGrid(pattern.gridData, pattern.colorPalette, {
+    ? renderBeadGrid(pattern.gridData, paletteHex, {
         width: 560,
         height: 560,
         showGrid: true,
@@ -63,7 +67,7 @@ export default function PatternGallery({
               ) : (
                 <BeadRenderer
                   grid={undefined}
-                  palette={pattern.colorPalette}
+                  palette={paletteHex}
                   width={400}
                   height={400}
                   title={pattern.title}
@@ -75,7 +79,7 @@ export default function PatternGallery({
 
         {activeTab === "Color Chart" && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {pattern.palette.map((c, i) => (
+            {palette.map((c, i) => (
               <div
                 key={c.hex + i}
                 className="flex items-center gap-4 p-3 bg-surface-container rounded-lg"
@@ -103,7 +107,7 @@ export default function PatternGallery({
                 data-print-finished
                 className="w-full max-w-lg mx-auto rounded-xl"
                 alt={`Finished perler bead ${pattern.title}`}
-                src={pattern.finished}
+                src={finishedImage.src || pattern.finishedImage || pattern.coverImage}
               />
             ) : (
               <div className="w-full max-w-lg mx-auto rounded-xl overflow-hidden">
@@ -117,12 +121,17 @@ export default function PatternGallery({
         )}
 
         {activeTab === "Guide" && (
-          <ol className="space-y-3 list-decimal list-inside">
-            {pattern.steps.map((step, i) => (
-              <li key={i} className="font-body-md text-secondary">
-                {step}
-              </li>
-            ))}
+          <ol className="space-y-4 list-decimal list-inside">
+            {steps.length > 0 ? (
+              steps.map((step, i) => (
+                <li key={step.id || i} className="font-body-md text-secondary">
+                  <span className="text-on-surface font-semibold">Step {step.stepNumber}:</span>{" "}
+                  {step.description}
+                </li>
+              ))
+            ) : (
+              <p className="text-secondary">No step-by-step guide available for this pattern.</p>
+            )}
           </ol>
         )}
       </div>

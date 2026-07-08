@@ -2,7 +2,7 @@
 
 import { useState, FormEvent } from "react";
 import Link from "next/link";
-import { API_BASE } from "../lib/patternService";
+import { PUBLIC_API_BASE } from "@/lib/publicApiService";
 
 const footerLinks = {
   "Popular Patterns": [
@@ -49,7 +49,7 @@ export default function Footer() {
     setMessage("");
 
     try {
-      const res = await fetch(`${API_BASE}/api/newsletter/subscribe`, {
+      const res = await fetch(`${PUBLIC_API_BASE}/newsletter/subscribe`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),

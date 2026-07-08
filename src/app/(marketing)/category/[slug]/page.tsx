@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { getCategoryBySlug } from "@/lib/patternService";
+import { getCategoryBySlug } from "@/lib/publicApiService";
 import PatternArchive from "@/components/archive/PatternArchive";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const category = await getCategoryBySlug(slug);
-  const name = category?.name ?? slug.replace(/-/g, " ");
+  const data = await getCategoryBySlug(slug);
+  const name = data?.category?.name ?? slug.replace(/-/g, " ");
   const capitalized = name.charAt(0).toUpperCase() + name.slice(1);
   return {
     title: `${capitalized} Bead Patterns - BeadPatternAI`,
@@ -15,8 +15,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const category = await getCategoryBySlug(slug);
-  const name = category?.name ?? slug.replace(/-/g, " ");
+  const data = await getCategoryBySlug(slug);
+  const name = data?.category?.name ?? slug.replace(/-/g, " ");
   const capitalized = name.charAt(0).toUpperCase() + name.slice(1);
 
   return (

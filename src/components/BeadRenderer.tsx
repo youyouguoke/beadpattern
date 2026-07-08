@@ -171,16 +171,20 @@ export function generateBeadGridFromPalette(
 }
 
 export function getPatternImage(
-pattern: {
-  cover_image?: string | null;
-  img?: string;
-  finished?: string;
-  title?: string;
-  palette?: { hex: string }[] | string[];
-  grid?: string;
-  gridData?: BeadGrid | string | null;
-},
-opts?: { width?: number; height?: number; preferFinished?: boolean; preferGrid?: boolean }
+  pattern: {
+    cover_image?: string | null;
+    coverImage?: string | null;
+    img?: string;
+    finished?: string;
+    finishedImage?: string;
+    title?: string;
+    palette?: { hex: string }[] | string[];
+    colorPalette?: { hex: string }[] | string[];
+    grid?: string;
+    gridSize?: string;
+    gridData?: BeadGrid | string | null;
+  },
+  opts?: { width?: number; height?: number; preferFinished?: boolean; preferGrid?: boolean }
 ): { type: "image" | "svg"; src: string; svg?: string } {
   const isRealImage = (src?: string | null) =>
     src && !src.includes("placehold.co") && !src.startsWith("data:image/svg+xml");
@@ -201,8 +205,9 @@ opts?: { width?: number; height?: number; preferFinished?: boolean; preferGrid?:
   }
 
   const palette: string[] = [];
-  if (pattern.palette?.length) {
-    for (const c of pattern.palette) {
+  const paletteSource = pattern.colorPalette || pattern.palette;
+  if (paletteSource?.length) {
+    for (const c of paletteSource) {
       const hex = typeof c === "string" ? c : (c as { hex: string }).hex;
       if (hex) palette.push(hex);
     }
@@ -236,7 +241,7 @@ opts?: { width?: number; height?: number; preferFinished?: boolean; preferGrid?:
   }
 
   const fallbackPalette = palette.length ? palette : ["#2D6A4F", "#40916C", "#52B788", "#74C69D", "#48DBFB", "#FFFFFF", "#161D1F"];
-  const gridSize = pattern.grid || "24x24";
+  const gridSize = pattern.gridSize || pattern.grid || "24x24";
   const match = gridSize.match(/(\d+)x(\d+)/i);
   const cols = match ? parseInt(match[1], 10) : 24;
   const rows = match ? parseInt(match[2], 10) : 24;

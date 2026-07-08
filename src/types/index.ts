@@ -225,6 +225,9 @@ export interface Collection {
   updatedAt: string;
   patternCount?: number;
   patterns?: { id: string; title: string; slug: string }[];
+  // Frontend presentation aliases (not necessarily stored in DB)
+  emoji?: string;
+  count?: number;
 }
 
 export interface Tag {
@@ -369,4 +372,76 @@ export interface Robots {
   allow: string[];
   disallow: string[];
   noindex: boolean;
+}
+
+// --- Phase 2 Public API Types ---
+
+export type AnalyticsAction = "view" | "like" | "download" | "share";
+
+export type PatternSort = "newest" | "popular" | "views" | "likes" | "recommended" | "publish_order" | "latest";
+
+export interface PatternListParams {
+  page?: number;
+  limit?: number;
+  q?: string;
+  difficulty?: Difficulty | Difficulty[];
+  category?: string | string[];
+  collection?: string | string[];
+  tag?: string | string[];
+  theme?: string | string[];
+  style?: string | string[];
+  season?: string | string[];
+  subject?: string | string[];
+  grid_size?: string | string[];
+  status?: "published";
+  sort?: PatternSort;
+}
+
+export interface CategoryWithPatterns extends Category {
+  patternCount: number;
+  patterns: Pattern[];
+}
+
+export interface CollectionWithPatterns extends Collection {
+  patternCount: number;
+  patterns: Pattern[];
+}
+
+export interface SearchResult {
+  patterns: Pattern[];
+  categories: Category[];
+  collections: Collection[];
+  tags: Tag[];
+  query: string;
+  total: number;
+}
+
+export interface RecommendResult {
+  pattern: Pattern;
+  related: Pattern[];
+  sameCollection: Pattern[];
+  sameCategory: Pattern[];
+  sameTag: Pattern[];
+}
+
+export interface PublicApiResponse<T> {
+  success: boolean;
+  data: T;
+  pagination?: {
+    page: number;
+    limit: number;
+    total: number;
+    total_pages: number;
+  };
+  error?: {
+    code: string;
+    message: string;
+  };
+}
+
+export interface SitemapUrl {
+  loc: string;
+  lastmod?: string;
+  changefreq?: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
+  priority?: number;
 }

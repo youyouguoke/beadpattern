@@ -1,7 +1,5 @@
-"use client";
-
+import type { Pattern } from "@/types";
 import Link from "next/link";
-import { Pattern } from "@/lib/patternService";
 
 interface RelatedPatternsProps {
   patterns: Pattern[];
@@ -9,12 +7,14 @@ interface RelatedPatternsProps {
 }
 
 export default function RelatedPatterns({ patterns, images }: RelatedPatternsProps) {
+  if (patterns.length === 0) return null;
+
   return (
     <div className="lg:col-span-12">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="font-headline-md text-headline-md">More from This Collection</h2>
+        <h2 className="font-headline-md text-headline-md">Related Patterns</h2>
         <Link
-          href="/category/animals"
+          href="/patterns"
           className="text-secondary font-label-sm flex items-center gap-2 hover:text-primary transition-colors"
         >
           View All <span className="material-symbols-outlined">arrow_forward</span>
@@ -34,7 +34,7 @@ export default function RelatedPatterns({ patterns, images }: RelatedPatternsPro
                 )}
               </div>
               <p className="font-label-sm truncate">{p.title}</p>
-              <p className="text-secondary text-sm">{p.difficulty} &bull; {p.beadCount.toLocaleString()} beads</p>
+              <p className="text-secondary text-sm">{p.difficulty} &bull; {(p.estimatedBeads ?? p.beadCount ?? 0).toLocaleString()} beads</p>
             </div>
           </Link>
         ))}

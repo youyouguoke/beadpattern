@@ -1,6 +1,6 @@
 "use client";
 
-import { Pattern } from "@/lib/patternService";
+import type { Pattern } from "@/types";
 import SaveButton from "./SaveButton";
 import { renderBeadGrid } from "@/components/BeadRenderer";
 
@@ -15,9 +15,10 @@ export default function PatternSidebar({
   onDownloadPDF,
   onDownloadPNG,
 }: PatternSidebarProps) {
+  const paletteHex: string[] = (pattern.colorPalette || []).map((c) => c.hex);
 
   const patternGrid = pattern.gridData
-    ? renderBeadGrid(pattern.gridData, pattern.colorPalette, {
+    ? renderBeadGrid(pattern.gridData, paletteHex, {
         width: 560,
         height: 560,
         showGrid: true,
@@ -25,6 +26,11 @@ export default function PatternSidebar({
         beadRadius: 2,
       })
     : null;
+
+  const palette = pattern.colorPalette || [];
+  const beads = pattern.estimatedBeads ?? pattern.beadCount ?? 0;
+  const gridSize = pattern.gridSize ?? pattern.grid ?? "-";
+  const colorCount = pattern.colorCount ?? palette.length ?? 0;
 
   return (
     <aside className="lg:col-span-4 space-y-6">
@@ -34,7 +40,7 @@ export default function PatternSidebar({
           <div>
             <p className="font-headline-md text-body-md">{pattern.title}</p>
             <p className="text-secondary text-sm">
-              {pattern.difficulty} &bull; {pattern.grid}
+              {pattern.difficulty} &bull; {gridSize}
             </p>
           </div>
         </div>
@@ -42,7 +48,7 @@ export default function PatternSidebar({
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-surface-container rounded-xl p-3 text-center">
             <p className="text-secondary text-[10px] uppercase tracking-wide">Grid Size</p>
-            <p className="font-semibold text-on-surface text-sm">{pattern.grid}</p>
+            <p className="font-semibold text-on-surface text-sm">{gridSize}</p>
           </div>
           <div className="bg-surface-container rounded-xl p-3 text-center">
             <p className="text-secondary text-[10px] uppercase tracking-wide">Difficulty</p>
@@ -50,18 +56,18 @@ export default function PatternSidebar({
           </div>
           <div className="bg-surface-container rounded-xl p-3 text-center">
             <p className="text-secondary text-[10px] uppercase tracking-wide">Beads</p>
-            <p className="font-semibold text-on-surface text-sm">{pattern.beadCount.toLocaleString()}</p>
+            <p className="font-semibold text-on-surface text-sm">{beads.toLocaleString()}</p>
           </div>
           <div className="bg-surface-container rounded-xl p-3 text-center">
             <p className="text-secondary text-[10px] uppercase tracking-wide">Colors</p>
-            <p className="font-semibold text-on-surface text-sm">{pattern.palette.length}</p>
+            <p className="font-semibold text-on-surface text-sm">{colorCount}</p>
           </div>
         </div>
 
         <div>
-          <p className="font-label-sm text-on-surface mb-2">Palette ({pattern.palette.length} Colors)</p>
+          <p className="font-label-sm text-on-surface mb-2">Palette ({colorCount} Colors)</p>
           <div className="flex flex-wrap gap-2">
-            {pattern.palette.map((c) => (
+            {palette.map((c) => (
               <div
                 key={c.hex}
                 className="w-8 h-8 rounded-lg border border-white shadow-sm"
@@ -89,7 +95,6 @@ export default function PatternSidebar({
         </div>
       </div>
 
-      {/* Hidden print area still owned by the sidebar PDF handler */}
       <div
         data-print-root
         className="bg-white p-8 w-[800px]"
@@ -98,20 +103,20 @@ export default function PatternSidebar({
         <div className="text-center mb-6">
           <h1 className="text-2xl font-bold text-primary mb-2">{pattern.title}</h1>
           <p className="text-secondary">
-            {pattern.difficulty} &bull; {pattern.grid} &bull; {pattern.beadCount.toLocaleString()} beads
+            {pattern.difficulty} &bull; {gridSize} &bull; {beads.toLocaleString()} beads
           </p>
         </div>
         <div className="flex justify-center mb-6">
           {patternGrid ? (
             <div dangerouslySetInnerHTML={{ __html: patternGrid.svg }} />
           ) : (
-            <img src={pattern.finished} alt={pattern.title} className="max-w-md rounded-xl" crossOrigin="anonymous" />
+            <img src={pattern.finishedImage || pattern.coverImage} alt={pattern.title} className="max-w-md rounded-xl" crossOrigin="anonymous" />
           )}
         </div>
         <div className="mb-6">
           <h2 className="text-lg font-bold mb-3">Color Chart</h2>
           <div className="grid grid-cols-2 gap-3">
-            {pattern.palette.map((c, i) => (
+            {palette.map((c, i) => (
               <div key={c.hex + i} className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded border" style={{ backgroundColor: c.hex }} />
                 <div className="text-sm">
@@ -125,8 +130,8 @@ export default function PatternSidebar({
         <div>
           <h2 className="text-lg font-bold mb-3">Step-by-Step Guide</h2>
           <ol className="list-decimal list-inside space-y-2">
-            {pattern.steps.map((step, i) => (
-              <li key={i} className="text-secondary">{step}</li>
+            {pattern.steps?.map((step, i) => (
+              <li key={i} className="text-secondary">{step.description}</li>
             ))}
           </ol>
         </div>

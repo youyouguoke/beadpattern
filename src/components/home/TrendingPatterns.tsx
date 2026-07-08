@@ -2,16 +2,21 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { getTrendingPatterns, Pattern } from "@/lib/patternService";
+import { getPublishedPatterns, Pattern } from "@/lib/publicApiService";
 import { getPatternImage } from "@/components/BeadRenderer";
 
-function difficultyColor(diff: Pattern["difficulty"]) {
-  switch (diff) {
-    case "Easy": return "bg-tertiary-container text-white";
-    case "Medium": return "bg-secondary-container text-on-secondary-container";
-    case "Hard": return "bg-error-container text-on-error-container";
+function difficultyColor(diff: string) {
+  const normalized = diff?.toLowerCase();
+  switch (normalized) {
+    case "easy": return "bg-tertiary-container text-white";
+    case "medium": return "bg-secondary-container text-on-secondary-container";
+    case "hard": return "bg-error-container text-on-error-container";
     default: return "bg-surface-variant text-on-surface-variant";
   }
+}
+
+function difficultyLabel(diff: string) {
+  return diff ? diff.charAt(0).toUpperCase() + diff.slice(1).toLowerCase() : "";
 }
 
 export default function TrendingPatterns() {
@@ -20,7 +25,7 @@ export default function TrendingPatterns() {
   const [hovered, setHovered] = useState<number | null>(null);
 
   useEffect(() => {
-    getTrendingPatterns().then((ps) => {
+    getPublishedPatterns({ sort: "popular", limit: 8 }).then((ps) => {
       setPatterns(ps);
       const map: Record<string, { type: "image" | "svg"; src: string; svg?: string }> = {};
       for (const p of ps) {
@@ -36,18 +41,18 @@ export default function TrendingPatterns() {
     <section className="px-4 md:px-12 py-16 bg-surface" id="trending">
       <div className="flex items-center justify-between mb-10">
         <div>
-          <h2 className="font-headline-md text-headline-md text-primary">Trending Patterns</h2>
+          <h2 className="font-headline-md text-headline-md text-primary">Trending Today</h2>
           <p className="text-secondary text-sm mt-1">Most downloaded this week</p>
         </div>
         <button className="text-secondary font-label-sm flex items-center gap-2 hover:text-primary transition-colors">
           View All <span className="material-symbols-outlined">grid_view</span>
         </button>
       </div>
-      <div className="grid grid-cols-8 gap-4">
+      <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar snap-x snap-mandatory">
         {patterns.map((p, i) => (
           <div
             key={p.slug}
-            className="bg-white rounded-xl bead-shadow transition-all hover:-translate-y-1 overflow-hidden group"
+            className="snap-start shrink-0 w-[240px] md:w-[280px] bg-white rounded-xl bead-shadow transition-all hover:-translate-y-1 overflow-hidden group"
             onMouseEnter={() => setHovered(i)}
             onMouseLeave={() => setHovered(null)}
           >
@@ -75,16 +80,16 @@ export default function TrendingPatterns() {
             </div>
             <div className="p-4">
               <div className="mb-2">
-                <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide ${difficultyColor(p.difficulty)}`}>{p.difficulty}</span>
+                <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide ${difficultyColor(p.difficulty)}`}>{difficultyLabel(p.difficulty)}</span>
               </div>
               <h3 className="font-headline-md text-body-md mb-1">{p.title}</h3>
               <div className="flex items-center gap-2 mb-3 text-[10px] font-bold uppercase tracking-wide">
-                <span className="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant">{p.grid}</span>
-                <span className="px-2 py-0.5 rounded bg-primary-fixed text-on-primary-fixed-variant">{p.colors} Colors</span>
+                <span className="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant">{p.gridSize}</span>
+                <span className="px-2 py-0.5 rounded bg-primary-fixed text-on-primary-fixed-variant">{p.colorCount} Colors</span>
               </div>
               <div className="flex items-center justify-between text-label-sm text-secondary">
                 <span className="flex items-center gap-1">
-                  <span className="material-symbols-outlined text-sm">download</span> {p.downloads}
+                  <span className="material-symbols-outlined text-sm">download</span> {p.downloads ?? 0}
                 </span>
                 <Link href={`/pattern/${p.slug}`} className="group-hover:text-primary transition-colors">View →</Link>
               </div>

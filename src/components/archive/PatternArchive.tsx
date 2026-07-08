@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+
 import { useEffect, useState } from "react";
-import { getCategories, getAllPatterns, searchPatterns, Pattern } from "@/lib/patternService";
+import type { Pattern } from "@/types";
+import { getPublishedPatterns, searchPatterns } from "@/lib/publicApiService";
 import { getPatternImage } from "@/components/BeadRenderer";
 
 function getPageNumbers(currentPage: number, totalPages: number, maxVisible = 7): (number | string)[] {
@@ -63,9 +65,9 @@ export default function PatternArchive({ searchQuery = "", collectionSlug = "", 
     let load: Promise<Pattern[]>;
     if (collectionSlug || categorySlug) {
       const targetSlug = collectionSlug || categorySlug;
-      load = getAllPatterns().then((ps) => ps.filter((p) => p.tags?.some((t) => t.slug === targetSlug)));
+      load = getPublishedPatterns({ [collectionSlug ? 'collection' : 'category']: targetSlug });
     } else {
-      load = current.trim() ? searchPatterns(current) : getAllPatterns();
+      load = current.trim() ? searchPatterns({ q: current }).then((res) => res.patterns) : getPublishedPatterns({});
     }
     load.then((ps) => {
       setAllPatterns(ps);
@@ -79,11 +81,6 @@ export default function PatternArchive({ searchQuery = "", collectionSlug = "", 
     });
   }, [qParam, searchQuery, collectionSlug, categorySlug]);
 
-  useEffect(() => {
-    getCategories().then((cats) => {
-      setCategories(["All", ...cats.map((c) => c.name).filter(Boolean)]);
-    });
-  }, []);
 
   const toggleDiff = (id: string) => {
     setSelectedDiffs((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -97,7 +94,7 @@ export default function PatternArchive({ searchQuery = "", collectionSlug = "", 
         return timeB - timeA;
       }
       case "Most Popular":
-        return Number(b.downloadsCount ?? b.downloads ?? 0) - Number(a.downloadsCount ?? a.downloads ?? 0);
+        return Number(b.downloads ?? b.estimatedBeads ?? 0) - Number(a.downloads ?? a.estimatedBeads ?? 0);
       case "Difficulty: Low to High": {
         const diffOrder = { easy: 1, medium: 2, hard: 3 };
         return diffOrder[a.difficulty.toLowerCase() as keyof typeof diffOrder] - diffOrder[b.difficulty.toLowerCase() as keyof typeof diffOrder];
@@ -110,8 +107,8 @@ export default function PatternArchive({ searchQuery = "", collectionSlug = "", 
   const filteredPatterns = sortedPatterns.filter((p) => {
     const q = query.toLowerCase();
     const matchesQuery = q === "" || p.title.toLowerCase().includes(q) || p.slug.toLowerCase().includes(q);
-    const matchesCategory = selectedCategory === "All" || p.tags?.some((t) => t.name === selectedCategory) || p.title.toLowerCase().includes(selectedCategory.toLowerCase());
-    const matchesSize = selectedSize === null || p.grid === selectedSize;
+    const matchesCategory = selectedCategory === "All" || p.categories?.some((c) => c.name === selectedCategory) || p.tags?.some((t) => t.name === selectedCategory) || p.title.toLowerCase().includes(selectedCategory.toLowerCase());
+    const matchesSize = selectedSize === null || p.gridSize === selectedSize || p.grid === selectedSize;
     const matchesDiff = selectedDiffs[p.difficulty.toLowerCase()];
     return matchesQuery && matchesCategory && matchesSize && matchesDiff;
   });
@@ -257,7 +254,7 @@ export default function PatternArchive({ searchQuery = "", collectionSlug = "", 
                       <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${difficultyColor(p.difficulty)}`}>
                         {p.difficulty}
                       </span>
-                      <span className="text-[10px] text-on-surface-variant">{p.grid} • {p.colors} Colors</span>
+                      <span className="text-[10px] text-on-surface-variant">{(p.gridSize ?? p.grid)} • {(p.colorCount ?? p.colors)} Colors</span>
                     </div>
                     <div className="flex items-center justify-between text-label-sm text-secondary">
                       <span className="flex items-center gap-1">
