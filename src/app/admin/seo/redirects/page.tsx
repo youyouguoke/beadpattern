@@ -9,17 +9,17 @@ export default function RedirectsPage() {
   const [newUrl, setNewUrl] = useState("");
   const [type, setType] = useState<301 | 302>(301);
 
-  useEffect(() => { adminService.listRedirects().then(setRedirects); }, []);
+  useEffect(() => { adminService.listRedirects().then((res) => setRedirects(res.data)); }, []);
 
   const add = async () => {
     await adminService.createRedirect({ oldUrl, newUrl, type });
     setOldUrl(""); setNewUrl("");
-    adminService.listRedirects().then(setRedirects);
+    adminService.listRedirects().then((res) => setRedirects(res.data));
   };
 
   const remove = async (id: string) => {
     await adminService.deleteRedirect(id);
-    adminService.listRedirects().then(setRedirects);
+    adminService.listRedirects().then((res) => setRedirects(res.data));
   };
 
   return (

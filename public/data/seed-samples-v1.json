@@ -1,0 +1,1238 @@
+[
+  {
+    "title": "V1 Cute Panda",
+    "slug": "v1-cute-panda",
+    "subject": "Panda",
+    "description": "Adorable panda perler bead pattern with black and white color blocks.",
+    "difficulty": "easy",
+    "grid_size": "21x21",
+    "grid_data": [
+      [
+        1,
+        1,
+        2
+      ],
+      [
+        1,
+        2,
+        2
+      ],
+      [
+        2,
+        2,
+        2
+      ]
+    ],
+    "estimated_beads": 420,
+    "color_count": 2,
+    "color_palette": [
+      "#000000",
+      "#ffffff"
+    ],
+    "estimated_time": "30 min",
+    "seo_priority": 80,
+    "publish_order": 1,
+    "grid_status": "ready",
+    "grid_designer": "AI Studio",
+    "grid_version": 1,
+    "grid_review_required": false,
+    "seo_title": "V1 Cute Panda Perler Bead Pattern",
+    "seo_description": "Make a cute panda with this easy perler bead pattern.",
+    "seo_keywords": "panda, perler beads, kawaii, easy",
+    "cover_image_url": "https://placehold.co/600x400/000000/ffffff?text=Panda",
+    "finished_image_url": "https://placehold.co/600x400/ffffff/000000?text=Panda",
+    "faqs": [
+      {
+        "question": "How many beads?",
+        "answer": "About 420 beads.",
+        "display_order": 0
+      }
+    ],
+    "category_slugs": [
+      "animals"
+    ],
+    "collection_slugs": [
+      "cute-animals"
+    ],
+    "tag_slugs": [
+      "panda",
+      "kawaii",
+      "easy"
+    ]
+  },
+  {
+    "title": "V1 Sleepy Panda",
+    "slug": "v1-sleepy-panda",
+    "subject": "Panda",
+    "description": "Sleepy panda lying down with a small bamboo leaf.",
+    "difficulty": "easy",
+    "grid_size": "21x21",
+    "grid_data": [
+      [
+        2,
+        2,
+        1
+      ],
+      [
+        2,
+        1,
+        1
+      ],
+      [
+        1,
+        1,
+        1
+      ]
+    ],
+    "estimated_beads": 410,
+    "color_count": 2,
+    "color_palette": [
+      "#000000",
+      "#eeeeee"
+    ],
+    "estimated_time": "30 min",
+    "seo_priority": 75,
+    "publish_order": 2,
+    "grid_status": "ready",
+    "grid_designer": "AI Studio",
+    "grid_version": 1,
+    "grid_review_required": false,
+    "seo_title": "V1 Sleepy Panda Perler Bead Pattern",
+    "seo_description": "A sleepy panda perler bead pattern perfect for beginners.",
+    "seo_keywords": "panda, sleep, easy, perler beads",
+    "cover_image_url": "https://placehold.co/600x400/222222/eeeeee?text=Sleepy+Panda",
+    "finished_image_url": "https://placehold.co/600x400/eeeeee/222222?text=Sleepy+Panda",
+    "faqs": [
+      {
+        "question": "Is this good for beginners?",
+        "answer": "Yes, it uses only two colors.",
+        "display_order": 0
+      }
+    ],
+    "category_slugs": [
+      "animals"
+    ],
+    "collection_slugs": [
+      "cute-animals"
+    ],
+    "tag_slugs": [
+      "panda",
+      "sleepy",
+      "easy"
+    ]
+  },
+  {
+    "title": "V1 Bamboo Panda",
+    "slug": "v1-bamboo-panda",
+    "subject": "Panda",
+    "description": "Panda munching on a bamboo stick.",
+    "difficulty": "medium",
+    "grid_size": "25x25",
+    "grid_data": [
+      [
+        1,
+        2,
+        3
+      ],
+      [
+        2,
+        3,
+        1
+      ],
+      [
+        3,
+        1,
+        2
+      ]
+    ],
+    "estimated_beads": 620,
+    "color_count": 3,
+    "color_palette": [
+      "#000000",
+      "#ffffff",
+      "#88cc44"
+    ],
+    "estimated_time": "45 min",
+    "seo_priority": 70,
+    "publish_order": 3,
+    "grid_status": "ready",
+    "grid_designer": "AI Studio",
+    "grid_version": 1,
+    "grid_review_required": false,
+    "seo_title": "V1 Bamboo Panda Perler Bead Pattern",
+    "seo_description": "Panda with bamboo perler bead design for intermediate crafters.",
+    "seo_keywords": "panda, bamboo, perler beads, nature",
+    "cover_image_url": "https://placehold.co/600x400/335533/ffffff?text=Bamboo+Panda",
+    "finished_image_url": "https://placehold.co/600x400/ffffff/335533?text=Bamboo+Panda",
+    "faqs": [
+      {
+        "question": "How many colors?",
+        "answer": "Three colors: black, white, and green.",
+        "display_order": 0
+      }
+    ],
+    "category_slugs": [
+      "animals"
+    ],
+    "collection_slugs": [
+      "cute-animals"
+    ],
+    "tag_slugs": [
+      "panda",
+      "bamboo",
+      "medium"
+    ]
+  },
+  {
+    "title": "V1 Red Mushroom",
+    "slug": "v1-red-mushroom",
+    "subject": "Mushroom",
+    "description": "Classic red mushroom with white dots.",
+    "difficulty": "easy",
+    "grid_size": "21x21",
+    "grid_data": [
+      [
+        1,
+        2,
+        1
+      ],
+      [
+        2,
+        2,
+        2
+      ],
+      [
+        1,
+        3,
+        1
+      ]
+    ],
+    "estimated_beads": 430,
+    "color_count": 3,
+    "color_palette": [
+      "#ff3333",
+      "#ffffff",
+      "#cc8866"
+    ],
+    "estimated_time": "25 min",
+    "seo_priority": 78,
+    "publish_order": 4,
+    "grid_status": "ready",
+    "grid_designer": "AI Studio",
+    "grid_version": 1,
+    "grid_review_required": false,
+    "seo_title": "V1 Red Mushroom Perler Bead Pattern",
+    "seo_description": "Classic red and white mushroom perler bead pattern.",
+    "seo_keywords": "mushroom, mario, perler beads, easy",
+    "cover_image_url": "https://placehold.co/600x400/ff3333/ffffff?text=Red+Mushroom",
+    "finished_image_url": "https://placehold.co/600x400/ffffff/ff3333?text=Red+Mushroom",
+    "faqs": [
+      {
+        "question": "What colors do I need?",
+        "answer": "Red, white, and tan.",
+        "display_order": 0
+      }
+    ],
+    "category_slugs": [
+      "gaming"
+    ],
+    "collection_slugs": [
+      "gaming-classics"
+    ],
+    "tag_slugs": [
+      "mushroom",
+      "mario",
+      "easy"
+    ]
+  },
+  {
+    "title": "V1 Green Mushroom",
+    "slug": "v1-green-mushroom",
+    "subject": "Mushroom",
+    "description": "1-up style green mushroom with white dots.",
+    "difficulty": "easy",
+    "grid_size": "21x21",
+    "grid_data": [
+      [
+        1,
+        2,
+        1
+      ],
+      [
+        2,
+        2,
+        2
+      ],
+      [
+        1,
+        3,
+        1
+      ]
+    ],
+    "estimated_beads": 430,
+    "color_count": 3,
+    "color_palette": [
+      "#33cc55",
+      "#ffffff",
+      "#cc8866"
+    ],
+    "estimated_time": "25 min",
+    "seo_priority": 76,
+    "publish_order": 5,
+    "grid_status": "ready",
+    "grid_designer": "AI Studio",
+    "grid_version": 1,
+    "grid_review_required": false,
+    "seo_title": "V1 Green Mushroom Perler Bead Pattern",
+    "seo_description": "1-up green mushroom perler bead pattern.",
+    "seo_keywords": "mushroom, 1up, perler beads, gaming-inspired",
+    "cover_image_url": "https://placehold.co/600x400/33cc55/ffffff?text=Green+Mushroom",
+    "finished_image_url": "https://placehold.co/600x400/ffffff/33cc55?text=Green+Mushroom",
+    "faqs": [
+      {
+        "question": "Is this from Mario?",
+        "answer": "It is inspired by the classic 1-up mushroom.",
+        "display_order": 0
+      }
+    ],
+    "category_slugs": [
+      "gaming"
+    ],
+    "collection_slugs": [
+      "gaming-classics"
+    ],
+    "tag_slugs": [
+      "mushroom",
+      "gaming-inspired",
+      "easy"
+    ]
+  },
+  {
+    "title": "V1 Mini Mushroom",
+    "slug": "v1-mini-mushroom",
+    "subject": "Mushroom",
+    "description": "Tiny mushroom charm design.",
+    "difficulty": "easy",
+    "grid_size": "15x15",
+    "grid_data": [
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        3
+      ]
+    ],
+    "estimated_beads": 220,
+    "color_count": 3,
+    "color_palette": [
+      "#ff6666",
+      "#ffffff",
+      "#ccaa88"
+    ],
+    "estimated_time": "15 min",
+    "seo_priority": 60,
+    "publish_order": 6,
+    "grid_status": "ready",
+    "grid_designer": "AI Studio",
+    "grid_version": 1,
+    "grid_review_required": false,
+    "seo_title": "V1 Mini Mushroom Perler Bead Charm",
+    "seo_description": "Small mushroom charm perler bead pattern.",
+    "seo_keywords": "mushroom, charm, small, perler beads",
+    "cover_image_url": "https://placehold.co/600x400/ff6666/ffffff?text=Mini+Mushroom",
+    "finished_image_url": "https://placehold.co/600x400/ffffff/ff6666?text=Mini+Mushroom",
+    "faqs": [
+      {
+        "question": "Can I make this into a keychain?",
+        "answer": "Yes, add a jump ring at the top.",
+        "display_order": 0
+      }
+    ],
+    "category_slugs": [
+      "gaming"
+    ],
+    "collection_slugs": [
+      "gaming-classics"
+    ],
+    "tag_slugs": [
+      "mushroom",
+      "charm",
+      "small"
+    ]
+  },
+  {
+    "title": "V1 Cute Cat",
+    "slug": "v1-cute-cat",
+    "subject": "Cat",
+    "description": "Simple sitting cat with big eyes.",
+    "difficulty": "easy",
+    "grid_size": "21x21",
+    "grid_data": [
+      [
+        1,
+        2,
+        1
+      ],
+      [
+        2,
+        2,
+        2
+      ],
+      [
+        1,
+        2,
+        1
+      ]
+    ],
+    "estimated_beads": 440,
+    "color_count": 2,
+    "color_palette": [
+      "#333333",
+      "#ffcccc"
+    ],
+    "estimated_time": "30 min",
+    "seo_priority": 82,
+    "publish_order": 7,
+    "grid_status": "ready",
+    "grid_designer": "AI Studio",
+    "grid_version": 1,
+    "grid_review_required": false,
+    "seo_title": "V1 Cute Cat Perler Bead Pattern",
+    "seo_description": "Easy sitting cat perler bead pattern.",
+    "seo_keywords": "cat, perler beads, kawaii, easy",
+    "cover_image_url": "https://placehold.co/600x400/333333/ffcccc?text=Cute+Cat",
+    "finished_image_url": "https://placehold.co/600x400/ffcccc/333333?text=Cute+Cat",
+    "faqs": [
+      {
+        "question": "What colors do I need?",
+        "answer": "Gray and pink.",
+        "display_order": 0
+      }
+    ],
+    "category_slugs": [
+      "animals"
+    ],
+    "collection_slugs": [
+      "cute-animals"
+    ],
+    "tag_slugs": [
+      "cat",
+      "kawaii",
+      "easy"
+    ]
+  },
+  {
+    "title": "V1 Sleepy Cat",
+    "slug": "v1-sleepy-cat",
+    "subject": "Cat",
+    "description": "Sleeping curled up cat.",
+    "difficulty": "easy",
+    "grid_size": "21x21",
+    "grid_data": [
+      [
+        2,
+        2,
+        2
+      ],
+      [
+        2,
+        1,
+        2
+      ],
+      [
+        2,
+        2,
+        2
+      ]
+    ],
+    "estimated_beads": 430,
+    "color_count": 2,
+    "color_palette": [
+      "#ff9999",
+      "#ffffff"
+    ],
+    "estimated_time": "30 min",
+    "seo_priority": 74,
+    "publish_order": 8,
+    "grid_status": "ready",
+    "grid_designer": "AI Studio",
+    "grid_version": 1,
+    "grid_review_required": false,
+    "seo_title": "V1 Sleepy Cat Perler Bead Pattern",
+    "seo_description": "Cute sleeping cat perler bead design.",
+    "seo_keywords": "cat, sleep, perler beads, easy",
+    "cover_image_url": "https://placehold.co/600x400/ff9999/ffffff?text=Sleepy+Cat",
+    "finished_image_url": "https://placehold.co/600x400/ffffff/ff9999?text=Sleepy+Cat",
+    "faqs": [
+      {
+        "question": "Is this good for kids?",
+        "answer": "Yes, it is beginner friendly.",
+        "display_order": 0
+      }
+    ],
+    "category_slugs": [
+      "animals"
+    ],
+    "collection_slugs": [
+      "cute-animals"
+    ],
+    "tag_slugs": [
+      "cat",
+      "sleepy",
+      "easy"
+    ]
+  },
+  {
+    "title": "V1 Black Cat",
+    "slug": "v1-black-cat",
+    "subject": "Cat",
+    "description": "Black cat silhouette for Halloween.",
+    "difficulty": "easy",
+    "grid_size": "21x21",
+    "grid_data": [
+      [
+        1,
+        1,
+        1
+      ],
+      [
+        1,
+        2,
+        1
+      ],
+      [
+        1,
+        1,
+        1
+      ]
+    ],
+    "estimated_beads": 440,
+    "color_count": 2,
+    "color_palette": [
+      "#000000",
+      "#ffaa00"
+    ],
+    "estimated_time": "30 min",
+    "seo_priority": 85,
+    "publish_order": 9,
+    "grid_status": "ready",
+    "grid_designer": "AI Studio",
+    "grid_version": 1,
+    "grid_review_required": false,
+    "seo_title": "V1 Black Cat Perler Bead Pattern",
+    "seo_description": "Halloween black cat perler bead pattern.",
+    "seo_keywords": "black cat, halloween, perler beads, easy",
+    "cover_image_url": "https://placehold.co/600x400/000000/ffaa00?text=Black+Cat",
+    "finished_image_url": "https://placehold.co/600x400/ffaa00/000000?text=Black+Cat",
+    "faqs": [
+      {
+        "question": "When is this pattern popular?",
+        "answer": "It is perfect for Halloween crafts.",
+        "display_order": 0
+      }
+    ],
+    "category_slugs": [
+      "animals"
+    ],
+    "collection_slugs": [
+      "halloween"
+    ],
+    "tag_slugs": [
+      "cat",
+      "halloween",
+      "easy"
+    ]
+  },
+  {
+    "title": "V1 Tiny Ghost",
+    "slug": "v1-tiny-ghost",
+    "subject": "Ghost",
+    "description": "Small white ghost with big eyes.",
+    "difficulty": "easy",
+    "grid_size": "15x15",
+    "grid_data": [
+      [
+        2,
+        2
+      ],
+      [
+        2,
+        1
+      ]
+    ],
+    "estimated_beads": 220,
+    "color_count": 2,
+    "color_palette": [
+      "#ffffff",
+      "#000000"
+    ],
+    "estimated_time": "15 min",
+    "seo_priority": 72,
+    "publish_order": 10,
+    "grid_status": "ready",
+    "grid_designer": "AI Studio",
+    "grid_version": 1,
+    "grid_review_required": false,
+    "seo_title": "V1 Tiny Ghost Perler Bead Pattern",
+    "seo_description": "Mini ghost perler bead pattern for Halloween.",
+    "seo_keywords": "ghost, halloween, mini, perler beads",
+    "cover_image_url": "https://placehold.co/600x400/ffffff/000000?text=Tiny+Ghost",
+    "finished_image_url": "https://placehold.co/600x400/000000/ffffff?text=Tiny+Ghost",
+    "faqs": [
+      {
+        "question": "How big is this?",
+        "answer": "It is a small 15x15 charm.",
+        "display_order": 0
+      }
+    ],
+    "category_slugs": [
+      "characters"
+    ],
+    "collection_slugs": [
+      "halloween"
+    ],
+    "tag_slugs": [
+      "ghost",
+      "halloween",
+      "mini"
+    ]
+  },
+  {
+    "title": "V1 Pumpkin Face",
+    "slug": "v1-pumpkin-face",
+    "subject": "Pumpkin",
+    "description": "Classic jack-o-lantern face.",
+    "difficulty": "easy",
+    "grid_size": "21x21",
+    "grid_data": [
+      [
+        1,
+        2,
+        1
+      ],
+      [
+        2,
+        2,
+        2
+      ],
+      [
+        1,
+        2,
+        1
+      ]
+    ],
+    "estimated_beads": 440,
+    "color_count": 2,
+    "color_palette": [
+      "#ff8800",
+      "#000000"
+    ],
+    "estimated_time": "30 min",
+    "seo_priority": 84,
+    "publish_order": 11,
+    "grid_status": "ready",
+    "grid_designer": "AI Studio",
+    "grid_version": 1,
+    "grid_review_required": false,
+    "seo_title": "V1 Pumpkin Face Perler Bead Pattern",
+    "seo_description": "Halloween jack-o-lantern perler bead pattern.",
+    "seo_keywords": "pumpkin, halloween, jack-o-lantern, perler beads",
+    "cover_image_url": "https://placehold.co/600x400/ff8800/000000?text=Pumpkin+Face",
+    "finished_image_url": "https://placehold.co/600x400/000000/ff8800?text=Pumpkin+Face",
+    "faqs": [
+      {
+        "question": "What season is this for?",
+        "answer": "Best for Halloween and fall crafts.",
+        "display_order": 0
+      }
+    ],
+    "category_slugs": [
+      "characters"
+    ],
+    "collection_slugs": [
+      "halloween"
+    ],
+    "tag_slugs": [
+      "pumpkin",
+      "halloween",
+      "easy"
+    ]
+  },
+  {
+    "title": "V1 Sunflower",
+    "slug": "v1-sunflower",
+    "subject": "Flower",
+    "description": "Bright yellow sunflower with brown center.",
+    "difficulty": "easy",
+    "grid_size": "25x25",
+    "grid_data": [
+      [
+        1,
+        2,
+        3
+      ],
+      [
+        2,
+        3,
+        1
+      ],
+      [
+        3,
+        1,
+        2
+      ]
+    ],
+    "estimated_beads": 620,
+    "color_count": 3,
+    "color_palette": [
+      "#ffcc00",
+      "#663300",
+      "#339900"
+    ],
+    "estimated_time": "40 min",
+    "seo_priority": 77,
+    "publish_order": 12,
+    "grid_status": "ready",
+    "grid_designer": "AI Studio",
+    "grid_version": 1,
+    "grid_review_required": false,
+    "seo_title": "V1 Sunflower Perler Bead Pattern",
+    "seo_description": "Bright sunflower perler bead pattern for summer.",
+    "seo_keywords": "sunflower, flower, summer, perler beads",
+    "cover_image_url": "https://placehold.co/600x400/ffcc00/663300?text=Sunflower",
+    "finished_image_url": "https://placehold.co/600x400/663300/ffcc00?text=Sunflower",
+    "faqs": [
+      {
+        "question": "What colors do I need?",
+        "answer": "Yellow, brown, and green.",
+        "display_order": 0
+      }
+    ],
+    "category_slugs": [
+      "nature"
+    ],
+    "collection_slugs": [
+      "spring"
+    ],
+    "tag_slugs": [
+      "sunflower",
+      "flower",
+      "easy"
+    ]
+  },
+  {
+    "title": "V1 Tulip",
+    "slug": "v1-tulip",
+    "subject": "Flower",
+    "description": "Simple pink tulip with green stem.",
+    "difficulty": "easy",
+    "grid_size": "21x21",
+    "grid_data": [
+      [
+        1,
+        2,
+        1
+      ],
+      [
+        2,
+        3,
+        2
+      ],
+      [
+        1,
+        2,
+        1
+      ]
+    ],
+    "estimated_beads": 430,
+    "color_count": 3,
+    "color_palette": [
+      "#ff6699",
+      "#339900",
+      "#ccffcc"
+    ],
+    "estimated_time": "30 min",
+    "seo_priority": 73,
+    "publish_order": 13,
+    "grid_status": "ready",
+    "grid_designer": "AI Studio",
+    "grid_version": 1,
+    "grid_review_required": false,
+    "seo_title": "V1 Tulip Perler Bead Pattern",
+    "seo_description": "Spring tulip perler bead pattern.",
+    "seo_keywords": "tulip, flower, spring, perler beads",
+    "cover_image_url": "https://placehold.co/600x400/ff6699/339900?text=Tulip",
+    "finished_image_url": "https://placehold.co/600x400/339900/ff6699?text=Tulip",
+    "faqs": [
+      {
+        "question": "Is this good for spring?",
+        "answer": "Yes, it is a spring flower design.",
+        "display_order": 0
+      }
+    ],
+    "category_slugs": [
+      "nature"
+    ],
+    "collection_slugs": [
+      "spring"
+    ],
+    "tag_slugs": [
+      "tulip",
+      "flower",
+      "easy"
+    ]
+  },
+  {
+    "title": "V1 Daisy",
+    "slug": "v1-daisy",
+    "subject": "Flower",
+    "description": "White daisy with yellow center.",
+    "difficulty": "easy",
+    "grid_size": "21x21",
+    "grid_data": [
+      [
+        1,
+        2,
+        1
+      ],
+      [
+        2,
+        3,
+        2
+      ],
+      [
+        1,
+        2,
+        1
+      ]
+    ],
+    "estimated_beads": 430,
+    "color_count": 3,
+    "color_palette": [
+      "#ffffff",
+      "#ffcc00",
+      "#339900"
+    ],
+    "estimated_time": "30 min",
+    "seo_priority": 71,
+    "publish_order": 14,
+    "grid_status": "ready",
+    "grid_designer": "AI Studio",
+    "grid_version": 1,
+    "grid_review_required": false,
+    "seo_title": "V1 Daisy Perler Bead Pattern",
+    "seo_description": "Simple white daisy perler bead pattern.",
+    "seo_keywords": "daisy, flower, perler beads, easy",
+    "cover_image_url": "https://placehold.co/600x400/ffffff/ffcc00?text=Daisy",
+    "finished_image_url": "https://placehold.co/600x400/ffcc00/ffffff?text=Daisy",
+    "faqs": [
+      {
+        "question": "What colors?",
+        "answer": "White, yellow, and green.",
+        "display_order": 0
+      }
+    ],
+    "category_slugs": [
+      "nature"
+    ],
+    "collection_slugs": [
+      "spring"
+    ],
+    "tag_slugs": [
+      "daisy",
+      "flower",
+      "easy"
+    ]
+  },
+  {
+    "title": "V1 Cute Bee",
+    "slug": "v1-cute-bee",
+    "subject": "Bee",
+    "description": "Small yellow and black bee with wings.",
+    "difficulty": "easy",
+    "grid_size": "21x21",
+    "grid_data": [
+      [
+        1,
+        2,
+        1
+      ],
+      [
+        2,
+        3,
+        2
+      ],
+      [
+        1,
+        2,
+        1
+      ]
+    ],
+    "estimated_beads": 440,
+    "color_count": 3,
+    "color_palette": [
+      "#ffcc00",
+      "#000000",
+      "#ccffff"
+    ],
+    "estimated_time": "30 min",
+    "seo_priority": 79,
+    "publish_order": 15,
+    "grid_status": "ready",
+    "grid_designer": "AI Studio",
+    "grid_version": 1,
+    "grid_review_required": false,
+    "seo_title": "V1 Cute Bee Perler Bead Pattern",
+    "seo_description": "Adorable bee perler bead pattern.",
+    "seo_keywords": "bee, insect, perler beads, kawaii",
+    "cover_image_url": "https://placehold.co/600x400/ffcc00/000000?text=Cute+Bee",
+    "finished_image_url": "https://placehold.co/600x400/000000/ffcc00?text=Cute+Bee",
+    "faqs": [
+      {
+        "question": "Does it have wings?",
+        "answer": "Yes, light blue wing beads.",
+        "display_order": 0
+      }
+    ],
+    "category_slugs": [
+      "animals"
+    ],
+    "collection_slugs": [
+      "cute-animals"
+    ],
+    "tag_slugs": [
+      "bee",
+      "insect",
+      "kawaii"
+    ]
+  },
+  {
+    "title": "V1 Butterfly",
+    "slug": "v1-butterfly",
+    "subject": "Butterfly",
+    "description": "Colorful butterfly with symmetrical wings.",
+    "difficulty": "medium",
+    "grid_size": "25x25",
+    "grid_data": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        2,
+        3,
+        4,
+        1
+      ],
+      [
+        3,
+        4,
+        1,
+        2
+      ],
+      [
+        4,
+        1,
+        2,
+        3
+      ]
+    ],
+    "estimated_beads": 620,
+    "color_count": 4,
+    "color_palette": [
+      "#ff6699",
+      "#66ccff",
+      "#ffcc00",
+      "#663399"
+    ],
+    "estimated_time": "50 min",
+    "seo_priority": 81,
+    "publish_order": 16,
+    "grid_status": "ready",
+    "grid_designer": "AI Studio",
+    "grid_version": 1,
+    "grid_review_required": false,
+    "seo_title": "V1 Butterfly Perler Bead Pattern",
+    "seo_description": "Colorful symmetrical butterfly perler bead pattern.",
+    "seo_keywords": "butterfly, insect, perler beads, medium",
+    "cover_image_url": "https://placehold.co/600x400/ff6699/66ccff?text=Butterfly",
+    "finished_image_url": "https://placehold.co/600x400/66ccff/ff6699?text=Butterfly",
+    "faqs": [
+      {
+        "question": "Is it symmetrical?",
+        "answer": "Yes, both wings match.",
+        "display_order": 0
+      }
+    ],
+    "category_slugs": [
+      "animals"
+    ],
+    "collection_slugs": [
+      "spring"
+    ],
+    "tag_slugs": [
+      "butterfly",
+      "insect",
+      "medium"
+    ]
+  },
+  {
+    "title": "V1 Ladybug",
+    "slug": "v1-ladybug",
+    "subject": "Ladybug",
+    "description": "Red ladybug with black spots.",
+    "difficulty": "easy",
+    "grid_size": "21x21",
+    "grid_data": [
+      [
+        1,
+        2,
+        1
+      ],
+      [
+        2,
+        2,
+        2
+      ],
+      [
+        1,
+        2,
+        1
+      ]
+    ],
+    "estimated_beads": 440,
+    "color_count": 2,
+    "color_palette": [
+      "#ff3333",
+      "#000000"
+    ],
+    "estimated_time": "30 min",
+    "seo_priority": 68,
+    "publish_order": 17,
+    "grid_status": "ready",
+    "grid_designer": "AI Studio",
+    "grid_version": 1,
+    "grid_review_required": false,
+    "seo_title": "V1 Ladybug Perler Bead Pattern",
+    "seo_description": "Simple red ladybug perler bead pattern.",
+    "seo_keywords": "ladybug, insect, perler beads, easy",
+    "cover_image_url": "https://placehold.co/600x400/ff3333/000000?text=Ladybug",
+    "finished_image_url": "https://placehold.co/600x400/000000/ff3333?text=Ladybug",
+    "faqs": [
+      {
+        "question": "How many spots?",
+        "answer": "Classic ladybug spots are shown in the pattern.",
+        "display_order": 0
+      }
+    ],
+    "category_slugs": [
+      "animals"
+    ],
+    "collection_slugs": [
+      "spring"
+    ],
+    "tag_slugs": [
+      "ladybug",
+      "insect",
+      "easy"
+    ]
+  },
+  {
+    "title": "V1 Smiley Face",
+    "slug": "v1-smiley-face",
+    "subject": "Smiley",
+    "description": "Classic yellow smiley face.",
+    "difficulty": "easy",
+    "grid_size": "21x21",
+    "grid_data": [
+      [
+        1,
+        1,
+        1
+      ],
+      [
+        1,
+        2,
+        1
+      ],
+      [
+        1,
+        1,
+        1
+      ]
+    ],
+    "estimated_beads": 440,
+    "color_count": 2,
+    "color_palette": [
+      "#ffcc00",
+      "#000000"
+    ],
+    "estimated_time": "25 min",
+    "seo_priority": 69,
+    "publish_order": 18,
+    "grid_status": "ready",
+    "grid_designer": "AI Studio",
+    "grid_version": 1,
+    "grid_review_required": false,
+    "seo_title": "V1 Smiley Face Perler Bead Pattern",
+    "seo_description": "Classic yellow smiley perler bead pattern.",
+    "seo_keywords": "smiley, face, perler beads, easy",
+    "cover_image_url": "https://placehold.co/600x400/ffcc00/000000?text=Smiley+Face",
+    "finished_image_url": "https://placehold.co/600x400/000000/ffcc00?text=Smiley+Face",
+    "faqs": [
+      {
+        "question": "Is this retro?",
+        "answer": "Yes, it is a classic smiley design.",
+        "display_order": 0
+      }
+    ],
+    "category_slugs": [
+      "objects-symbols"
+    ],
+    "collection_slugs": [
+      "emoji"
+    ],
+    "tag_slugs": [
+      "smiley",
+      "retro",
+      "easy"
+    ]
+  },
+  {
+    "title": "V1 Heart",
+    "slug": "v1-heart",
+    "subject": "Heart",
+    "description": "Red heart shape for Valentine's Day.",
+    "difficulty": "easy",
+    "grid_size": "21x21",
+    "grid_data": [
+      [
+        2,
+        1,
+        2
+      ],
+      [
+        1,
+        1,
+        1
+      ],
+      [
+        2,
+        1,
+        2
+      ]
+    ],
+    "estimated_beads": 440,
+    "color_count": 2,
+    "color_palette": [
+      "#ff3333",
+      "#ffffff"
+    ],
+    "estimated_time": "25 min",
+    "seo_priority": 86,
+    "publish_order": 19,
+    "grid_status": "ready",
+    "grid_designer": "AI Studio",
+    "grid_version": 1,
+    "grid_review_required": false,
+    "seo_title": "V1 Heart Perler Bead Pattern",
+    "seo_description": "Red heart perler bead pattern for Valentine's Day.",
+    "seo_keywords": "heart, valentine, love, perler beads",
+    "cover_image_url": "https://placehold.co/600x400/ff3333/ffffff?text=Heart",
+    "finished_image_url": "https://placehold.co/600x400/ffffff/ff3333?text=Heart",
+    "faqs": [
+      {
+        "question": "When should I make this?",
+        "answer": "Perfect for Valentine's Day gifts.",
+        "display_order": 0
+      }
+    ],
+    "category_slugs": [
+      "objects-symbols"
+    ],
+    "collection_slugs": [
+      "valentines"
+    ],
+    "tag_slugs": [
+      "heart",
+      "love",
+      "easy"
+    ]
+  },
+  {
+    "title": "V1 Rainbow",
+    "slug": "v1-rainbow",
+    "subject": "Rainbow",
+    "description": "Colorful rainbow arc with clouds.",
+    "difficulty": "medium",
+    "grid_size": "25x25",
+    "grid_data": [
+      [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      [
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      [
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    ],
+    "estimated_beads": 620,
+    "color_count": 7,
+    "color_palette": [
+      "#ff3333",
+      "#ff9900",
+      "#ffcc00",
+      "#33cc55",
+      "#3366ff",
+      "#663399",
+      "#ffffff"
+    ],
+    "estimated_time": "55 min",
+    "seo_priority": 88,
+    "publish_order": 20,
+    "grid_status": "ready",
+    "grid_designer": "AI Studio",
+    "grid_version": 1,
+    "grid_review_required": false,
+    "seo_title": "V1 Rainbow Perler Bead Pattern",
+    "seo_description": "Bright rainbow perler bead pattern with clouds.",
+    "seo_keywords": "rainbow, colors, perler beads, medium",
+    "cover_image_url": "https://placehold.co/600x400/663399/ffffff?text=Rainbow",
+    "finished_image_url": "https://placehold.co/600x400/ffffff/663399?text=Rainbow",
+    "faqs": [
+      {
+        "question": "How many colors?",
+        "answer": "Seven colors plus white clouds.",
+        "display_order": 0
+      }
+    ],
+    "category_slugs": [
+      "nature"
+    ],
+    "collection_slugs": [
+      "spring"
+    ],
+    "tag_slugs": [
+      "rainbow",
+      "colors",
+      "medium"
+    ]
+  }
+]

@@ -6,20 +6,22 @@ import { adminService, AdminSubscriber } from "@/lib/adminService";
 export default function NewsletterPage() {
   const [subscribers, setSubscribers] = useState<AdminSubscriber[]>([]);
 
-  useEffect(() => { adminService.listSubscribers().then(setSubscribers); }, []);
+  useEffect(() => { adminService.listSubscribers().then((res) => setSubscribers(res.data)); }, []);
 
   const exportCSV = async () => {
-    const blob = await adminService.exportSubscribers();
+    const csv = await adminService.exportSubscribers();
+    const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
     a.download = "subscribers.csv";
     a.click();
+    URL.revokeObjectURL(url);
   };
 
   const deleteSub = async (id: string) => {
     await adminService.deleteSubscriber(id);
-    adminService.listSubscribers().then(setSubscribers);
+    adminService.listSubscribers().then((res) => setSubscribers(res.data));
   };
 
   return (

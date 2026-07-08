@@ -9,12 +9,12 @@ export default function MediaPage() {
   const [folder, setFolder] = useState("All");
   const [media, setMedia] = useState<AdminMedia[]>([]);
 
-  useEffect(() => { adminService.listMedia(folder === "All" ? undefined : folder).then(setMedia); }, [folder]);
+  useEffect(() => { adminService.listMedia({ folder: folder === "All" ? undefined : folder }).then((res) => setMedia(res.data)); }, [folder]);
 
   const deleteMedia = async (id: string) => {
     if (!confirm("Delete this media?")) return;
     await adminService.deleteMedia(id);
-    adminService.listMedia(folder === "All" ? undefined : folder).then(setMedia);
+    adminService.listMedia({ folder: folder === "All" ? undefined : folder }).then((res) => setMedia(res.data));
   };
 
   return (

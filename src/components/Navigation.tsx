@@ -2,18 +2,20 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 const navLinks = [
-  { label: "Patterns", href: "/pattern/cute-frog" },
-  { label: "Categories", href: "/category/animals" },
-  { label: "Collections", href: "/collection/halloween" },
-  { label: "Ideas", href: "#inspiration" },
+  { label: "Patterns", href: "/patterns" },
+  { label: "Categories", href: "/categories" },
+  { label: "Collections", href: "/collections" },
+  { label: "Ideas", href: "/inspiration" },
   { label: "Generator", href: "/generate" },
   { label: "Blog", href: "#" },
 ];
 
 export default function Navigation() {
   const pathname = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const isActive = (href: string) => {
     if (href.startsWith("#")) return false;
@@ -43,15 +45,54 @@ export default function Navigation() {
           ))}
         </div>
 
-        <div>
+        <div className="hidden md:block">
           <Link
             href="/generate"
-            className="bg-primary-container text-on-primary-container px-6 py-2 rounded-lg font-label-lg text-label-lg hover:scale-105 transition-transform active:scale-95 shadow-sm hidden"
+            className="bg-primary-container text-on-primary-container px-6 py-2 rounded-lg font-label-lg text-label-lg hover:scale-105 transition-transform active:scale-95 shadow-sm"
           >
             Create with AI
           </Link>
         </div>
+
+        <button
+          className="md:hidden p-2 rounded-lg text-on-surface-variant hover:bg-surface-container"
+          onClick={() => setMenuOpen((o) => !o)}
+          aria-label="Toggle menu"
+        >
+          <span className="material-symbols-outlined text-2xl">
+            {menuOpen ? "close" : "menu"}
+          </span>
+        </button>
       </nav>
+
+      {menuOpen && (
+        <div className="md:hidden absolute top-20 left-0 w-full bg-surface/95 backdrop-blur-md border-b border-outline-variant/30 shadow-lg">
+          <div className="px-4 py-4 space-y-2">
+            {navLinks.map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                onClick={() => setMenuOpen(false)}
+                className={
+                  "block px-4 py-3 rounded-lg font-label-lg text-label-lg " +
+                  (isActive(link.href)
+                    ? "bg-primary-container text-on-primary-container font-bold"
+                    : "text-on-surface-variant hover:bg-surface-container hover:text-primary")
+                }
+              >
+                {link.label}
+              </Link>
+            ))}
+            <Link
+              href="/generate"
+              onClick={() => setMenuOpen(false)}
+              className="block w-full text-center bg-primary-container text-on-primary-container px-6 py-3 rounded-lg font-label-lg text-label-lg mt-4"
+            >
+              Create with AI
+            </Link>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

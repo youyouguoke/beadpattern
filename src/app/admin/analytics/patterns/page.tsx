@@ -32,7 +32,7 @@ export default function PatternAnalyticsPage() {
                 <td className="px-4 py-3">{p.views}</td>
                 <td className="px-4 py-3">{p.downloads}</td>
                 <td className="px-4 py-3">{p.likes}</td>
-                <td className="px-4 py-3">{((Number(p.downloads) / Math.max(p.views, 1)) * 100).toFixed(1)}%</td>
+                <td className="px-4 py-3">{((Number(p.downloads ?? 0) / Math.max(p.views ?? 1, 1)) * 100).toFixed(1)}%</td>
               </tr>
             ))}
           </tbody>

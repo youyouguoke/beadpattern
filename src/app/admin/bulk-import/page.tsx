@@ -6,39 +6,42 @@ import { adminService, AdminBulkJob } from "@/lib/adminService";
 export default function BulkImportPage() {
   const [step, setStep] = useState(1);
   const [file, setFile] = useState<File | null>(null);
+  const [sourceData, setSourceData] = useState<string>("");
   const [rows, setRows] = useState<any[]>([]);
   const [errors, setErrors] = useState<string[]>([]);
   const [warnings, setWarnings] = useState<string[]>([]);
   const [jobs, setJobs] = useState<AdminBulkJob[]>([]);
   const [publishNow, setPublishNow] = useState(false);
+  const [imported, setImported] = useState<{ jobId: string; total: number; processed: number; failed: number; errors: string[] } | null>(null);
 
-  useEffect(() => { adminService.listBulkJobs().then(setJobs); }, []);
+  useEffect(() => { adminService.listBulkJobs().then((res) => setJobs(res.data)); }, []);
 
-  const onUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
     if (!f) return;
     setFile(f);
-    // Mock parse CSV
-    setRows([
-      { title: "Ghost Cute", slug: "ghost-cute", tags: "halloween,cute", error: "" },
-      { title: "Frog", slug: "frog", tags: "animals", error: "" },
-    ]);
-    setErrors([]);
+    const text = await f.text();
+    setSourceData(text);
+    const preview = await adminService.previewBulkImport("csv", text);
+    setRows(preview.rows.map((r: any) => r.data));
+    setErrors(preview.rows.filter((r: any) => r.errors?.length).map((r: any) => `Row ${r.row}: ${r.errors.join(", ")}`));
     setWarnings(["2 rows missing cover image"]);
     setStep(2);
   };
 
   const validate = () => {
-    setErrors([]);
-    setStep(3);
+    if (errors.length === 0) setStep(3);
   };
 
   const runImport = async () => {
-    if (!file) return;
-    const job = await adminService.uploadBulkCSV(file);
-    await adminService.runBulkJob(job.id, publishNow);
+    if (!file || !sourceData) return;
+    const result = await adminService.createBulkImport("csv", sourceData);
+    setImported(result);
+    if (publishNow && result.processed > 0) {
+      await adminService.publishBulkImport();
+    }
     setStep(4);
-    adminService.listBulkJobs().then(setJobs);
+    adminService.listBulkJobs().then((res) => setJobs(res.data));
   };
 
   const stepLabels = ["", "Upload CSV", "Validation", "Preview", "Import"];

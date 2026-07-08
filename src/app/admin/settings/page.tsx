@@ -8,9 +8,7 @@ export default function SettingsPage() {
 
   useEffect(() => {
     adminService.listSettings().then((s) => {
-      const map: Record<string, string> = {};
-      s.forEach(({ key, value }) => map[key] = value);
-      setSettings(map);
+      setSettings(typeof s === "object" && s !== null ? (s as Record<string, string>) : {});
     });
   }, []);
 
