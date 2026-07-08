@@ -30,15 +30,26 @@ search.get('/', zValidator('query', z.object({
   const params: unknown[] = [];
 
   if (q) {
-    // Use FTS5 when we have a search term; fall back to tag matches via LIKE for tags.
-    where.push(`(p.rowid IN (
-      SELECT rowid FROM pattern_search WHERE pattern_search MATCH ?
-    ) OR p.id IN (
-      SELECT pt.pattern_id FROM pattern_tags pt
-      JOIN tags t ON t.id = pt.tag_id
-      WHERE t.name LIKE ? OR t.slug LIKE ?
-    ))`);
-    params.push(q, `%${q}%`, `%${q}%`);
+    // Try FTS5 first; if the virtual table is missing, fall back to LIKE.
+    try {
+      const ftsRows = await db.query<{ rowid: number }>('SELECT rowid FROM pattern_search WHERE pattern_search MATCH ? LIMIT 1000', [q]);
+      if (ftsRows.length > 0) {
+        const rowids = ftsRows.map(r => r.rowid).join(',');
+        where.push(`p.rowid IN (${rowids})`);
+      } else {
+        where.push(`(p.title LIKE ? OR p.description LIKE ? OR p.slug LIKE ?)`);
+        const like = `%${q}%`;
+        params.push(like, like, like);
+      }
+    } catch (e) {
+      where.push(`(p.title LIKE ? OR p.description LIKE ? OR p.slug LIKE ? OR p.id IN (
+        SELECT pt.pattern_id FROM pattern_tags pt
+        JOIN tags t ON t.id = pt.tag_id
+        WHERE t.name LIKE ? OR t.slug LIKE ?
+      ))`);
+      const like = `%${q}%`;
+      params.push(like, like, like, like, like);
+    }
   }
 
   if (difficulty) {

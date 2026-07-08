@@ -24,15 +24,6 @@ async function resolveTagIds(db: ReturnType<typeof getDB>, tagSlugs?: string[], 
   return Array.from(ids);
 }
 
-function parseJsonField<T>(value: string | null | undefined, fallback: T): T {
-  if (!value) return fallback;
-  try {
-    return JSON.parse(value) as T;
-  } catch {
-    return fallback;
-  }
-}
-
 async function resolveDifficultySlug(db: ReturnType<typeof getDB>, difficultyId: number): Promise<string> {
   const row = await db.queryOne<{ slug: string }>('SELECT slug FROM difficulties WHERE id = ?', [difficultyId]);
   return row?.slug ?? 'easy';
@@ -181,9 +172,31 @@ patterns.get('/', zValidator('query', ListPatternsQuerySchema), async (c) => {
     params.push(tag);
   }
 
+  if (query.category) {
+    where.push('EXISTS (SELECT 1 FROM pattern_categories pc JOIN categories cat ON cat.id = pc.category_id WHERE pc.pattern_id = p.id AND cat.slug = ?)');
+    params.push(query.category);
+  }
+
+  if (query.collection) {
+    where.push('EXISTS (SELECT 1 FROM pattern_collections pcoll JOIN collections col ON col.id = pcoll.collection_id WHERE pcoll.pattern_id = p.id AND col.slug = ?)');
+    params.push(query.collection);
+  }
+
+  if (query.q) {
+    where.push('(p.title LIKE ? OR p.description LIKE ? OR p.slug LIKE ?)');
+    const like = `%${query.q.replace(/%/g, '\\%').replace(/_/g, '\\_')}%`;
+    params.push(like, like, like);
+  }
+
   let orderBy = 'p.created_at DESC';
   if (sort === 'popular' || sort === 'views') {
     orderBy = 'COALESCE(a.views, 0) DESC';
+  } else if (sort === 'newest') {
+    orderBy = 'p.created_at DESC';
+  } else if (sort === 'recommended') {
+    orderBy = 'COALESCE(a.likes, 0) DESC, COALESCE(a.views, 0) DESC';
+  } else if (sort === 'publish_order') {
+    orderBy = 'p.publish_order ASC, p.created_at DESC';
   }
 
   let countSql = `SELECT COUNT(*) as count FROM patterns p LEFT JOIN analytics a ON a.pattern_id = p.id`;

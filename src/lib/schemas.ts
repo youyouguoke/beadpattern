@@ -108,12 +108,21 @@ export const UpdatePatternSchema = CreatePatternSchema.partial().extend({
 
 export const ListPatternsQuerySchema = z.object({
   tag: z.string().optional(),
+  category: z.string().optional(),
+  collection: z.string().optional(),
   difficulty: DifficultySchema.optional(),
   status: z.enum(['draft', 'published', 'archived']).optional(),
-  sort: z.enum(['latest', 'popular', 'views']).optional().default('latest'),
+  sort: z.enum(['latest', 'popular', 'views', 'newest', 'recommended', 'publish_order']).optional().default('latest'),
   page: z.coerce.number().int().nonnegative().optional().default(1),
   limit: z.coerce.number().int().min(1).max(100).optional().default(20),
   q: z.string().max(200).optional(),
+});
+
+export const ActionTypeSchema = z.enum(['view', 'like', 'download', 'share']);
+export const ActionPayloadSchema = z.object({
+  type: ActionTypeSchema,
+  pattern_slug: z.string().min(1),
+  fingerprint: z.string().optional(),
 });
 
 export const BulkImportRowSchema = z.object({

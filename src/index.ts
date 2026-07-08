@@ -15,6 +15,9 @@ import bulk from './routes/bulk';
 import sitemap from './routes/sitemap';
 import newsletter from './routes/newsletter';
 import admin from './routes/admin';
+import actions from './routes/actions';
+import collections from './routes/collections';
+import categories from './routes/categories';
 
 const app = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
@@ -35,6 +38,9 @@ app.route('/api/media', media);
 app.route('/api/bulk', bulk);
 app.route('/api/sitemap', sitemap);
 app.route('/api/newsletter', newsletter);
+app.route('/api/actions', actions);
+app.route('/api/collections', collections);
+app.route('/api/categories', categories);
 app.route('/api/admin', admin);
 
 // Fallback 404

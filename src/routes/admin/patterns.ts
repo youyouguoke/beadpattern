@@ -472,6 +472,15 @@ patterns.post('/:id/publish', async (c) => {
   return c.json(success({ id, status: 'published' }));
 });
 
+patterns.post('/:id/unpublish', async (c) => {
+  const db = getDB(c.env);
+  const id = c.req.param('id');
+  const existing = await db.queryOne<Pattern>('SELECT id FROM patterns WHERE id = ?', [id]);
+  if (!existing) throw new AppError('Pattern not found', 'PATTERN_NOT_FOUND', 404);
+  await db.update('patterns', { status: 'draft', updated_at: new Date().toISOString() }, { id });
+  return c.json(success({ id, status: 'draft' }));
+});
+
 patterns.post('/:id/archive', async (c) => {
   const db = getDB(c.env);
   const id = c.req.param('id');

@@ -400,6 +400,80 @@ git commit -m "feat: public collections list and detail endpoints"
 
 ---
 
+### P2.5b Public Categories endpoints
+
+**Objective:** Expose published categories and their patterns for the frontend category index and category detail pages.
+
+**Files:**
+- Create: `src/routes/categories.ts`
+- Modify: `src/index.ts` (mount router under `/api/categories`)
+- Test: `test/categories.e2e.test.ts`
+
+**Step 1: Create route**
+
+```ts
+// src/routes/categories.ts
+import { Hono } from 'hono';
+import { getDb } from '../lib/db';
+
+const categories = new Hono<{ Bindings: Env }>();
+
+categories.get('/', async (c) => {
+  const db = getDb(c.env.DB);
+  const rows = await db.query(
+    `SELECT c.*, COUNT(p.id) AS pattern_count
+     FROM categories c
+     LEFT JOIN pattern_categories pc ON pc.category_id = c.id
+     LEFT JOIN patterns p ON p.id = pc.pattern_id AND p.status = 'published'
+     GROUP BY c.id
+     ORDER BY c.display_order ASC, c.name ASC`
+  );
+  return c.json({ success: true, data: rows });
+});
+
+categories.get('/:slug', async (c) => {
+  const slug = c.req.param('slug');
+  const db = getDb(c.env.DB);
+  const category = await db.first('SELECT * FROM categories WHERE slug = ?', [slug]);
+  if (!category) return c.json({ success: false, error: { code: 'NOT_FOUND', message: 'Category not found' } }, 404);
+  const patterns = await db.query(
+    `SELECT p.* FROM patterns p
+     JOIN pattern_categories pc ON pc.pattern_id = p.id
+     WHERE pc.category_id = ? AND p.status = 'published'
+     ORDER BY p.created_at DESC`,
+    [category.id]
+  );
+  return c.json({ success: true, data: { category, patterns } });
+});
+
+export default categories;
+```
+
+**Step 2: Mount**
+
+```ts
+// src/index.ts
+import categoriesRoute from './routes/categories';
+app.route('/api/categories', categoriesRoute);
+```
+
+**Step 3: Test**
+
+```bash
+npm run test -- --run
+```
+
+Expected: `test/categories.e2e.test.ts` passes (GET /api/categories returns list with `pattern_count`; GET /api/categories/:slug returns category + patterns, 404 for missing slug).
+
+**Step 4: Commit**
+
+```bash
+git add src/routes/categories.ts src/index.ts test/categories.e2e.test.ts
+git commit -m "feat: public categories list and detail endpoints"
+```
+
+---
+
 ### P2.6 Sitemap endpoint
 
 **Objective:** Generate `/api/sitemap` XML for SEO.
@@ -594,7 +668,7 @@ git commit -m "feat: admin publish/unpublish and bulk-publish endpoints"
 
 ---
 
-### P2.9 Deploy & verify remotely
+### P2.10 Deploy & verify remotely
 
 **Step 1: Apply remote migrations**
 
@@ -628,6 +702,273 @@ git commit -m "docs: phase 2 public api spec"
 
 ---
 
+### P2.9 Public API Response Shapes
+
+**Objective:** Document the exact JSON response shapes for every Phase 2 public endpoint so the frontend can build mock types and page skeletons without waiting for backend implementation.
+
+**Note:** AI Generator and Blog endpoints are explicitly excluded from Phase 2.
+
+#### `GET /api/patterns` — Pattern list
+
+```json
+{
+  "success": true,
+  "data": {
+    "patterns": [
+      {
+        "id": "uuid",
+        "slug": "cute-cat",
+        "title": "Cute Cat",
+        "description": "A cute cat bead pattern",
+        "difficulty_id": 1,
+        "status": "published",
+        "cover_image": "https://pub-beadpatternai.r2.dev/covers/cute-cat.jpg",
+        "finished_image": null,
+        "cover_image_r2_key": "covers/cute-cat.jpg",
+        "cover_media_id": null,
+        "finished_media_id": null,
+        "gallery_media_ids": null,
+        "step_media_ids": null,
+        "image_updated_at": null,
+        "grid_size": "24x24",
+        "grid_data": null,
+        "estimated_beads": 576,
+        "color_count": 8,
+        "color_palette": ["#ff0000", "#00ff00"],
+        "version": 1,
+        "published_at": "2026-01-01T00:00:00.000Z",
+        "seo_title": null,
+        "seo_description": null,
+        "seo_keywords": null,
+        "subject": null,
+        "style": null,
+        "season": null,
+        "estimated_time": null,
+        "seo_priority": 50,
+        "publish_order": 0,
+        "grid_status": "missing",
+        "grid_designer": null,
+        "grid_version": 1,
+        "grid_review_required": 0,
+        "grid_reviewed_at": null,
+        "created_at": "2026-01-01T00:00:00.000Z",
+        "updated_at": "2026-01-01T00:00:00.000Z"
+      }
+    ]
+  },
+  "pagination": {
+    "page": 1,
+    "limit": 20,
+    "total": 100,
+    "total_pages": 5
+  }
+}
+```
+
+#### `GET /api/patterns/:slug` — Pattern detail
+
+```json
+{
+  "success": true,
+  "data": {
+    "pattern": {
+      "id": "uuid",
+      "slug": "cute-cat",
+      "title": "Cute Cat",
+      "description": "A cute cat bead pattern",
+      "difficulty_id": 1,
+      "status": "published",
+      "cover_image": "https://pub-beadpatternai.r2.dev/covers/cute-cat.jpg",
+      "finished_image": null,
+      "cover_image_r2_key": "covers/cute-cat.jpg",
+      "cover_media_id": null,
+      "finished_media_id": null,
+      "gallery_media_ids": null,
+      "step_media_ids": null,
+      "image_updated_at": null,
+      "grid_size": "24x24",
+      "grid_data": null,
+      "estimated_beads": 576,
+      "color_count": 8,
+      "color_palette": ["#ff0000", "#00ff00"],
+      "version": 1,
+      "published_at": "2026-01-01T00:00:00.000Z",
+      "seo_title": "Cute Cat Bead Pattern",
+      "seo_description": "Make a cute cat bead pattern",
+      "seo_keywords": "cat,bead,pattern",
+      "subject": null,
+      "style": null,
+      "season": null,
+      "estimated_time": null,
+      "seo_priority": 50,
+      "publish_order": 0,
+      "grid_status": "missing",
+      "grid_designer": null,
+      "grid_version": 1,
+      "grid_review_required": 0,
+      "grid_reviewed_at": null,
+      "created_at": "2026-01-01T00:00:00.000Z",
+      "updated_at": "2026-01-01T00:00:00.000Z"
+    },
+    "tags": [
+      { "id": "tag_cute", "name": "Cute", "slug": "cute", "type": "style", "display_order": 0 }
+    ],
+    "categories": [
+      { "id": "cat_animals", "name": "Animals", "slug": "animals", "description": null, "display_order": 0 }
+    ],
+    "collections": [
+      { "id": "col_cute_animals", "title": "Cute Animals", "slug": "cute-animals", "description": null, "banner": null, "display_order": 0, "published": 1 }
+    ],
+    "steps": [
+      { "id": "uuid", "pattern_id": "uuid", "step_number": 1, "description": "Step 1", "image": null, "grid_data": null }
+    ],
+    "analytics": { "views": 10, "likes": 2, "shares": 1, "downloads": 0 },
+    "related": [
+      { "id": "uuid", "slug": "happy-dog", "title": "Happy Dog", "cover_image": "https://...", "difficulty_id": 1 }
+    ]
+  }
+}
+```
+
+#### `GET /api/categories` — Category list
+
+```json
+{
+  "success": true,
+  "data": {
+    "categories": [
+      {
+        "id": "cat_animals",
+        "name": "Animals",
+        "slug": "animals",
+        "description": null,
+        "display_order": 0,
+        "created_at": "2026-01-01T00:00:00.000Z",
+        "updated_at": "2026-01-01T00:00:00.000Z",
+        "pattern_count": 42
+      }
+    ]
+  }
+}
+```
+
+#### `GET /api/categories/:slug` — Category detail
+
+```json
+{
+  "success": true,
+  "data": {
+    "category": {
+      "id": "cat_animals",
+      "name": "Animals",
+      "slug": "animals",
+      "description": null,
+      "display_order": 0,
+      "created_at": "2026-01-01T00:00:00.000Z",
+      "updated_at": "2026-01-01T00:00:00.000Z"
+    },
+    "patterns": [
+      { "id": "uuid", "slug": "cute-cat", "title": "Cute Cat", "cover_image": "https://...", "difficulty_id": 1 }
+    ]
+  }
+}
+```
+
+#### `GET /api/collections` — Collection list
+
+```json
+{
+  "success": true,
+  "data": {
+    "collections": [
+      {
+        "id": "col_cute_animals",
+        "title": "Cute Animals",
+        "slug": "cute-animals",
+        "description": null,
+        "banner": null,
+        "display_order": 0,
+        "published": 1,
+        "created_at": "2026-01-01T00:00:00.000Z",
+        "updated_at": "2026-01-01T00:00:00.000Z",
+        "pattern_count": 12
+      }
+    ]
+  }
+}
+```
+
+#### `GET /api/collections/:slug` — Collection detail
+
+```json
+{
+  "success": true,
+  "data": {
+    "collection": {
+      "id": "col_cute_animals",
+      "title": "Cute Animals",
+      "slug": "cute-animals",
+      "description": null,
+      "banner": null,
+      "display_order": 0,
+      "published": 1,
+      "created_at": "2026-01-01T00:00:00.000Z",
+      "updated_at": "2026-01-01T00:00:00.000Z"
+    },
+    "patterns": [
+      { "id": "uuid", "slug": "cute-cat", "title": "Cute Cat", "cover_image": "https://...", "difficulty_id": 1 }
+    ]
+  }
+}
+```
+
+#### `GET /api/search?q=...` — Search
+
+```json
+{
+  "success": true,
+  "data": {
+    "patterns": [
+      { "id": "uuid", "slug": "cute-cat", "title": "Cute Cat", "cover_image": "https://...", "difficulty_id": 1 }
+    ]
+  },
+  "pagination": {
+    "page": 1,
+    "limit": 20,
+    "total": -1,
+    "total_pages": -1
+  }
+}
+```
+
+#### `GET /api/recommend?slug=...` — Recommendations
+
+```json
+{
+  "success": true,
+  "data": {
+    "patterns": [
+      { "id": "uuid", "slug": "happy-dog", "title": "Happy Dog", "cover_image": "https://...", "difficulty_id": 1 }
+    ]
+  }
+}
+```
+
+#### `POST /api/actions` — Record action
+
+```json
+{
+  "success": true,
+  "data": {
+    "action": "like",
+    "pattern_id": "uuid",
+    "counted": true
+  }
+}
+```
+
+---
+
 ## Risks & Open Questions
 
 1. **FTS5 availability**: Cloudflare D1 supports FTS5, but virtual table corruption has been observed. If `pattern_search` is missing, add a migration to create it + triggers. Search will fallback to `LIKE` if needed.
@@ -645,9 +986,10 @@ git commit -m "docs: phase 2 public api spec"
 3. P2.3 Search
 4. P2.4 Recommend
 5. P2.5 Collections public
-6. P2.6 Sitemap
-7. P2.7 Admin media CRUD
-8. P2.8 Admin publish/bulk
-9. P2.9 Deploy & verify
+6. P2.5b Categories public
+7. P2.6 Sitemap
+8. P2.7 Admin media CRUD
+9. P2.8 Admin publish/bulk
+10. P2.10 Deploy & verify
 
 Ready to execute with subagent-driven-development.

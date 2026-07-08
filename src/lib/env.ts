@@ -5,6 +5,7 @@ export interface Bindings {
   APP_ORIGIN: string;
   SITE_NAME: string;
   R2_PUBLIC_URL?: string;
+  SITE_URL?: string;
   ASSETS?: Fetcher;
   SESSION_SECRET?: string;
   ADMIN_API_KEY?: string;

@@ -151,6 +151,26 @@ media.delete('/:id', async (c) => {
   return c.json(success({ deleted: true }));
 });
 
+media.get('/:id/references', async (c) => {
+  const db = getDB(c.env);
+  const id = c.req.param('id');
+  const row = await db.queryOne<Media>('SELECT id FROM media WHERE id = ?', [id]);
+  if (!row) throw new AppError('Media not found', 'MEDIA_NOT_FOUND', 404);
+  const refs = await db.query<
+    { role: string; id: string; slug: string; title: string }
+  >(
+    `SELECT 'cover' AS role, p.id, p.slug, p.title FROM patterns p WHERE p.cover_media_id = ?
+     UNION ALL
+     SELECT 'finished' AS role, p.id, p.slug, p.title FROM patterns p WHERE p.finished_media_id = ?
+     UNION ALL
+     SELECT 'gallery' AS role, p.id, p.slug, p.title FROM patterns p WHERE p.gallery_media_ids LIKE ?
+     UNION ALL
+     SELECT 'step' AS role, p.id, p.slug, p.title FROM patterns p WHERE p.step_media_ids LIKE ?`,
+    [id, id, `%${id}%`, `%${id}%`]
+  );
+  return c.json(success({ media_id: id, references: refs }));
+});
+
 media.post('/upload-image', async (c) => {
   const body = await c.req.parseBody();
   const file = body.file;
