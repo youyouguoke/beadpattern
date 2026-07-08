@@ -77,6 +77,10 @@ export const CreatePatternSchema = z.object({
   cover_image: z.string().url().max(1000).optional(),
   finished_image: z.string().url().max(1000).optional(),
   cover_image_r2_key: z.string().max(500).optional(),
+  cover_media_id: z.string().uuid().optional(),
+  finished_media_id: z.string().uuid().optional(),
+  gallery_media_ids: z.array(z.string().uuid()).max(20).optional(),
+  step_media_ids: z.array(z.string().uuid()).max(50).optional(),
   image_updated_at: z.string().datetime().optional(),
   grid_size: z.string().max(50).optional(),
   grid_data: z.array(z.array(z.union([z.string(), z.number()]))).optional(),
@@ -133,6 +137,8 @@ export const AdminPatternQuerySchema = z.object({
   category: z.string().optional(),
   tag: z.string().optional(),
   q: z.string().max(200).optional(),
+  grid_status: z.enum(['missing', 'designing', 'review', 'ready']).optional(),
+  seo_ready: z.enum(['true', 'false']).optional(),
   sort: z.enum(['latest', 'updated', 'views', 'downloads']).optional().default('latest'),
   page: z.coerce.number().int().min(1).optional().default(1),
   limit: z.coerce.number().int().min(1).max(100).optional().default(20),
@@ -187,6 +193,7 @@ export const CreateMediaSchema = z.object({
   height: z.number().int().nonnegative().optional(),
   folder: z.string().max(200).optional(),
   used_by: z.record(z.number().int().nonnegative()).optional(),
+  alt_text: z.string().max(500).optional(),
 });
 
 export const UpdateMediaSchema = CreateMediaSchema.partial();

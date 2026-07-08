@@ -7,8 +7,11 @@ export interface Bindings {
   R2_PUBLIC_URL?: string;
   ASSETS?: Fetcher;
   SESSION_SECRET?: string;
+  ADMIN_API_KEY?: string;
+  SEED_IMPORT_SECRET?: string;
 }
 
 export type Variables = {
   requestId?: string;
+  isAdmin?: boolean;
 };

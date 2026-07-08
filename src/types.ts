@@ -3,7 +3,9 @@ export type DifficultyLevel = 1 | 2 | 3;
 export type PatternStatus = 'draft' | 'published' | 'archived';
 export type TagType = 'style' | 'theme' | 'difficulty' | 'animal' | 'object' | 'color' | 'season' | 'character';
 export type JobStatus = 'pending' | 'processing' | 'done' | 'failed';
-export type BulkSourceType = 'csv' | 'json';
+export type GridStatus = 'missing' | 'designing' | 'review' | 'ready';
+export type RelatedType = 'similar' | 'same_collection' | 'same_tag' | 'same_category' | 'manual';
+export type SearchIntent = 'informational' | 'commercial' | 'transactional' | 'navigational';
 
 export interface Tag {
   id: string;
@@ -68,6 +70,9 @@ export interface Pattern {
   slug: string;
   title: string;
   description: string | null;
+  subject: string | null;
+  style: string | null;
+  season: string | null;
   difficulty: Difficulty;
   difficulty_id: number;
   status: PatternStatus;
@@ -76,12 +81,24 @@ export interface Pattern {
   cover_image: string | null;
   finished_image: string | null;
   cover_image_r2_key: string | null;
+  cover_media_id: string | null;
+  finished_media_id: string | null;
+  gallery_media_ids: string | null; // JSON array of media IDs
+  step_media_ids: string | null; // JSON array of media IDs
   image_updated_at: string | null;
   grid_size: string | null; // e.g. "29x29"
   grid_data: string | null; // JSON array of array of color indices or hex strings
   estimated_beads: number | null;
   color_count: number | null;
   color_palette: string | null; // JSON array of hex strings or PatternColor objects
+  grid_status: GridStatus;
+  grid_designer: string | null;
+  grid_version: number;
+  grid_review_required: boolean;
+  grid_reviewed_at: string | null;
+  estimated_time: string | null;
+  seo_priority: number;
+  publish_order: number;
   seo_title: string | null;
   seo_description: string | null;
   seo_keywords: string | null;
@@ -103,6 +120,8 @@ export interface PatternTagRelation {
   tag_id: string;
 }
 
+export type BulkSourceType = 'csv' | 'json';
+
 export interface BulkJob {
   id: string;
   status: JobStatus;
@@ -120,6 +139,11 @@ export interface PatternWithDetails extends Pattern {
   tags: Tag[];
   steps: PatternStep[];
   analytics: PatternAnalytics | null;
+  faqs: PatternFaq[];
+  related: PatternRelated[];
+  seo_variants: PatternSeoVariant[];
+  audit: PatternAudit | null;
+  pattern_colors: { hex: string; name: string | null; family: string | null; count: number }[];
 }
 
 export interface PatternListItem extends Pattern {
@@ -161,6 +185,7 @@ export interface Media {
   height: number | null;
   used_by: string | null; // JSON object
   folder: string | null;
+  alt_text: string | null;
   created_at: string;
 }
 
@@ -195,6 +220,52 @@ export interface NewsletterSubscriber {
   email: string;
   source: string | null;
   subscribed_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PatternFaq {
+  id: string;
+  pattern_id: string;
+  question: string;
+  answer: string;
+  display_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PatternRelated {
+  id: string;
+  pattern_id: string;
+  related_pattern_id: string;
+  related_type: RelatedType;
+  score: number;
+  display_order: number;
+  created_at: string;
+}
+
+export interface PatternSeoVariant {
+  id: string;
+  pattern_id: string;
+  variant: string;
+  landing_slug: string;
+  search_intent: SearchIntent;
+  display_order: number;
+  created_at: string;
+}
+
+export interface PatternAudit {
+  id: string;
+  pattern_id: string;
+  missing_cover: boolean;
+  missing_faq: boolean;
+  missing_collection: boolean;
+  missing_related: boolean;
+  missing_internal_links: boolean;
+  ready: boolean;
+  published: boolean;
+  score: number;
+  checked_at: string;
   created_at: string;
   updated_at: string;
 }

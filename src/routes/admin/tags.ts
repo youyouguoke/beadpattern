@@ -53,6 +53,15 @@ const tags = new Hono<{ Bindings: Bindings }>();
   return c.json(paginated(rows, { page, limit, total }));
 });
 
+// Get single tag
+ tags.get('/:id', async (c) => {
+  const db = getDB(c.env);
+  const id = c.req.param('id');
+  const tag = await db.queryOne<Tag>('SELECT * FROM tags WHERE id = ?', [id]);
+  if (!tag) throw new AppError('Tag not found', 'TAG_NOT_FOUND', 404);
+  return c.json(success(tag));
+});
+
 // Create tag
  tags.post('/', zValidator('json', CreateTagSchema), async (c) => {
   const body = c.req.valid('json');

@@ -2,6 +2,7 @@ node_modules/
 .wrangler/
 .open-next/
 .env
+.dev.vars
 *.log
 dist/
 *.local

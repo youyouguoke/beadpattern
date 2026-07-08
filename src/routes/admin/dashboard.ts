@@ -1,27 +1,93 @@
 import { Hono } from 'hono';
 import { getDB } from '../../lib/db';
 import { success } from '../../lib/response';
-import { computeHealthScore } from '../../lib/health';
 import type { Bindings } from '../../lib/env';
-import type { MinimalSeo, Pattern } from '../../types';
+
+interface DashboardPatternRow {
+  id: string;
+  slug: string;
+  title: string;
+  status: string;
+  cover_image: string | null;
+  created_at: string;
+  updated_at: string;
+  emoji?: string;
+  description?: string;
+  difficulty?: string;
+  grid_size?: string;
+  estimated_beads?: number;
+  color_count?: number;
+  finished_image?: string | null;
+  seo_title?: string;
+  seo_description?: string;
+  views?: number;
+  likes?: number;
+  downloads?: number;
+}
+
+interface BulkJobRow {
+  id: string;
+  status: string;
+  total_rows: number;
+  processed_rows: number;
+  failed_rows: number;
+  created_at: string;
+  updated_at?: string;
+  name?: string;
+}
+
+interface TopDownloadedRow {
+  id: string;
+  slug: string;
+  title: string;
+  downloads: number;
+}
 
 const dashboard = new Hono<{ Bindings: Bindings }>();
 
-async function healthDistribution(db: ReturnType<typeof getDB>) {
-  const patterns = await db.query<Pattern>('SELECT * FROM patterns');
-  const buckets = { below60: 0, between60and80: 0, above80: 0 };
-  for (const p of patterns) {
-    const steps = await db.query<{ step_number: number }>('SELECT step_number FROM pattern_steps WHERE pattern_id = ?', [p.id]);
-    const tags = await db.query<{ tag_id: string }>('SELECT tag_id FROM pattern_tags WHERE pattern_id = ?', [p.id]);
-    const collections = await db.query<{ collection_id: string }>('SELECT collection_id FROM pattern_collections WHERE pattern_id = ?', [p.id]);
-    const seo = await db.queryOne<MinimalSeo>('SELECT title, description FROM pattern_seo WHERE pattern_id = ?', [p.id]);
-    const colors = await db.query<{ count: number }>('SELECT count FROM pattern_colors WHERE pattern_id = ?', [p.id]);
-    const { score } = computeHealthScore(p, steps as { step_number: number }[], tags, collections as { collection_id: string }[], seo, colors);
-    if (score < 60) buckets.below60++;
-    else if (score <= 80) buckets.between60and80++;
-    else buckets.above80++;
-  }
-  return buckets;
+function toAdminPattern(p: DashboardPatternRow) {
+  return {
+    id: p.id,
+    slug: p.slug,
+    title: p.title,
+    emoji: p.emoji ?? '',
+    description: p.description ?? '',
+    difficulty: p.difficulty ?? 'easy',
+    grid: p.grid_size ?? '24x24',
+    beadCount: p.estimated_beads ?? 0,
+    colors: p.color_count ?? 0,
+    status: p.status,
+    coverImage: p.cover_image ?? '',
+    finishedImage: p.finished_image ?? '',
+    tags: [],
+    categories: [],
+    collections: [],
+    steps: [],
+    seoTitle: p.seo_title ?? '',
+    seoDescription: p.seo_description ?? '',
+    keywords: [],
+    views: p.views ?? 0,
+    downloads: p.downloads ?? 0,
+    likes: p.likes ?? 0,
+    createdAt: p.created_at ?? '',
+    updatedAt: p.updated_at ?? '',
+    healthScore: 0,
+    healthChecks: [],
+  };
+}
+
+function toAdminBulkJob(j: BulkJobRow) {
+  return {
+    id: j.id,
+    name: j.name ?? 'Bulk Job',
+    status: j.status as 'pending' | 'running' | 'completed' | 'failed',
+    total: j.total_rows ?? 0,
+    processed: j.processed_rows ?? 0,
+    errors: j.failed_rows ?? 0,
+    warnings: 0,
+    createdAt: j.created_at ?? '',
+    completedAt: j.updated_at,
+  };
 }
 
 dashboard.get('/', async (c) => {
@@ -30,14 +96,14 @@ dashboard.get('/', async (c) => {
   const patterns = await db.queryOne<{ total: number; published: number; draft: number; archived: number }>(
     `SELECT
        COUNT(*) as total,
-       SUM(CASE WHEN status = 'published' THEN 1 ELSE 0 END) as published,
-       SUM(CASE WHEN status = 'draft' THEN 1 ELSE 0 END) as draft,
-       SUM(CASE WHEN status = 'archived' THEN 1 ELSE 0 END) as archived
+       COALESCE(SUM(CASE WHEN status = 'published' THEN 1 ELSE 0 END), 0) as published,
+       COALESCE(SUM(CASE WHEN status = 'draft' THEN 1 ELSE 0 END), 0) as draft,
+       COALESCE(SUM(CASE WHEN status = 'archived' THEN 1 ELSE 0 END), 0) as archived
      FROM patterns`
   );
 
-  const collections = await db.queryOne<{ total: number; published: number }>(
-    `SELECT COUNT(*) as total, SUM(CASE WHEN published = 1 THEN 1 ELSE 0 END) as published FROM collections`
+  const collections = await db.queryOne<{ total: number }>(
+    `SELECT COUNT(*) as total FROM collections`
   );
 
   const tags = await db.queryOne<{ total: number }>('SELECT COUNT(*) as total FROM tags');
@@ -52,45 +118,42 @@ dashboard.get('/', async (c) => {
      FROM bulk_jobs`
   );
 
-  const latestPatterns = await db.query<Pattern>(
-    `SELECT id, slug, title, status, cover_image, created_at, updated_at
-     FROM patterns
-     ORDER BY created_at DESC
+  const latestPatterns = await db.query<DashboardPatternRow>(
+    `SELECT p.id, p.slug, p.title, p.status, p.description, p.difficulty, p.grid_size, p.estimated_beads, p.color_count, p.cover_image, p.finished_image, p.seo_title, p.seo_description, COALESCE(a.views, 0) AS views, COALESCE(a.likes, 0) AS likes, COALESCE(a.downloads, 0) AS downloads, p.created_at, p.updated_at
+     FROM patterns p
+     LEFT JOIN analytics a ON a.pattern_id = p.id
+     ORDER BY p.created_at DESC
      LIMIT 10`
   );
 
-  const latestBulkJobs = await db.query(
+  const latestBulkJobs = await db.query<BulkJobRow>(
     'SELECT id, status, total_rows, processed_rows, failed_rows, created_at, updated_at FROM bulk_jobs ORDER BY created_at DESC LIMIT 5'
   );
 
-  const topDownloaded = await db.query(
-    `SELECT p.id, p.slug, p.title, a.downloads
+  const topDownloaded = await db.query<TopDownloadedRow>(
+    `SELECT p.id, p.slug, p.title, COALESCE(a.downloads, 0) AS downloads
      FROM patterns p
-     JOIN analytics a ON a.pattern_id = p.id
+     LEFT JOIN analytics a ON a.pattern_id = p.id
      ORDER BY a.downloads DESC
      LIMIT 10`
   );
 
-  const recentlyUpdated = await db.query<Pattern>(
-    `SELECT id, slug, title, status, updated_at
-     FROM patterns
-     ORDER BY updated_at DESC
-     LIMIT 10`
-  );
-
-  const contentHealth = await healthDistribution(db);
-
   return c.json(success({
     patterns: patterns ?? { total: 0, published: 0, draft: 0, archived: 0 },
-    collections: collections ?? { total: 0, published: 0 },
-    tags: tags ?? { total: 0 },
-    media: media ?? { total: 0 },
-    bulk_jobs: bulkJobs ?? { total: 0, pending: 0, processing: 0, done: 0, failed: 0 },
-    latest_patterns: latestPatterns,
-    latest_bulk_jobs: latestBulkJobs,
-    top_downloaded: topDownloaded,
-    recently_updated: recentlyUpdated,
-    content_health: contentHealth,
+    collections: (collections?.total ?? 0),
+    tags: (tags?.total ?? 0),
+    media: (media?.total ?? 0),
+    bulkJobs: (bulkJobs?.total ?? 0),
+    latestPatterns: latestPatterns.map(toAdminPattern),
+    latestJobs: latestBulkJobs.map(toAdminBulkJob),
+    topDownloaded: topDownloaded.map((p) => ({
+      title: p.title ?? '',
+      slug: p.slug ?? '',
+      downloads: p.downloads ?? 0,
+    })),
+    recentlyUpdated: latestPatterns.map(toAdminPattern),
+    searchTrends: [],
+    googleIndex: { indexed: 0, submitted: 0, pending: 0 },
   }));
 });
 

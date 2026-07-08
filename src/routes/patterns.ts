@@ -7,9 +7,10 @@ import { AppError } from '../lib/errors';
 import { CreatePatternSchema, UpdatePatternSchema, ListPatternsQuerySchema, difficultyStringToId } from '../lib/schemas';
 import { generateSEO } from '../lib/seo';
 import { normalizeColorPalette, enrichPaletteFromGrid, computeStats } from '../lib/colors';
+import { parseMediaIds, stringifyMediaIds, expandMediaIds, syncPatternMediaUsedBy } from '../lib/media';
 import type { Bindings } from '../lib/env';
 import type { Pattern, PatternStep, Tag, PatternColor, Color } from '../types';
-import { generateId as colorGenerateId } from '../lib/slug';
+
 
 const patterns = new Hono<{ Bindings: Bindings }>();
 
@@ -55,7 +56,7 @@ async function upsertPatternColors(
     const hex = c.hex.toLowerCase();
     const existing = await db.queryOne<Color>('SELECT id FROM colors WHERE hex = ?', [hex]);
     if (!existing) {
-      await db.insert('colors', { id: colorGenerateId(), hex, name: c.name ?? null, family: null });
+      await db.insert('colors', { id: generateId(), hex, name: c.name ?? null, family: null });
     }
   }
 
@@ -71,7 +72,7 @@ async function upsertPatternColors(
     const colorId = colorMap.get(hex);
     if (!colorId) continue;
     await db.insert('pattern_colors', {
-      id: colorGenerateId(),
+      id: generateId(),
       pattern_id: patternId,
       color_id: colorId,
       count: c.count ?? 0,
@@ -119,6 +120,15 @@ async function getPatternWithDetails(db: ReturnType<typeof getDB>, slug: string)
   const grid = parseJsonField<(string | number)[][] | null>(pattern.grid_data as string | null, null);
   const palette = enrichPaletteFromGrid(normalizeColorPalette(rawPalette ?? []), grid);
 
+  const coverMedia = pattern.cover_media_id
+    ? await expandMediaIds(db, [pattern.cover_media_id]).then((r) => r[0] ?? null)
+    : null;
+  const finishedMedia = pattern.finished_media_id
+    ? await expandMediaIds(db, [pattern.finished_media_id]).then((r) => r[0] ?? null)
+    : null;
+  const galleryMedia = await expandMediaIds(db, parseMediaIds(pattern.gallery_media_ids));
+  const stepMedia = await expandMediaIds(db, parseMediaIds(pattern.step_media_ids));
+
   return {
     pattern: {
       ...pattern,
@@ -136,6 +146,10 @@ async function getPatternWithDetails(db: ReturnType<typeof getDB>, slug: string)
     })),
     tags,
     analytics,
+    cover_media: coverMedia,
+    finished_media: finishedMedia,
+    gallery: galleryMedia,
+    step_media: stepMedia,
   };
 }
 
@@ -244,6 +258,11 @@ patterns.post('/', zValidator('json', CreatePatternSchema), async (c) => {
     difficulty_id: difficultyStringToId(body.difficulty),
     status: 'draft',
     cover_image: body.cover_image ?? null,
+    finished_image: body.finished_image ?? null,
+    cover_media_id: body.cover_media_id ?? null,
+    finished_media_id: body.finished_media_id ?? null,
+    gallery_media_ids: stringifyMediaIds(body.gallery_media_ids),
+    step_media_ids: stringifyMediaIds(body.step_media_ids),
     grid_size: body.grid_size ?? null,
     grid_data: grid ? JSON.stringify(grid) : null,
     estimated_beads: stats.estimated_beads ?? null,
@@ -296,8 +315,18 @@ patterns.post('/', zValidator('json', CreatePatternSchema), async (c) => {
     structured_data: body.structured_data ?? null,
   });
 
-  // Pattern colors from palette and grid
-  await upsertPatternColors(db, id, enrichedPalette, grid ?? null);
+  // Sync media used_by
+  await syncPatternMediaUsedBy(
+    db,
+    id,
+    { cover: [], finished: [], gallery: [], step: [] },
+    {
+      cover: body.cover_media_id ? [body.cover_media_id] : [],
+      finished: body.finished_media_id ? [body.finished_media_id] : [],
+      gallery: body.gallery_media_ids ?? [],
+      step: body.step_media_ids ?? [],
+    }
+  );
 
   // Analytics
   await db.insert('analytics', { pattern_id: id });
@@ -358,6 +387,18 @@ patterns.put('/:id', zValidator('json', UpdatePatternSchema), async (c) => {
   if (body.color_count !== undefined) updates.color_count = body.color_count;
   if (body.estimated_beads !== undefined) updates.estimated_beads = body.estimated_beads;
   if (body.status !== undefined) updates.status = body.status;
+
+  // Media fields
+  const oldMediaIds = {
+    cover: existing.cover_media_id ? [existing.cover_media_id] : [],
+    finished: existing.finished_media_id ? [existing.finished_media_id] : [],
+    gallery: parseMediaIds(existing.gallery_media_ids),
+    step: parseMediaIds(existing.step_media_ids),
+  };
+  if (body.cover_media_id !== undefined) updates.cover_media_id = body.cover_media_id ?? null;
+  if (body.finished_media_id !== undefined) updates.finished_media_id = body.finished_media_id ?? null;
+  if (body.gallery_media_ids !== undefined) updates.gallery_media_ids = stringifyMediaIds(body.gallery_media_ids);
+  if (body.step_media_ids !== undefined) updates.step_media_ids = stringifyMediaIds(body.step_media_ids);
 
   // Update image fields before persisting
   if (body.finished_image !== undefined) updates.finished_image = body.finished_image;
@@ -447,6 +488,20 @@ patterns.put('/:id', zValidator('json', UpdatePatternSchema), async (c) => {
   }
 
   const updated = await db.queryOne<Pattern>('SELECT slug FROM patterns WHERE id = ?', [id]);
+
+  // Sync media used_by after persist so new columns are committed
+  await syncPatternMediaUsedBy(
+    db,
+    id,
+    oldMediaIds,
+    {
+      cover: updates.cover_media_id !== undefined ? (updates.cover_media_id as string ? [updates.cover_media_id as string] : []) : oldMediaIds.cover,
+      finished: updates.finished_media_id !== undefined ? (updates.finished_media_id as string ? [updates.finished_media_id as string] : []) : oldMediaIds.finished,
+      gallery: updates.gallery_media_ids !== undefined ? parseMediaIds(updates.gallery_media_ids as string | null) : oldMediaIds.gallery,
+      step: updates.step_media_ids !== undefined ? parseMediaIds(updates.step_media_ids as string | null) : oldMediaIds.step,
+    }
+  );
+
   const result = await getPatternWithDetails(db, updated!.slug);
   return c.json(success(result));
 });

@@ -14,10 +14,13 @@ export function configureCors(app: Hono<{ Bindings: Bindings; Variables: Variabl
         env.APP_ORIGIN,
         'https://beadpatternai.com',
         'https://www.beadpatternai.com',
+        'https://admin.beadpatternai.com',
         'https://beadpatternai.youyouguoke.workers.dev',
         'https://bead-pattern-ai.youyouguoke.workers.dev',
         'http://localhost:3000',
         'http://127.0.0.1:3000',
+        'http://localhost:8787',
+        'http://127.0.0.1:8787',
       ].filter(Boolean);
       if (allowedOrigins.includes(origin)) return origin;
       // Deny unknown origins instead of falling back to wildcard.

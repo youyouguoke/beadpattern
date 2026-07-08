@@ -17,8 +17,8 @@ END;
 CREATE TRIGGER IF NOT EXISTS pattern_search_update
 AFTER UPDATE ON patterns
 BEGIN
-  UPDATE pattern_search SET title = NEW.title, description = NEW.description
-  WHERE rowid = NEW.rowid;
+  INSERT OR REPLACE INTO pattern_search (rowid, title, description)
+  VALUES (NEW.rowid, NEW.title, NEW.description);
 END;
 
 CREATE TRIGGER IF NOT EXISTS pattern_search_delete
