@@ -6,7 +6,7 @@ import { adminService } from "@/lib/adminService";
 import MediaPicker from "@/components/admin/MediaPicker";
 import { AuditStatusBadge } from "@/components/admin/AuditStatusBadge";
 import { JsonEditor } from "@/components/admin/JsonEditor";
-import type { Pattern, PatternStep } from "@/types";
+import type { Pattern, PatternStep, PatternDetail } from "@/types";
 
 const DIFFICULTIES = [
   { value: "easy", label: "Easy" },
@@ -61,7 +61,7 @@ export default function PatternEditorPage() {
         healthChecks: [],
       });
     } else {
-      adminService.getPattern(id).then(setPattern);
+      adminService.getPattern(id).then((p: PatternDetail) => setPattern({ ...p, related: p.related as unknown as Pattern["related"] }));
     }
   }, [id]);
 

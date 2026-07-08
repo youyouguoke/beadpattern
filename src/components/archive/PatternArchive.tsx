@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { Pattern } from "@/types";
 import { getPublishedPatterns, searchPatterns } from "@/lib/publicApiService";
-import { getPatternImage } from "@/components/BeadRenderer";
+import { getPatternImage } from "@/lib/patternImage";
 
 function getPageNumbers(currentPage: number, totalPages: number, maxVisible = 7): (number | string)[] {
   if (totalPages <= maxVisible) return Array.from({ length: totalPages }, (_, i) => i + 1);

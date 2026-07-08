@@ -168,7 +168,7 @@ export interface Pattern {
   categories?: { id: string; name: string; slug: string }[];
   collections?: { id: string; name: string; slug: string; title: string }[];
   faqs?: PatternFAQ[];
-  related?: PatternRelated[];
+  related?: Pattern[];
   seoVariants?: PatternSEOVariant[];
   audit?: PatternAudit | null; // populated on detail / list when joined
 
@@ -187,7 +187,8 @@ export interface PatternDetail extends Pattern {
   categories: { id: string; name: string; slug: string }[];
   collections: { id: string; name: string; slug: string; title: string }[];
   faqs: PatternFAQ[];
-  related: PatternRelated[];
+  related: Pattern[];
+  relatedPatterns?: Pattern[];
   seo: PatternSEO | null;
   seoVariants: PatternSEOVariant[];
   audit: PatternAudit | null;
@@ -334,6 +335,7 @@ export interface DashboardStats {
   recentlyUpdated: Pattern[];
   searchTrends: { term: string; count: number }[];
   googleIndex: { indexed: number; submitted: number; pending: number };
+  health?: { total: number; missingGrid: number; missingCover: number; missingFaq: number; missingRelated: number };
 }
 
 export interface Paginated<T> {

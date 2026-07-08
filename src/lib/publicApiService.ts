@@ -54,14 +54,77 @@ export async function getPublishedPatterns(params: PatternListParams = {}): Prom
 }
 
 export async function getPatternBySlug(slug: string): Promise<PatternDetail | null> {
-  const res = await fetchPublicApi<Record<string, unknown>>(`/patterns/${slug}`);
-  return res.success && res.data ? (mapPattern(res.data) as PatternDetail) : null;
+  const res = await fetchPublicApi<Record<string, unknown>>(`/patterns/${slug}`, { cache: "no-store" });
+  if (!res.success || !res.data) return null;
+
+  const data = res.data as Record<string, unknown>;
+  const rawPattern = (data.pattern ?? data) as Record<string, unknown>;
+  const pattern = mapPattern(rawPattern) as PatternDetail;
+
+  const parseArray = (v: unknown): unknown[] | undefined => {
+    if (Array.isArray(v)) return v as unknown[];
+    if (typeof v === "string" && v.trim()) {
+      try {
+        const parsed = JSON.parse(v);
+        return Array.isArray(parsed) ? parsed : undefined;
+      } catch {
+        return undefined;
+      }
+    }
+    return undefined;
+  };
+
+  const coverMedia = data.cover_media;
+  const finishedMedia = data.finished_media;
+  if (!pattern.coverImage && coverMedia && typeof coverMedia === "object") {
+    pattern.coverImage = (coverMedia as Record<string, unknown>).url as string | undefined;
+  }
+  if (!pattern.finishedImage && finishedMedia && typeof finishedMedia === "object") {
+    pattern.finishedImage = (finishedMedia as Record<string, unknown>).url as string | undefined;
+  }
+
+  pattern.steps = Array.isArray(data.steps)
+    ? data.steps.map((s: Record<string, unknown>) => ({
+        id: String(s.id || ""),
+        patternId: String(s.pattern_id || s.patternId || ""),
+        stepNumber: Number(s.step_number || s.stepNumber || 0),
+        description: String(s.description || ""),
+        image: s.image_url ? String(s.image_url) : s.image ? String(s.image) : undefined,
+        gridData: parseArray(s.grid_data || s.gridData) as Pattern["gridData"],
+      }))
+    : [];
+
+  pattern.faqs = Array.isArray(data.faqs)
+    ? data.faqs.map((f: Record<string, unknown>) => ({
+        id: String(f.id || ""),
+        patternId: String(f.pattern_id || f.patternId || ""),
+        question: String(f.question || ""),
+        answer: String(f.answer || ""),
+        displayOrder: Number(f.display_order || f.displayOrder || 0),
+      }))
+    : [];
+
+  pattern.related = Array.isArray(rawPattern.related_patterns)
+    ? (rawPattern.related_patterns as Record<string, unknown>[]).map((r) => mapPattern(r))
+    : [];
+
+  return pattern;
 }
 
 export async function getRecommendedPatterns(slug: string): Promise<RecommendResult> {
   const res = await fetchPublicApi<RecommendResult>(`/recommend/${encodeURIComponent(slug)}`);
   if (res.success && res.data) {
-    const data = res.data as unknown as Record<string, unknown>;
+    const data = res.data as unknown as Record<string, unknown> | Record<string, unknown>[];
+    // Backend currently returns { data: Pattern[] } for /recommend/:slug
+    if (Array.isArray(data)) {
+      return {
+        pattern: {} as Pattern,
+        related: data.map((p) => mapPattern(p as Record<string, unknown>)),
+        sameCollection: [],
+        sameCategory: [],
+        sameTag: [],
+      } as RecommendResult;
+    }
     return {
       pattern: mapPattern((data.pattern ?? {}) as Record<string, unknown>),
       related: Array.isArray(data.related) ? data.related.map((p) => mapPattern(p as Record<string, unknown>)) : [],
@@ -127,16 +190,33 @@ export async function getCategoryBySlug(slug: string): Promise<{ category: Categ
   return null;
 }
 
+function mapCollection(input: Record<string, unknown>): Collection {
+  return {
+    id: String(input.id || input.slug || ""),
+    title: String(input.title || ""),
+    slug: String(input.slug || ""),
+    description: String(input.description || ""),
+    banner: input.banner ? String(input.banner) : undefined,
+    displayOrder: Number(input.display_order || input.displayOrder || 0),
+    published: Boolean(input.published ?? 1),
+    createdAt: String(input.created_at || input.createdAt || ""),
+    updatedAt: String(input.updated_at || input.updatedAt || ""),
+    patternCount: Number(input.pattern_count || input.patternCount || 0),
+    count: Number(input.pattern_count || input.patternCount || 0),
+    emoji: String(input.emoji || ""),
+  } as Collection;
+}
+
 export async function getCollections(): Promise<Collection[]> {
   const res = await fetchPublicApi<Collection[]>("/collections");
-  return res.success ? res.data : [];
+  return res.success && res.data ? (res.data as unknown as Record<string, unknown>[]).map(mapCollection) : [];
 }
 
 export async function getCollectionBySlug(slug: string): Promise<{ collection: Collection; patterns: Pattern[] } | null> {
-  const res = await fetchPublicApi<{ collection: Collection; patterns: Record<string, unknown>[] }>(`/collections/${slug}`);
+  const res = await fetchPublicApi<{ collection: Record<string, unknown>; patterns: Record<string, unknown>[] }>(`/collections/${slug}`);
   if (res.success && res.data) {
     return {
-      collection: res.data.collection,
+      collection: mapCollection(res.data.collection),
       patterns: res.data.patterns.map(mapPattern),
     };
   }
@@ -145,6 +225,38 @@ export async function getCollectionBySlug(slug: string): Promise<{ collection: C
 
 export async function recordAnalytics(slug: string, action: "view" | "like" | "download" | "share"): Promise<void> {
   await fetchPublicApi<unknown>(`/patterns/${slug}/${action}`, { method: "POST" }).catch(() => null);
+}
+
+export interface PatternDownload {
+  url: string;
+  filename: string;
+  contentType: string;
+  note?: string;
+}
+
+export interface PatternDownloadPngResponse {
+  url: string;
+  filename: string;
+  content_type: string;
+}
+
+export interface PatternDownloadPdfResponse {
+  url: string;
+  filename: string;
+  content_type: string;
+  note?: string;
+}
+
+export async function downloadPatternPng(slug: string): Promise<PatternDownload> {
+  const res = await fetchPublicApi<PatternDownloadPngResponse>(`/patterns/${encodeURIComponent(slug)}/download/png`);
+  if (!res.success || !res.data) throw new Error(res.error?.message || "PNG download unavailable");
+  return { url: res.data.url, filename: res.data.filename, contentType: res.data.content_type || "image/svg+xml" };
+}
+
+export async function downloadPatternPdf(slug: string): Promise<PatternDownload> {
+  const res = await fetchPublicApi<PatternDownloadPdfResponse>(`/patterns/${encodeURIComponent(slug)}/download/pdf`);
+  if (!res.success || !res.data) throw new Error(res.error?.message || "PDF download unavailable");
+  return { url: res.data.url, filename: res.data.filename, contentType: res.data.content_type || "application/pdf", note: res.data.note };
 }
 
 export async function getSitemapData(): Promise<{ patterns: { slug: string; updatedAt?: string }[]; collections: { slug: string }[]; categories: { slug: string }[] }> {
@@ -196,8 +308,8 @@ function mapPattern(input: Record<string, unknown>): Pattern {
     finishedImage: get("finishedImage", "finished_image") as string | undefined,
     gridSize: (get("gridSize", "grid_size") as string) ?? (get("grid", "grid") as string) ?? "",
     gridData: gridData as Pattern["gridData"],
-    estimatedBeads: Number(get("estimatedBeads", "estimated_beads") || get("beadCount", "bead_count") || 0),
-    colorCount: Number(get("colorCount", "color_count") || colorPalette?.length || 0),
+    estimatedBeads: Number(get("estimatedBeads", "estimated_beads") ?? get("beadCount", "bead_count") ?? 0) || (gridData ? gridData.length * ((gridData[0] as { length?: number })?.length || 0) : 0),
+    colorCount: Number(get("colorCount", "color_count") ?? colorPalette?.length ?? 0),
     colorPalette: colorPalette as Pattern["colorPalette"],
     version: Number(get("version", "version") || 1),
     views: Number(get("views", "views") || 0),
@@ -228,9 +340,12 @@ function mapPattern(input: Record<string, unknown>): Pattern {
       ? (get("collections", "collections") as Pattern["collections"])
       : undefined,
     audit: get("audit", "audit") as Pattern["audit"],
-  } as Pattern;
-}
+    relatedPatterns: Array.isArray(get("related_patterns", "related_patterns"))
+      ? (get("related_patterns", "related_patterns") as unknown[]).map((r) => mapPattern(r as Record<string, unknown>))
+      : undefined,
+    } as Pattern;
+    }
 
-function normalizeArray<T>(v: T | T[]): T[] {
+    function normalizeArray<T>(v: T | T[]): T[] {
   return Array.isArray(v) ? v : [v];
 }

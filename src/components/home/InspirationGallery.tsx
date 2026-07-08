@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { getPublishedPatterns, Pattern } from "@/lib/publicApiService";
-import { getPatternImage } from "@/components/BeadRenderer";
+import { getPatternImage } from "@/lib/patternImage";
 
 export default function InspirationGallery() {
   const [patterns, setPatterns] = useState<Pattern[]>([]);

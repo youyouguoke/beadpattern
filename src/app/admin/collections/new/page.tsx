@@ -1,0 +1,66 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { adminService } from "@/lib/adminService";
+
+export default function NewCollectionPage() {
+  const router = useRouter();
+  const [item, setItem] = useState<Partial<{ title: string; slug: string; description: string; published: boolean; displayOrder: number; banner: string }>>({
+    title: "", slug: "", description: "", published: false, displayOrder: 0, banner: "",
+  });
+  const [saving, setSaving] = useState(false);
+
+  const save = async () => {
+    setSaving(true);
+    try {
+      await adminService.createCollection(item);
+      router.push("/admin/collections");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="font-display-md text-2xl text-primary-container">Create Collection</h1>
+        <div className="flex gap-2">
+          <button onClick={() => router.push("/admin/collections")} className="px-4 py-2 rounded-xl text-sm border border-secondary-container hover:bg-surface-container">Cancel</button>
+          <button onClick={save} disabled={saving} className="px-4 py-2 rounded-xl text-sm bg-primary-container text-white hover:bg-primary disabled:opacity-50">
+            {saving ? "Saving..." : "Save"}
+          </button>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-2xl border border-secondary-container p-6 space-y-4 max-w-2xl">
+        <div>
+          <label className="text-sm font-medium text-secondary">Title</label>
+          <input className="w-full mt-1 border border-secondary-container rounded-xl px-3 py-2 text-sm" value={item.title || ""} onChange={(e) => setItem({ ...item, title: e.target.value })} />
+        </div>
+        <div>
+          <label className="text-sm font-medium text-secondary">Slug</label>
+          <input className="w-full mt-1 border border-secondary-container rounded-xl px-3 py-2 text-sm" value={item.slug || ""} onChange={(e) => setItem({ ...item, slug: e.target.value })} />
+        </div>
+        <div>
+          <label className="text-sm font-medium text-secondary">Description</label>
+          <textarea className="w-full mt-1 border border-secondary-container rounded-xl px-3 py-2 text-sm min-h-[80px]" value={item.description || ""} onChange={(e) => setItem({ ...item, description: e.target.value })} />
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="text-sm font-medium text-secondary">Display Order</label>
+            <input type="number" className="w-full mt-1 border border-secondary-container rounded-xl px-3 py-2 text-sm" value={item.displayOrder ?? 0} onChange={(e) => setItem({ ...item, displayOrder: Number(e.target.value) })} />
+          </div>
+          <div className="flex items-center gap-2 pt-6">
+            <input id="published" type="checkbox" checked={!!item.published} onChange={(e) => setItem({ ...item, published: e.target.checked })} />
+            <label htmlFor="published" className="text-sm font-medium text-secondary">Published</label>
+          </div>
+        </div>
+        <div>
+          <label className="text-sm font-medium text-secondary">Banner URL</label>
+          <input className="w-full mt-1 border border-secondary-container rounded-xl px-3 py-2 text-sm" value={item.banner || ""} onChange={(e) => setItem({ ...item, banner: e.target.value })} />
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import PatternDetail from "@/components/pattern/PatternDetail";
-import { getPatternBySlug } from "@/lib/publicApiService";
+import PatternPageClient from "@/components/pattern/PatternPageClient";
+import { getPatternBySlug, getRecommendedPatterns } from "@/lib/publicApiService";
+import { getPatternImage } from "@/lib/patternImage";
 import { notFound } from "next/navigation";
+import JsonLd from "@/components/seo/JsonLd";
+
+const SITE_URL = "https://beadpatternai.com";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -11,7 +15,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   const title = pattern.seoTitle || `${pattern.title} - Perler Bead Pattern | BeadPatternAI`;
   const description = pattern.seoDescription || `Download ${pattern.title} Perler bead pattern. ${pattern.gridSize} grid, ${pattern.estimatedBeads} beads, ${pattern.difficulty} difficulty.`;
-  const url = `https://beadpatternai.com/pattern/${pattern.slug}`;
+  const url = `${SITE_URL}/pattern/${pattern.slug}`;
   const image = pattern.coverImage || pattern.finishedImage;
 
   return {
@@ -41,10 +45,50 @@ export default async function PatternDetailPage({ params }: { params: Promise<{ 
   const pattern = await getPatternBySlug(slug);
   if (!pattern) notFound();
 
+  const rec = await getRecommendedPatterns(slug);
+  const related = [
+    ...(pattern.related || []),
+    ...rec.related,
+    ...rec.sameCollection,
+    ...rec.sameCategory,
+    ...rec.sameTag,
+  ]
+    .filter((p, i, arr) => arr.findIndex((x) => x.slug === p.slug) === i)
+    .filter((p) => p.slug !== slug)
+    .slice(0, 8);
+
+  const relatedImages: Record<string, { type: "image" | "svg"; src: string; svg?: string }> = {};
+  for (const p of related) {
+    relatedImages[p.slug] = getPatternImage(p, { width: 240, height: 240, preferGrid: true });
+  }
+
+  const finishedImage = getPatternImage(pattern, { width: 560, height: 560, preferGrid: true });
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    name: pattern.title,
+    description: pattern.description,
+    image: pattern.coverImage || pattern.finishedImage,
+    url: `${SITE_URL}/pattern/${pattern.slug}`,
+    learningResourceType: "Perler bead pattern",
+    educationalLevel: pattern.difficulty,
+    datePublished: pattern.publishedAt,
+    dateModified: pattern.updatedAt,
+    author: { "@type": "Organization", name: "BeadPatternAI" },
+  };
+
   return (
     <main className="px-4 md:px-12 py-8 pt-28 max-w-screen-2xl mx-auto min-h-screen bg-surface">
+      <JsonLd data={structuredData} />
       <Suspense fallback={<div className="pt-28 text-center">Loading pattern...</div>}>
-        <PatternDetail slug={slug} initialPattern={pattern} />
+        <PatternPageClient
+          slug={slug}
+          pattern={pattern}
+          related={related}
+          relatedImages={relatedImages}
+          finishedImage={finishedImage}
+        />
       </Suspense>
     </main>
   );

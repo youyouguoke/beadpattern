@@ -1,7 +1,7 @@
 "use client";
 
 import { getPatternBySlug, Pattern } from "@/lib/publicApiService";
-import { getPatternImage } from "@/components/BeadRenderer";
+import { getPatternImage } from "@/lib/patternImage";
 import { useEffect, useState } from "react";
 
 const showcasePatterns = [
@@ -75,7 +75,7 @@ export default function HeroPreview({ activeIndex, onSelect }: HeroPreviewProps)
         const mock = showcasePatterns[i];
         const real = fetched[i];
         if (real) {
-          merged.push(real);
+          merged.push(real as unknown as Pattern);
         } else {
           merged.push({
             id: mock.slug,

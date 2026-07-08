@@ -219,7 +219,7 @@ export function mapPatternDetailRow(data: Record<string, unknown>): PatternDetai
     categories: categories.map((c) => ({ id: c.id as string, name: c.name as string, slug: c.slug as string })),
     collections: collections.map((c) => ({ id: c.id as string, name: c.name as string, slug: c.slug as string, title: c.title as string })),
     faqs: faqs.map(mapFAQRow),
-    related: related.map(mapRelatedRow),
+    related: related.map(mapRelatedRow) as unknown as Pattern[],
     seo: seo ? mapSEORow(seo) : null,
     seoVariants: seoVariants.map(mapSEOVariantRow),
     audit: auditRaw ? mapAuditRow(auditRaw) : null,

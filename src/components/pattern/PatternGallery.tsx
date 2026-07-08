@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import type { Pattern } from "@/types";
-import BeadRenderer, { renderBeadGrid } from "@/components/BeadRenderer";
+import BeadRenderer from "@/components/BeadRenderer";
+import { renderBeadGrid } from "@/lib/patternImage";
 
 interface PatternGalleryProps {
   pattern: Pattern;

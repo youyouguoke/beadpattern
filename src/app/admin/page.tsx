@@ -102,6 +102,35 @@ export default function DashboardPage() {
               ))}
             </div>
           </div>
+
+          {stats.health && (
+            <div className="bg-white rounded-2xl border border-secondary-container p-5">
+              <h2 className="font-headline-md text-lg mb-4">Data Health</h2>
+              <div className="space-y-3">
+                <div className="flex justify-between text-sm">
+                  <span className="text-secondary">Total Patterns</span>
+                  <span className="font-medium">{stats.health.total}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-secondary">Missing Grid</span>
+                  <span className="font-medium text-red-600">{stats.health.missingGrid}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-secondary">Missing Cover</span>
+                  <span className="font-medium text-red-600">{stats.health.missingCover}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-secondary">Missing FAQ</span>
+                  <span className="font-medium text-yellow-600">{stats.health.missingFaq}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-secondary">Missing Related</span>
+                  <span className="font-medium text-yellow-600">{stats.health.missingRelated}</span>
+                </div>
+              </div>
+              <Link href="/admin/patterns" className="inline-block mt-4 text-sm text-primary-container">Review Patterns</Link>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getPublishedPatterns, Pattern } from "@/lib/publicApiService";
-import { getPatternImage } from "@/components/BeadRenderer";
+import { getPatternImage } from "@/lib/patternImage";
 
 function diffColor(diff: string) {
   const normalized = diff?.toLowerCase();

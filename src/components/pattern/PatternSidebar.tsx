@@ -2,7 +2,7 @@
 
 import type { Pattern } from "@/types";
 import SaveButton from "./SaveButton";
-import { renderBeadGrid } from "@/components/BeadRenderer";
+import { renderBeadGrid } from "@/lib/patternImage";
 
 interface PatternSidebarProps {
   pattern: Pattern;
