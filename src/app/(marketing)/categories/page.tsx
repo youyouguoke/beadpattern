@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { getCategories } from "@/lib/publicApiService";
+import CategoryCard from "@/components/categories/CategoryCard";
 
 export const dynamic = "force-dynamic";
 
@@ -22,24 +22,7 @@ export default async function CategoriesPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {categories.map((cat) => (
-            <Link
-              key={cat.slug}
-              href={`/category/${cat.slug}`}
-              className="group block bg-white rounded-2xl p-6 border border-secondary-container shadow-sm hover:-translate-y-1 hover:shadow-lg transition-all"
-            >
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 rounded-xl bg-primary-container text-white flex items-center justify-center">
-                  <span className="material-symbols-outlined">{cat.icon ?? "label"}</span>
-                </div>
-                <span className="text-label-sm text-on-surface-variant">
-                {cat.patternCount ?? cat.count ?? 0} patterns
-              </span>
-            </div>
-            <h3 className="font-headline-md text-headline-md text-on-surface mb-1">{cat.name}</h3>
-            <p className="text-body-md text-on-surface-variant line-clamp-2">
-              {cat.description || `Explore ${cat.name} bead patterns.`}
-            </p>
-            </Link>
+            <CategoryCard key={cat.slug} category={cat} variant="page" />
           ))}
         </div>
       </div>
