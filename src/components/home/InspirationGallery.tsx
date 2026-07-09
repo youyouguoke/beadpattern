@@ -7,7 +7,6 @@ import { getPatternImage } from "@/lib/patternImage";
 
 export default function InspirationGallery() {
   const [patterns, setPatterns] = useState<Pattern[]>([]);
-  const [visibleCount, setVisibleCount] = useState(8);
   const [previews, setPreviews] = useState<Record<string, { type: "image" | "svg"; src: string; svg?: string }>>({});
 
   useEffect(() => {
@@ -20,16 +19,6 @@ export default function InspirationGallery() {
       setPreviews(map);
     });
   }, []);
-
-  useEffect(() => {
-    const handle = () => {
-      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 600) {
-        setVisibleCount((prev) => Math.min(prev + 4, patterns.length));
-      }
-    };
-    window.addEventListener("scroll", handle);
-    return () => window.removeEventListener("scroll", handle);
-  }, [patterns]);
 
   if (!patterns.length) return null;
 
@@ -45,7 +34,7 @@ export default function InspirationGallery() {
         </button>
       </div>
       <div className="masonry-grid">
-        {patterns.slice(0, visibleCount).map((img) => (
+        {patterns.map((img) => (
           <Link
             key={img.slug}
             href={`/pattern/${img.slug}`}
@@ -82,16 +71,6 @@ export default function InspirationGallery() {
           </Link>
         ))}
       </div>
-      {visibleCount < patterns.length && (
-        <div className="flex justify-center mt-10">
-          <button
-            onClick={() => setVisibleCount((prev) => Math.min(prev + 4, patterns.length))}
-            className="px-6 py-3 rounded-xl bg-white border border-secondary-container text-secondary hover:bg-primary-container hover:text-white transition-colors"
-          >
-            Load More
-          </button>
-        </div>
-      )}
     </section>
   );
 }
