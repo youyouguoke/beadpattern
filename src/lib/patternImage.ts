@@ -139,9 +139,12 @@ export function getPatternImage(
   const isRealImage = (src?: string | null) =>
     src && !src.includes("placehold.co") && !src.startsWith("data:image/svg+xml");
   if (!opts?.preferGrid) {
-    const finishedSrc = pattern.cover_image || pattern.finished || pattern.img;
+    const finishedSrc = pattern.coverImage || pattern.cover_image || pattern.finished || pattern.img;
     if (opts?.preferFinished && isRealImage(finishedSrc)) {
       return { type: "image", src: finishedSrc! };
+    }
+    if (isRealImage(pattern.coverImage)) {
+      return { type: "image", src: pattern.coverImage! };
     }
     if (isRealImage(pattern.cover_image)) {
       return { type: "image", src: pattern.cover_image! };

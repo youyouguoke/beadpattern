@@ -65,10 +65,17 @@ describe("PatternArchive", () => {
   });
 
   it("filters by category when categorySlug is provided", async () => {
-    (global.fetch as jest.Mock).mockResolvedValue(mockPatternsResponse([
-      makeBackendPattern(1, { tags: [{ name: "Animals", slug: "animals" }] }),
-      makeBackendPattern(2, { tags: [{ name: "Food", slug: "food" }] }),
-    ]));
+    // The API is expected to filter server-side when categorySlug is passed.
+    (global.fetch as jest.Mock).mockImplementation(async (input: RequestInfo | URL) => {
+      const url = typeof input === "string" ? input : input.toString();
+      if (url.includes("category=animals")) {
+        return mockPatternsResponse([makeBackendPattern(1, { tags: [{ name: "Animals", slug: "animals" }] })]);
+      }
+      return mockPatternsResponse([
+        makeBackendPattern(1, { tags: [{ name: "Animals", slug: "animals" }] }),
+        makeBackendPattern(2, { tags: [{ name: "Food", slug: "food" }] }),
+      ]);
+    });
 
     render(<PatternArchive categorySlug="animals" />);
 

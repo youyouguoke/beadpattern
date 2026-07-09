@@ -10,7 +10,6 @@ const navLinks = [
   { label: "Collections", href: "/collections" },
   { label: "Ideas", href: "/inspiration" },
   { label: "Generator", href: "/generate" },
-  { label: "Blog", href: "#" },
 ];
 
 export default function Navigation() {
@@ -45,15 +44,6 @@ export default function Navigation() {
           ))}
         </div>
 
-        <div className="hidden md:block">
-          <Link
-            href="/generate"
-            className="bg-primary-container text-on-primary-container px-6 py-2 rounded-lg font-label-lg text-label-lg hover:scale-105 transition-transform active:scale-95 shadow-sm"
-          >
-            Create with AI
-          </Link>
-        </div>
-
         <button
           className="md:hidden p-2 rounded-lg text-on-surface-variant hover:bg-surface-container"
           onClick={() => setMenuOpen((o) => !o)}
@@ -83,13 +73,6 @@ export default function Navigation() {
                 {link.label}
               </Link>
             ))}
-            <Link
-              href="/generate"
-              onClick={() => setMenuOpen(false)}
-              className="block w-full text-center bg-primary-container text-on-primary-container px-6 py-3 rounded-lg font-label-lg text-label-lg mt-4"
-            >
-              Create with AI
-            </Link>
           </div>
         </div>
       )}

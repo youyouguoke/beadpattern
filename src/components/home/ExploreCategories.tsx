@@ -12,14 +12,14 @@ const tagStyles: Record<string, string> = {
 };
 
 const categoryIcons: Record<string, string> = {
-  animals: "pets",
-  characters: "face",
-  "food-drink": "restaurant",
-  nature: "forest",
-  gaming: "sports_esports",
-  halloween: "skull",
-  christmas: "ac_unit",
-  kawaii: "favorite",
+  animals: "🐰",
+  characters: "🦸",
+  "food-drink": "🍧",
+  nature: "🌻",
+  gaming: "👾",
+  "seasonal-holidays": "🎊",
+  "fantasy-mythical": "🧚",
+  "objects-symbols": "💎",
 };
 
 const categoryTags: Record<string, string> = {
@@ -56,7 +56,7 @@ export default function ExploreCategories() {
             <div className="bg-white rounded-xl bead-shadow transition-all hover:-translate-y-1 overflow-hidden cursor-pointer">
               <div className="aspect-square overflow-hidden bg-secondary-container relative">
                 <div className="w-full h-full flex items-center justify-center bg-surface-container">
-                  <span className="material-symbols-outlined text-6xl text-primary/30">{categoryIcons[cat.slug] || "label"}</span>
+                  <span className="text-6xl" role="img" aria-label={cat.name}>{categoryIcons[cat.slug] || "✨"}</span>
                 </div>
                 {categoryTags[cat.slug] && (
                   <span className={`absolute top-3 left-3 text-[10px] font-bold px-2 py-0.5 rounded-full ${tagStyles[categoryTags[cat.slug]] || "bg-surface-container text-on-surface-variant"}`}>

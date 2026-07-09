@@ -10,7 +10,10 @@
     "deploy": "npx opennextjs-cloudflare build && wrangler deploy",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:ci": "jest --ci --coverage"
+    "test:ci": "jest --ci --coverage",
+    "test:api": "jest src/__tests__/api/api.test.ts",
+    "api-smoke:ts": "ts-node scripts/api-smoke-test.ts",
+    "api-smoke:sh": "bash scripts/api-smoke-test.sh"
   },
   "dependencies": {
     "html2canvas": "^1.4.1",
