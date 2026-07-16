@@ -3,7 +3,7 @@ import "./globals.css";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 
-const GA_ID = "G-NKBPE63232";
+const GA_ID = "G-6PQKQYXEB3";
 
 export const metadata: Metadata = {
   title: "BeadPatternAI | AI Perler Bead Pattern Generator",
@@ -54,11 +54,11 @@ export default function RootLayout({
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', 'G-NKBPE63232', { send_page_view: true });
+              gtag('config', 'G-6PQKQYXEB3', { send_page_view: true });
               (function(){
                 var s = document.createElement('script');
                 s.async = true;
-                s.src = 'https://www.googletagmanager.com/gtag/js?id=G-NKBPE63232';
+                s.src = 'https://www.googletagmanager.com/gtag/js?id=G-6PQKQYXEB3';
                 s.id = 'ga-script';
                 var first = document.getElementsByTagName('script')[0];
                 first.parentNode.insertBefore(s, first);
