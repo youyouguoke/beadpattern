@@ -80,6 +80,23 @@ export default async function PatternDetailPage({ params }: { params: Promise<{ 
     author: { "@type": "Organization", name: "BeadPatternAI" },
   };
 
+  const productSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: pattern.title,
+    description: pattern.description,
+    image: pattern.coverImage || pattern.finishedImage,
+    url: pageUrl,
+    brand: { "@type": "Brand", name: "BeadPatternAI" },
+    offers: {
+      "@type": "Offer",
+      url: pageUrl,
+      priceCurrency: "USD",
+      price: "0",
+      availability: "https://schema.org/InStock",
+    },
+  };
+
   const breadcrumbList = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -121,6 +138,7 @@ export default async function PatternDetailPage({ params }: { params: Promise<{ 
     <main className="min-h-screen bg-surface">
       <div className="container-main py-8 pt-28">
         <JsonLd data={creativeWork} />
+        <JsonLd data={productSchema} />
         <JsonLd data={breadcrumbList} />
         {itemList && <JsonLd data={itemList} />}
         {faqPage && <JsonLd data={faqPage} />}

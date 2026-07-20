@@ -6,12 +6,13 @@ export const dynamic = "force-dynamic";
 
 const SITE_URL = "https://beadpatternai.com";
 
-const posts: Record<string, { title: string; description: string; date: string; category: string; content: string }> = {
+const posts: Record<string, { title: string; description: string; date: string; category: string; type: "article" | "listicle"; items?: { title: string; description: string; link: string }[]; content: string }> = {
   "beginner-guide-to-perler-beads": {
     title: "The Beginner's Guide to Perler Beads",
     description: "Learn the basics of Perler beads: supplies, ironing tips, and how to read your first pattern.",
     date: "2026-07-10",
     category: "Tutorials",
+    type: "article" as const,
     content: `Perler beads — also called fuse beads or Hama beads — are small plastic beads that you arrange on a pegboard to create pixel-art designs. Once arranged, you cover them with ironing paper and melt the beads together with a household iron. This guide covers everything you need to start your first project.
 
 ## What You Need
@@ -37,6 +38,7 @@ Happy crafting!`,
     description: "Picking between 16x16, 32x32, and 64x64 grids for your Perler bead project.",
     date: "2026-07-12",
     category: "Tips",
+    type: "article" as const,
     content: `Grid size determines both detail and difficulty. A 16x16 grid is great for keychains and magnets. A 32x32 grid is the most common choice for balanced detail and speed. A 48x48 or 64x64 grid is ideal for portraits or complex scenes but requires more beads and multiple pegboards.
 
 Use the Difficulty and Grid Size filters on BeadPatternAI to find projects that match your time and supplies.`,
@@ -46,13 +48,34 @@ Use the Difficulty and Grid Size filters on BeadPatternAI to find projects that 
     description: "Cute characters and sweet designs for your next Perler bead project.",
     date: "2026-07-15",
     category: "Inspiration",
-    content: `Kawaii patterns are some of the most popular designs on BeadPatternAI. From smiling foods to tiny animals, these projects use simple shapes and bright colors. They make great gifts, pins, and backpack charms. Browse our Kawaii category for the latest designs.`,
+    type: "listicle" as const,
+    items: [
+      { title: "Cute Panda", description: "A sleepy panda face with rosy cheeks, perfect for beginners.", link: "/pattern/cute-panda" },
+      { title: "Kawaii Cat", description: "Tiny round cat with big eyes and a pink nose.", link: "/pattern/kawaii-cat" },
+      { title: "Bubble Tea Duck", description: "A duck holding a boba tea, fun and colorful.", link: "/pattern/bubble-tea-duck" },
+      { title: "Cupcake Cherry", description: "Sweet cupcake topped with a bright cherry.", link: "/pattern/cupcake-cherry" },
+      { title: "Sleepy Bunny", description: "Fluffy bunny with closed eyes and long ears.", link: "/pattern/sleepy-bunny" },
+      { title: "Happy Sushi", description: "Smiling sushi roll with a cute face.", link: "/pattern/happy-sushi" },
+      { title: "Little Mushroom", description: "Red-capped mushroom with white spots.", link: "/pattern/little-mushroom" },
+      { title: "Strawberry Milk", description: "Cartoon strawberry milk carton.", link: "/pattern/strawberry-milk" },
+      { title: "Cloud Friend", description: "Fluffy cloud with a smile and tiny arms.", link: "/pattern/cloud-friend" },
+      { title: "Star Cookie", description: "Star-shaped cookie with a cheerful face.", link: "/pattern/star-cookie" },
+    ],
+    content: `Kawaii patterns are some of the most popular designs on BeadPatternAI. From smiling foods to tiny animals, these projects use simple shapes and bright colors. They make great gifts, pins, and backpack charms.`,
   },
   "halloween-perler-bead-ideas": {
     title: "Spooky Halloween Perler Bead Ideas",
     description: "Ghosts, pumpkins, bats, and more Halloween Perler bead patterns.",
     date: "2026-07-18",
     category: "Seasonal",
+    type: "listicle" as const,
+    items: [
+      { title: "Friendly Ghost", description: "A cute ghost with big eyes and a little smile.", link: "/pattern/friendly-ghost" },
+      { title: "Jack-o'-Lantern", description: "Classic pumpkin with a glowing carved face.", link: "/pattern/jack-o-lantern" },
+      { title: "Vampire Bat", description: "Adorable bat with tiny fangs and wings.", link: "/pattern/vampire-bat" },
+      { title: "Witch Hat", description: "Striped witch hat perfect for magnets.", link: "/pattern/witch-hat" },
+      { title: "Candy Corn", description: "Tri-color candy corn in kawaii style.", link: "/pattern/candy-corn" },
+    ],
     content: `Halloween is the perfect season for Perler beads. Try ghosts, black cats, pumpkins, bats, and candy corn. These small projects are quick to make and perfect for decorations, magnets, or trick-or-treat gifts.`,
   },
 };
@@ -153,6 +176,32 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               }
               return <p key={i} className="text-on-surface-variant mb-4 leading-relaxed">{paragraph}</p>;
             })}
+
+            {post.type === "listicle" && post.items && (
+              <ol className="space-y-6 mt-8">
+                {post.items.map((item, idx) => (
+                  <li key={idx} className="bg-surface-container-low rounded-2xl p-5 border border-outline-variant/20">
+                    <div className="flex items-start gap-4">
+                      <span className="flex-shrink-0 w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold font-quicksand">
+                        {idx + 1}
+                      </span>
+                      <div className="flex-1">
+                        <h3 className="font-quicksand font-bold text-headline-sm text-on-surface mb-1">
+                          <Link href={item.link} className="hover:text-primary transition-colors">{item.title}</Link>
+                        </h3>
+                        <p className="text-on-surface-variant mb-3">{item.description}</p>
+                        <Link
+                          href={item.link}
+                          className="inline-flex items-center gap-1 text-primary font-label-sm font-bold hover:underline"
+                        >
+                          View Pattern <span className="material-symbols-outlined text-base">arrow_forward</span>
+                        </Link>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            )}
           </div>
         </div>
       </div>

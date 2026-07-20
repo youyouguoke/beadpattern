@@ -12,6 +12,7 @@ import PatternFaq from "./PatternFaq";
 import GenerateSimilar from "./GenerateSimilar";
 import ShareCard from "./ShareCard";
 import RelatedPatterns from "./RelatedPatterns";
+import PatternInternalLinks from "./PatternInternalLinks";
 import { downloadPng, downloadPdf } from "@/lib/downloads";
 import { renderBeadGrid } from "@/lib/patternImage";
 
@@ -163,6 +164,7 @@ export default function PatternPageClient({
         <PatternAbout pattern={pattern} />
         <PatternSteps steps={pattern.steps} />
         <PatternFaq faqs={pattern.faqs} />
+        <PatternInternalLinks pattern={pattern} />
         <GenerateSimilar title={pattern.title} />
         <ShareCard pattern={pattern} />
         <RelatedPatterns patterns={related} images={relatedImages} />

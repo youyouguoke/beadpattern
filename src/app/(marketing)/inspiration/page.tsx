@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import InspirationGallery from "@/components/home/InspirationGallery";
 import JsonLd from "@/components/seo/JsonLd";
 
@@ -40,12 +41,18 @@ export default function InspirationPage() {
     <main className="min-h-screen bg-surface">
       <JsonLd data={breadcrumbSchema} />
       <div className="max-w-[1280px] mx-auto px-4 md:px-12 py-8 pt-28">
+        <nav className="text-body-sm text-on-surface-variant mb-6">
+          <Link href="/" className="hover:text-primary transition-colors">Home</Link>
+          <span className="mx-2">/</span>
+          <span className="text-on-surface">Inspiration</span>
+        </nav>
+
         <div className="mb-8">
-          <h1 className="font-quicksand font-bold text-display-lg-mobile md:text-display-lg text-on-surface mb-2">
+          <h1 className="font-quicksand font-bold text-display-lg-mobile md:text-display-lg text-on-surface mb-3">
             Inspiration Gallery
           </h1>
-          <p className="text-body-lg text-on-surface-variant">
-            Pinterest-style Perler bead pattern inspiration from the community.
+          <p className="text-body-lg text-on-surface-variant max-w-2xl">
+            Pinterest-style Perler bead pattern inspiration. Save your favorite ideas, discover trending designs, and download printable templates.
           </p>
         </div>
       </div>
