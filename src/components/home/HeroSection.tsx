@@ -1,65 +1,108 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import HeroSearch from "./HeroSearch";
-import HeroCta from "./HeroCta";
-import HeroTrending from "./HeroTrending";
-import HeroPreview from "./HeroPreview";
-import HeroPopular from "./HeroPopular";
+import Link from "next/link";
 
-const rotatingPlaceholders = ["Cute Frog", "Christmas Tree", "Ghost", "Panda", "Flower"];
+const heroImages = {
+  hero: "https://pub-98e050954fa34ccebe6d2e8911f520a3.r2.dev/covers/cute-cat.png",
+  panda: "https://pub-98e050954fa34ccebe6d2e8911f520a3.r2.dev/covers/detailed-panda.png",
+  food: "https://pub-98e050954fa34ccebe6d2e8911f520a3.r2.dev/covers/cupcake-cherry.png",
+  collage: "https://pub-98e050954fa34ccebe6d2e8911f520a3.r2.dev/covers/cute-fox.png",
+};
 
 export default function HeroSection() {
-  const [active, setActive] = useState(0);
-  const [query, setQuery] = useState("");
-  const [placeholderIndex, setPlaceholderIndex] = useState(0);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setActive((prev) => (prev + 1) % 4);
-    }, 4000);
-    return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setPlaceholderIndex((prev) => (prev + 1) % rotatingPlaceholders.length);
-    }, 2500);
-    return () => clearInterval(timer);
-  }, []);
-
   return (
-    <section className="relative px-4 md:px-12 lg:px-16 py-12 md:py-20 lg:py-24 overflow-hidden">
-      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-[#fffdfb] via-[#fff8f9] to-[#fff4f6]" />
+    <section className="relative overflow-hidden bg-surface-container-lowest">
+      {/* Decorative background blobs */}
+      <div className="absolute -top-24 -right-24 w-96 h-96 bg-secondary-container/20 rounded-full blur-3xl -z-0" />
+      <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-primary-container/20 rounded-full blur-3xl -z-0" />
 
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-        <div className="space-y-6 lg:space-y-7">
-          <h1 className="font-display-lg text-[1.85rem] sm:text-[2.1rem] md:text-[2.5rem] lg:text-[2.85rem] text-primary-container leading-[1.08] tracking-tight text-center lg:text-left">
-            Discover Printable
-            <br />
-            Perler Bead Patterns
-          </h1>
+      <div className="container-main relative z-10 pt-16 pb-24">
+        <div className="flex flex-col lg:flex-row items-center gap-12">
+          {/* Left: copy */}
+          <div className="lg:w-1/2 space-y-stack-md">
+            <h1 className="font-quicksand text-headline-xl text-primary max-w-md">
+              Cute Perler Bead Patterns
+            </h1>
 
-          <p className="font-body-lg text-base md:text-lg text-secondary max-w-md text-center lg:text-left">
-            Search thousands of free printable bead patterns or create your own with AI.
-          </p>
+            <p className="font-plus-jakarta text-body-lg text-on-surface-variant max-w-lg">
+              Discover printable fuse bead patterns for animals, food, kawaii characters and pixel art. Join our community of makers today.
+            </p>
 
-          <HeroSearch
-            rotatingPlaceholders={rotatingPlaceholders}
-            placeholderIndex={placeholderIndex}
-            value={query}
-            onChange={setQuery}
-          />
+            <div className="flex flex-wrap gap-4 pt-4">
+              <Link
+                href="/patterns"
+                className="bg-primary text-on-primary px-8 py-4 rounded-full font-label-md hover:shadow-lg transition-all flex items-center gap-2"
+              >
+                Browse Patterns
+                <span className="material-symbols-outlined text-lg">arrow_forward</span>
+              </Link>
+              <Link
+                href="/collections"
+                className="border-2 border-primary text-primary px-8 py-4 rounded-full font-label-md hover:bg-primary/5 transition-all"
+              >
+                Explore Collections
+              </Link>
+            </div>
+          </div>
 
-          <HeroCta />
+          {/* Right: Pinterest-style collage */}
+          <div className="lg:w-1/2 w-full">
+            <div className="grid grid-cols-3 gap-4">
+              {/* Large 2x2 hero image */}
+              <div className="col-span-2 row-span-2 rounded-2xl overflow-hidden shadow-xl aspect-square bg-surface-container-low">
+                <img
+                  src={heroImages.hero}
+                  alt="Cute Cat Perler Bead Pattern"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src =
+                      "https://placehold.co/800x800/d9e3f6/ad2c4e?text=Cute+Cat";
+                  }}
+                />
+              </div>
 
-          <HeroTrending />
+              {/* Top-right small */}
+              <div className="rounded-2xl overflow-hidden shadow-xl aspect-square bg-surface-container-low">
+                <img
+                  src={heroImages.panda}
+                  alt="Detailed Panda Perler Bead Pattern"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src =
+                      "https://placehold.co/400x400/d9e3f6/ad2c4e?text=Panda";
+                  }}
+                />
+              </div>
+
+              {/* Middle-right small */}
+              <div className="rounded-2xl overflow-hidden shadow-xl aspect-square bg-surface-container-low">
+                <img
+                  src={heroImages.food}
+                  alt="Cupcake Cherry Perler Bead Pattern"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src =
+                      "https://placehold.co/400x400/d9e3f6/ad2c4e?text=Cupcake";
+                  }}
+                />
+              </div>
+
+              {/* Bottom full-width collage */}
+              <div className="col-span-3 rounded-2xl overflow-hidden shadow-xl aspect-video bg-surface-container-low">
+                <img
+                  src={heroImages.collage}
+                  alt="Cute Fox Perler Bead Pattern"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src =
+                      "https://placehold.co/1200x675/d9e3f6/ad2c4e?text=Fox";
+                  }}
+                />
+              </div>
+            </div>
+          </div>
         </div>
-
-        <HeroPreview activeIndex={active} onSelect={setActive} />
       </div>
-
-      <HeroPopular />
     </section>
   );
 }
