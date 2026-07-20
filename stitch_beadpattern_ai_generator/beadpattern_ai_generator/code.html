@@ -1,0 +1,365 @@
+<!DOCTYPE html><html class="light" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>BeadPatternAI | AI Pattern Generator</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Quicksand:wght@700&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bead-grid {
+            background-image: radial-gradient(circle, #dde4e6 1.5px, transparent 1.5px);
+            background-size: 16px 16px;
+        }
+        .glass-panel {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #ffb2b9;
+            border-radius: 10px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "outline": "#8b7072",
+                      "on-tertiary": "#ffffff",
+                      "tertiary": "#006970",
+                      "on-tertiary-fixed": "#002022",
+                      "primary-fixed-dim": "#ffb2b9",
+                      "on-error": "#ffffff",
+                      "secondary-container": "#fed5df",
+                      "inverse-primary": "#ffb2b9",
+                      "inverse-on-surface": "#ebf2f4",
+                      "primary": "#ad2d47",
+                      "on-primary-fixed": "#400010",
+                      "tertiary-fixed-dim": "#7cd4dd",
+                      "on-surface-variant": "#584143",
+                      "surface-bright": "#f4fafd",
+                      "tertiary-container": "#4fa9b2",
+                      "on-secondary-container": "#795a63",
+                      "on-background": "#161d1f",
+                      "surface-container-lowest": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "surface": "#f4fafd",
+                      "surface-variant": "#dde4e6",
+                      "primary-container": "#ff6b81",
+                      "on-secondary-fixed": "#2b151c",
+                      "secondary-fixed": "#ffd9e2",
+                      "inverse-surface": "#2b3234",
+                      "on-secondary-fixed-variant": "#5b3f47",
+                      "surface-tint": "#ad2d47",
+                      "tertiary-fixed": "#99f1fa",
+                      "surface-container": "#e8eff1",
+                      "outline-variant": "#dfbfc1",
+                      "surface-container-highest": "#dde4e6",
+                      "on-error-container": "#93000a",
+                      "primary-fixed": "#ffdadc",
+                      "secondary": "#75565f",
+                      "surface-container-high": "#e2e9ec",
+                      "on-tertiary-container": "#003a3f",
+                      "surface-container-low": "#eef5f7",
+                      "on-primary-container": "#6e0021",
+                      "on-surface": "#161d1f",
+                      "on-secondary": "#ffffff",
+                      "on-primary-fixed-variant": "#8c1231",
+                      "error": "#ba1a1a",
+                      "surface-dim": "#d4dbdd",
+                      "secondary-fixed-dim": "#e4bcc6",
+                      "background": "#f4fafd",
+                      "on-tertiary-fixed-variant": "#004f55"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-mobile": "16px",
+                      "lg": "40px",
+                      "sm": "16px",
+                      "gutter": "24px",
+                      "md": "24px",
+                      "margin-desktop": "48px",
+                      "xs": "8px",
+                      "xl": "64px",
+                      "base": "4px"
+              },
+              "fontFamily": {
+                      "display-lg": ["Quicksand"],
+                      "body-lg": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "headline-md": ["Quicksand"],
+                      "display-lg-mobile": ["Quicksand"],
+                      "body-md": ["Inter"]
+              },
+              "fontSize": {
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "label-sm": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                      "display-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface font-body-md custom-scrollbar overflow-x-hidden">
+<!-- TopNavBar -->
+<nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-desktop py-base max-w-screen-2xl mx-auto bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-md shadow-sm">
+<div class="flex items-center gap-xl">
+<img src="https://lh3.googleusercontent.com/aida/AP1WRLvrVIKgtKTfLumW8gaMsC_UqmglrLH24mVFUAZVt8aYEWvyhavtvwgKd5aT4y6oOcoLHGRjzyDSbbKlG3C6I0CojD64kCLOBBi8niFBPmaOWeoHNwZ4DzwM12CKVY4wrOCFWFiCTs4ZQSitM33UZSJRsASrhB6inHxr7Z8ye4exJIZfvnEuF8Xs7Nk1kvBYIpQaYFY6TSP4tCutxaTlisfk-big9iUEZEgXZCEMlVeh88T92JfDziO_kcM" alt="BeadPatternAI Logo" class="h-8 w-auto object-contain">
+<div class="hidden md:flex gap-md items-center">
+<a class="font-body-md text-body-md text-primary dark:text-inverse-primary font-bold border-b-2 border-primary hover:text-primary-container transition-colors duration-200" href="#">Generator</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary-container transition-colors duration-200" href="#">Categories</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary-container transition-colors duration-200" href="#">Popular Patterns</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary-container transition-colors duration-200" href="#">Blog</a>
+</div>
+</div>
+<button class="bg-primary-container text-on-primary hover:scale-102 transition-transform duration-200 font-label-sm text-label-sm px-md py-xs rounded-lg shadow-sm">
+            Generate Pattern
+        </button>
+</nav>
+<!-- Main Content Area -->
+<main class="pt-32 pb-xl px-margin-desktop max-w-screen-2xl mx-auto">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<!-- Left Panel (Controls) -->
+<aside class="lg:col-span-4 bg-white rounded-xl p-md shadow-sm border border-secondary-container/30 sticky top-24">
+<header class="mb-md">
+<h1 class="font-headline-md text-headline-md text-primary mb-xs">AI Pattern Generator</h1>
+<p class="text-on-surface-variant text-label-sm">Turn your wildest ideas into perler bead art.</p>
+</header>
+<div class="space-y-md">
+<!-- Text Area -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-sm text-on-surface-variant">Describe your idea</label>
+<textarea class="w-full bg-surface-container-low border-2 border-secondary-fixed rounded-lg p-sm font-body-md focus:outline-none focus:border-primary-container focus:ring-4 focus:ring-primary-container/10 transition-all resize-none h-32" placeholder="cute panda eating ramen"></textarea>
+</div>
+<!-- Style Selector -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-sm text-on-surface-variant">Style Preference</label>
+<div class="flex flex-wrap gap-xs">
+<button class="px-md py-xs bg-primary text-on-primary rounded-full font-label-sm transition-all scale-102">Kawaii</button>
+<button class="px-md py-xs bg-secondary-fixed text-on-secondary-fixed-variant rounded-full font-label-sm hover:bg-secondary-container transition-colors">Cute</button>
+<button class="px-md py-xs bg-secondary-fixed text-on-secondary-fixed-variant rounded-full font-label-sm hover:bg-secondary-container transition-colors">Pixel Art</button>
+<button class="px-md py-xs bg-secondary-fixed text-on-secondary-fixed-variant rounded-full font-label-sm hover:bg-secondary-container transition-colors">Minimal</button>
+</div>
+</div>
+<!-- Grid Size Selector -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-sm text-on-surface-variant">Grid Size</label>
+<div class="grid grid-cols-3 gap-xs">
+<button class="p-xs bg-secondary-fixed text-on-secondary-fixed-variant rounded-lg font-label-sm text-center border-2 border-transparent hover:border-primary-container/30">16x16</button>
+<button class="p-xs bg-surface-container-high text-primary border-2 border-primary-container rounded-lg font-label-sm text-center font-bold">32x32</button>
+<button class="p-xs bg-secondary-fixed text-on-secondary-fixed-variant rounded-lg font-label-sm text-center border-2 border-transparent hover:border-primary-container/30">64x64</button>
+</div>
+</div>
+<!-- Color Count Slider -->
+<div class="flex flex-col gap-xs">
+<div class="flex justify-between items-center">
+<label class="font-label-sm text-on-surface-variant">Color Complexity</label>
+<span class="font-label-sm text-primary font-bold">12 Colors</span>
+</div>
+<input class="w-full h-2 bg-secondary-fixed rounded-lg appearance-none cursor-pointer accent-primary-container" max="32" min="8" type="range" value="12">
+<div class="flex justify-between text-[10px] text-on-surface-variant px-1">
+<span class="">8</span>
+<span class="">16</span>
+<span class="">32</span>
+</div>
+</div>
+<!-- Generate Button -->
+<button class="w-full bg-primary-container text-on-primary py-md rounded-lg font-headline-md shadow-[0px_4px_20px_rgba(255,107,129,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-xs">
+<span class="material-symbols-outlined">auto_awesome</span>
+                        Generate Pattern
+                    </button>
+</div>
+</aside>
+<!-- Right Panel (Preview & Output) -->
+<div class="lg:col-span-8 flex flex-col gap-gutter">
+<!-- Large Pattern Preview Area -->
+<div class="bg-white rounded-xl shadow-sm border border-secondary-container/30 overflow-hidden group">
+<div class="p-md border-b border-surface-variant flex justify-between items-center bg-surface-container-low">
+<span class="font-label-sm text-on-surface-variant flex items-center gap-xs">
+<span class="material-symbols-outlined text-[20px]">brush</span>
+                            Draft #1,240
+                        </span>
+<div class="flex gap-xs">
+<button class="p-xs text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">zoom_in</span>
+</button>
+<button class="p-xs text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">fullscreen</span>
+</button>
+</div>
+</div>
+<div class="aspect-square bead-grid flex items-center justify-center p-xl relative group">
+<div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="relative w-full h-full rounded-xl overflow-hidden shadow-lg border-4 border-white">
+<img class="w-full h-full object-cover" data-alt="A vibrant, high-definition perler bead pattern design of a cute panda character happily eating a bowl of steaming ramen. The design is rendered in a clean, isometric 32x32 grid style with visible circular bead textures. The color palette includes soft whites, charcoal blacks, and pastel pinks for the cheeks, with a warm terracotta bowl. The aesthetic is bright, playful, and minimalist, set against a soft off-white background consistent with a professional crafting application." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJozQx0j3a3kJ61ZaliX82D8Y9w3n4T3T3kl2nz_wl1HDhUXfLN0cACLOfoMiSphgZ89-9U1drHewr2y6ZYJaLKOupchA4iFvPLXhmIR81-q7vyovA4_cuvnjjWZks6Iugx4AEc5jvHl34isqi934WvERWJqOs4EwTraZt8kM2cYAE4oAWMTrDEHDuccgDXAJqTNcXgSN2D_d-JxLIoofTmPhagb5aEghj92RQ3cQNX1yN-DBKHhWZi0hnPndLVx338UIX_1bwAkM">
+</div>
+</div>
+</div>
+<!-- Bento Info Cluster -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Info Card -->
+<div class="md:col-span-2 bg-white rounded-xl p-md shadow-sm border border-secondary-container/30">
+<h3 class="font-headline-md text-headline-md text-primary mb-md">Pattern Details</h3>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-md">
+<div class="flex flex-col">
+<span class="text-[12px] text-on-surface-variant uppercase tracking-wider font-bold">Grid Size</span>
+<span class="font-headline-md text-on-surface">32 x 32</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[12px] text-on-surface-variant uppercase tracking-wider font-bold">Colors</span>
+<span class="font-headline-md text-on-surface">12</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[12px] text-on-surface-variant uppercase tracking-wider font-bold">Beads</span>
+<span class="font-headline-md text-on-surface">1,024</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[12px] text-on-surface-variant uppercase tracking-wider font-bold">Difficulty</span>
+<span class="font-headline-md text-tertiary">Medium</span>
+</div>
+</div>
+</div>
+<!-- Action Card -->
+<div class="bg-primary-container rounded-xl p-md shadow-lg flex flex-col justify-center gap-sm">
+<button class="w-full bg-white text-primary py-xs rounded-lg font-label-sm shadow-sm hover:bg-surface-container-low transition-colors flex items-center justify-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                            Download PNG
+                        </button>
+<button class="w-full bg-white text-primary py-xs rounded-lg font-label-sm shadow-sm hover:bg-surface-container-low transition-colors flex items-center justify-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
+                            Download PDF
+                        </button>
+</div>
+</div>
+<!-- Color Palette Section -->
+<div class="bg-white rounded-xl p-md shadow-sm border border-secondary-container/30">
+<div class="flex justify-between items-center mb-md">
+<h3 class="font-headline-md text-headline-md text-primary">Bead Palette</h3>
+<span class="px-md py-xs bg-tertiary-fixed text-on-tertiary-fixed-variant rounded-full text-[12px] font-bold">Compatible with Perler® &amp; Hama®</span>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-sm">
+<!-- Color Item 1 -->
+<div class="flex items-center gap-xs p-xs rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="w-8 h-8 rounded-full border border-outline-variant shadow-inner shrink-0 bg-[#FFFFFF]" style="box-shadow: inset 0 2px 4px rgba(0,0,0,0.1)"></div>
+<div class="flex flex-col overflow-hidden">
+<span class="text-label-sm truncate group-hover:text-primary transition-colors">White</span>
+<span class="text-[10px] text-on-surface-variant font-mono">#FFFFFF</span>
+</div>
+</div>
+<!-- Color Item 2 -->
+<div class="flex items-center gap-xs p-xs rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="w-8 h-8 rounded-full border border-outline-variant shadow-inner shrink-0 bg-[#2D3436]"></div>
+<div class="flex flex-col overflow-hidden">
+<span class="text-label-sm truncate group-hover:text-primary transition-colors">Charcoal</span>
+<span class="text-[10px] text-on-surface-variant font-mono">#2D3436</span>
+</div>
+</div>
+<!-- Color Item 3 -->
+<div class="flex items-center gap-xs p-xs rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="w-8 h-8 rounded-full border border-outline-variant shadow-inner shrink-0 bg-[#FFD6E0]"></div>
+<div class="flex flex-col overflow-hidden">
+<span class="text-label-sm truncate group-hover:text-primary transition-colors">Soft Pink</span>
+<span class="text-[10px] text-on-surface-variant font-mono">#FFD6E0</span>
+</div>
+</div>
+<!-- Color Item 4 -->
+<div class="flex items-center gap-xs p-xs rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="w-8 h-8 rounded-full border border-outline-variant shadow-inner shrink-0 bg-[#FF6B81]"></div>
+<div class="flex flex-col overflow-hidden">
+<span class="text-label-sm truncate group-hover:text-primary transition-colors">Flamingo</span>
+<span class="text-[10px] text-on-surface-variant font-mono">#FF6B81</span>
+</div>
+</div>
+<!-- Color Item 5 -->
+<div class="flex items-center gap-xs p-xs rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="w-8 h-8 rounded-full border border-outline-variant shadow-inner shrink-0 bg-[#E67E22]"></div>
+<div class="flex flex-col overflow-hidden">
+<span class="text-label-sm truncate group-hover:text-primary transition-colors">Terracotta</span>
+<span class="text-[10px] text-on-surface-variant font-mono">#E67E22</span>
+</div>
+</div>
+<!-- Color Item 6 -->
+<div class="flex items-center gap-xs p-xs rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="w-8 h-8 rounded-full border border-outline-variant shadow-inner shrink-0 bg-[#F1C40F]"></div>
+<div class="flex flex-col overflow-hidden">
+<span class="text-label-sm truncate group-hover:text-primary transition-colors">Sunshine</span>
+<span class="text-[10px] text-on-surface-variant font-mono">#F1C40F</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-xl px-margin-desktop grid grid-cols-1 md:grid-cols-3 gap-md items-start bg-surface-container dark:bg-surface-container-highest border-t border-surface-variant">
+<div class="flex flex-col gap-sm">
+<img src="https://lh3.googleusercontent.com/aida/AP1WRLvrVIKgtKTfLumW8gaMsC_UqmglrLH24mVFUAZVt8aYEWvyhavtvwgKd5aT4y6oOcoLHGRjzyDSbbKlG3C6I0CojD64kCLOBBi8niFBPmaOWeoHNwZ4DzwM12CKVY4wrOCFWFiCTs4ZQSitM33UZSJRsASrhB6inHxr7Z8ye4exJIZfvnEuF8Xs7Nk1kvBYIpQaYFY6TSP4tCutxaTlisfk-big9iUEZEgXZCEMlVeh88T92JfDziO_kcM" alt="BeadPatternAI Logo" class="h-8 w-auto object-contain">
+<p class="font-body-md text-body-md text-secondary dark:text-secondary-fixed-dim max-w-xs">© 2024 BeadPatternAI. Crafting digital beads into infinite possibilities.</p>
+</div>
+<div class="flex flex-col gap-xs">
+<h4 class="font-label-sm text-primary mb-base">Explore</h4>
+<a class="font-body-md text-body-md text-secondary hover:text-primary transition-colors" href="#">Documentation</a>
+<a class="font-body-md text-body-md text-secondary hover:text-primary transition-colors" href="#">Community Guidelines</a>
+<a class="font-body-md text-body-md text-secondary hover:text-primary transition-colors" href="#">Contact Us</a>
+</div>
+<div class="flex flex-col gap-xs">
+<h4 class="font-label-sm text-primary mb-base">Legal</h4>
+<a class="font-body-md text-body-md text-secondary hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="font-body-md text-body-md text-secondary hover:text-primary transition-colors" href="#">Privacy Policy</a>
+</div>
+</footer>
+<script>
+        // Simple micro-interactions for the bead grid
+        document.querySelector('.bead-grid').addEventListener('mousemove', (e) => {
+            const rect = e.target.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            e.target.style.setProperty('--mouse-x', `${x}px`);
+            e.target.style.setProperty('--mouse-y', `${y}px`);
+        });
+
+        // Add subtle feedback to generate button
+        const genBtn = document.querySelector('button.bg-primary-container');
+        genBtn.addEventListener('click', function() {
+            const originalContent = this.innerHTML;
+            this.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span> Dreaming...';
+            this.classList.add('opacity-80');
+            
+            setTimeout(() => {
+                this.innerHTML = originalContent;
+                this.classList.remove('opacity-80');
+            }, 2000);
+        });
+    </script>
+
+
+
+
+
+
+</body></html>

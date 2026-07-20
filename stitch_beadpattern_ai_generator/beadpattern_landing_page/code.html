@@ -1,0 +1,466 @@
+<!DOCTYPE html><html class="light" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>BeadPatternAI | AI Perler Bead Pattern Generator</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Quicksand:wght@700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "inverse-primary": "#ffb2b9",
+                    "on-secondary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-error": "#ffffff",
+                    "surface-container-low": "#eef5f7",
+                    "outline-variant": "#dfbfc1",
+                    "primary-container": "#ff6b81",
+                    "surface-container-high": "#e2e9ec",
+                    "on-tertiary-container": "#003a3f",
+                    "inverse-on-surface": "#ebf2f4",
+                    "on-error-container": "#93000a",
+                    "secondary-fixed-dim": "#e4bcc6",
+                    "primary-fixed": "#ffdadc",
+                    "primary-fixed-dim": "#ffb2b9",
+                    "surface-container-highest": "#dde4e6",
+                    "tertiary-container": "#4fa9b2",
+                    "error-container": "#ffdad6",
+                    "surface-tint": "#ad2d47",
+                    "surface": "#f4fafd",
+                    "on-surface-variant": "#584143",
+                    "secondary": "#75565f",
+                    "on-secondary-fixed": "#2b151c",
+                    "secondary-fixed": "#ffd9e2",
+                    "secondary-container": "#fed5df",
+                    "on-surface": "#161d1f",
+                    "on-secondary-fixed-variant": "#5b3f47",
+                    "on-background": "#161d1f",
+                    "primary": "#ad2d47",
+                    "surface-dim": "#d4dbdd",
+                    "surface-variant": "#dde4e6",
+                    "surface-container": "#e8eff1",
+                    "on-tertiary-fixed": "#002022",
+                    "background": "#f4fafd",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-container": "#795a63",
+                    "on-tertiary-fixed-variant": "#004f55",
+                    "tertiary": "#006970",
+                    "on-primary": "#ffffff",
+                    "outline": "#8b7072",
+                    "surface-bright": "#f4fafd",
+                    "inverse-surface": "#2b3234",
+                    "on-primary-fixed": "#400010",
+                    "on-primary-container": "#6e0021",
+                    "on-primary-fixed-variant": "#8c1231",
+                    "tertiary-fixed": "#99f1fa",
+                    "error": "#ba1a1a",
+                    "tertiary-fixed-dim": "#7cd4dd"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xl": "64px",
+                    "gutter": "24px",
+                    "margin-mobile": "16px",
+                    "lg": "40px",
+                    "base": "4px",
+                    "xs": "8px",
+                    "md": "24px",
+                    "sm": "16px",
+                    "margin-desktop": "48px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-md": ["Quicksand"],
+                    "display-lg-mobile": ["Quicksand"],
+                    "label-sm": ["Inter"],
+                    "display-lg": ["Quicksand"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "display-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                    "label-sm": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .masonry-grid {
+            column-count: 1;
+            column-gap: 24px;
+        }
+        @media (min-width: 768px) { .masonry-grid { column-count: 2; } }
+        @media (min-width: 1024px) { .masonry-grid { column-count: 4; } }
+        .masonry-item {
+            break-inside: avoid;
+            margin-bottom: 24px;
+        }
+        .bead-shadow {
+            box-shadow: 0px 4px 20px rgba(255, 107, 129, 0.08);
+        }
+        .bead-shadow:hover {
+            box-shadow: 0px 12px 32px rgba(45, 52, 54, 0.12);
+        }
+        .glass-nav {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md selection:bg-primary-container selection:text-white">
+<!-- Navigation -->
+<header class="fixed top-0 left-0 w-full z-50 glass-nav bg-surface/80 dark:bg-surface-dim/80 shadow-sm">
+<nav class="max-w-screen-2xl mx-auto flex justify-between items-center px-margin-mobile md:px-margin-desktop py-base h-20">
+<div class="flex items-center gap-xs">
+<img alt="BeadPatternAI Logo" class="h-10 w-10 object-contain" src="https://lh3.googleusercontent.com/aida/AP1WRLvrVIKgtKTfLumW8gaMsC_UqmglrLH24mVFUAZVt8aYEWvyhavtvwgKd5aT4y6oOcoLHGRjzyDSbbKlG3C6I0CojD64kCLOBBi8niFBPmaOWeoHNwZ4DzwM12CKVY4wrOCFWFiCTs4ZQSitM33UZSJRsASrhB6inHxr7Z8ye4exJIZfvnEuF8Xs7Nk1kvBYIpQaYFY6TSP4tCutxaTlisfk-big9iUEZEgXZCEMlVeh88T92JfDziO_kcM">
+<span class="font-display-lg text-headline-md md:text-display-lg-mobile text-primary tracking-tighter">BeadPatternAI</span>
+</div>
+<div class="hidden md:flex items-center gap-lg">
+<a class="text-primary font-bold border-b-2 border-primary font-body-md text-body-md py-1" href="#">Generator</a>
+<a class="text-on-surface-variant hover:text-primary-container transition-colors duration-200 font-body-md text-body-md" href="#">Categories</a>
+<a class="text-on-surface-variant hover:text-primary-container transition-colors duration-200 font-body-md text-body-md" href="#">Popular Patterns</a>
+<a class="text-on-surface-variant hover:text-primary-container transition-colors duration-200 font-body-md text-body-md" href="#">Blog</a>
+</div>
+<button class="bg-primary-container text-white px-sm py-xs rounded-lg font-label-sm hover:scale-105 active:scale-95 transition-all duration-200">
+                Generate Pattern
+            </button>
+</nav>
+</header>
+<main class="pt-24 overflow-x-hidden">
+<!-- Hero Section -->
+<section class="relative px-margin-mobile md:px-margin-desktop py-xl flex flex-col items-center text-center overflow-hidden">
+<!-- Decorative Background Animation -->
+<div class="absolute inset-0 -z-10 opacity-30">
+
+</div>
+<div class="max-w-4xl space-y-md">
+<h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-primary-container animate-fade-in">
+                    Generate Cute AI Perler Bead Patterns in Seconds
+                </h1>
+<p class="font-body-lg text-body-lg text-secondary max-w-2xl mx-auto">
+                    Turn any idea into printable bead templates with AI. Perfect for hobbyists, educators, and creative souls.
+                </p>
+<!-- Generator Input -->
+<div class="w-full max-w-2xl mx-auto mt-lg bg-white rounded-xl p-base bead-shadow flex flex-col md:flex-row gap-xs items-center border-2 border-secondary-container">
+<div class="flex-1 flex items-center px-sm w-full">
+<span class="material-symbols-outlined text-secondary mr-2">magic_button</span>
+<input class="w-full border-none focus:ring-0 text-body-md placeholder:text-outline italic bg-transparent py-4" placeholder="cute frog drinking bubble tea" type="text">
+</div>
+<button class="w-full md:w-auto bg-primary-container text-white px-lg py-4 rounded-lg font-headline-md text-body-md flex items-center justify-center gap-xs hover:bg-primary transition-colors">
+                        Generate Pattern
+                    </button>
+</div>
+<a class="inline-block mt-sm text-primary font-label-sm hover:underline flex items-center justify-center gap-xs" href="#trending">
+                    Browse Patterns <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+<!-- Hero Collage (Asymmetric Layout) -->
+<div class="mt-xl grid grid-cols-2 md:grid-cols-4 gap-md max-w-6xl w-full">
+<div class="aspect-square bg-surface-container rounded-xl overflow-hidden bead-shadow rotate-[-2deg] transition-transform hover:rotate-0">
+<img class="w-full h-full object-cover" data-alt="A vibrant and adorable AI-generated perler bead pattern of a small green frog sitting on a lily pad. The style is pixel-art inspired with soft pastel tones of mint green, peach, and soft teal. The lighting is bright and cheerful, matching a clean light-mode SaaS aesthetic. Every bead is clearly defined for easy crafting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWT5tvsLT5H-4CecbGo_XnuUokaS_102CWORmggbQxOdwVkZ_cl5tIXP3sg1mhBZ6EkrZwq8vf6XY0xY-Q-WN5sIX6WGGB1PFwxJ2sZ-SGchI_MJYx8xvMSgSEwbmC5XHgvJR3UjyxBbu-BRYZwidp4DzBrrty-pfLGTZzG6Ir5IAYSfM42OFjrP0nV7MoNrzFKM1l30bEcNfQ27NNia-q9inJP4kzldFz_FYnGn_a0p5zHk352OHj-1wEWopD3aQKpPqq99fmQC0">
+</div>
+<div class="aspect-square bg-surface-container rounded-xl overflow-hidden bead-shadow rotate-[3deg] translate-y-8 transition-transform hover:rotate-0">
+<img class="w-full h-full object-cover" data-alt="A cute perler bead pattern showing a kawaii kitten face with pink cheeks and big sparkly eyes. The color palette features soft whites, pale pinks, and delicate charcoal beads. This digital illustration has a tactile, physical bead-like texture, presented in a bright and airy minimalist setting with high-key lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFdza8PIvdgLrj5_FtX4jzkvrl2wRs9NDix-J7WJQ4zXYm6m9_lXv5RCyxSg7QsXkQx5qbpnjjRq-RbaqFZFqb7Rr2GImZwW0hYbGBPiYP7C6OxBy2dQntlr5YE6P0ABBL_hTBnz6GbXVWxPFF4fX8qIM-F0T1zsVtX0EeG0kYJ_3YD5pkXJzrpa6expQcWHOO1d4gOP6EypP2wgcuNgGvRsKbEtckXEgScwFCvV9DHwU5k079dVtEWkbDKMGSs78C5qhJMFQhxSo">
+</div>
+<div class="aspect-square bg-surface-container rounded-xl overflow-hidden bead-shadow rotate-[-1deg] transition-transform hover:rotate-0">
+<img class="w-full h-full object-cover" data-alt="A whimsical AI-generated perler bead design of a pink strawberry-themed bear. The bear is holding a tiny heart. Colors are creamy strawberry pink, white, and a splash of vibrant red. The style is clean, modern, and perfectly suited for a high-end crafting platform with a focus on delightful user experiences." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnTILibubFvUGzTAS2Itlg57qDFSlEVU5wzAOnESlcRdmQsjBc5nCuZIzDhJe38FOfaGFl1ZgCGXm2ce2CpWe4o1XMWmfIPfPrrgJRBofMqy_tjMtRUsK-6IajWOfqw2IlQD7I9qAcfFzebNzjwe1dVBJWYUSo3FhwaAjxYjHB00ZWtO6rKPuXHS9whhsbgO0UkFbAsU3TubZ9lZnr6XFe6RFdMFsa3AforTVU_rwQ9AUUnh4pFITzUiwyRVv_96PlXTiBS3hZ4z0">
+</div>
+<div class="aspect-square bg-surface-container rounded-xl overflow-hidden bead-shadow rotate-[4deg] translate-y-4 transition-transform hover:rotate-0">
+<img class="w-full h-full object-cover" data-alt="A creative perler bead layout featuring a cup of bubble tea with a tiny duck floating on top. The design uses shades of baby blue, cream, and brown for the boba pearls. The aesthetic is playful and modern, showcasing the high-detail generation capabilities of PatternNest in a bright, clean lighting environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBp1Hx8CHpK41eASn_qf3_g_X9Y2zCSTV2qUL0s2a1ab7vk6DY_jzXCI9DWNW_KURWs0qZY_Agj6vBbYkscKFsnIhNf7OHUWJPvRoSCZuVMs347-8Y2GpnOL8Yj84HTTwNFjiJq8u7JOHkLprEKSE3PYtKy3k0NaXOgHTJSsg5tsSm-UZrpK3kG9LDqkH5VJk73R4JBzLkr-zkSievOse9BsXXkVJgGuyqJNZShr8LjQL7r89rqGJkigQJNAEH03xkYbOuFaUxTigg">
+</div>
+</div>
+</section>
+<!-- Trending Patterns Grid -->
+<section class="px-margin-mobile md:px-margin-desktop py-xl bg-surface" id="trending">
+<div class="flex items-center justify-between mb-lg">
+<h2 class="font-headline-md text-headline-md text-primary">Trending Patterns</h2>
+<button class="text-secondary font-label-sm flex items-center gap-xs">View All <span class="material-symbols-outlined">grid_view</span></button>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-md">
+<!-- Card 1 -->
+<div class="bg-white p-sm rounded-xl bead-shadow transition-all hover:-translate-y-1">
+<div class="aspect-square rounded-lg overflow-hidden bg-secondary-container mb-sm">
+<img class="w-full h-full object-cover" data-alt="Close-up of a perler bead pattern titled Cute Frog, showing a pixelated green frog with a tiny crown. The colors are lush greens and soft yellows against a clean white backdrop. The style is geometric yet adorable, emphasizing the tactile quality of the craft beads in a bright, modern studio light." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgxFYJto7lkC9x0ECKVPTXRfngOPqbHLfly2rxIeCkhEo0emZq-kSlicJjBp1J9h0khwEDJ_M-z8I-_irNiWEqH0h6HNMN1GFMq6LppAzHR77WN2bvvXKBmL3rGH8_Yzc9GSOT4jLEW5_iDPOm0QqX4yyegJkMeNngqlvoXAuPNVs4GcevjcBIvmplkV_wPQOxT9ELGaXgOaEDoqj5gc2Rnqf0AIBx8shTmg_ElsvMXwWUguesYf3MHcjOtTl8mEf85wacTr2ZosQ">
+</div>
+<h3 class="font-headline-md text-body-md mb-xs">Cute Frog</h3>
+<button class="w-full bg-secondary-container text-primary py-xs rounded-lg font-label-sm hover:bg-primary-container hover:text-white transition-colors">View Pattern</button>
+</div>
+<!-- Card 2 -->
+<div class="bg-white p-sm rounded-xl bead-shadow transition-all hover:-translate-y-1">
+<div class="aspect-square rounded-lg overflow-hidden bg-secondary-container mb-sm">
+<img class="w-full h-full object-cover" data-alt="A kawaii cat perler bead pattern featuring a white cat with large blue eyes and a tiny pink bow. The lighting is soft and even, highlighting the rounded edges of each bead. The overall aesthetic is minimalist and precious, using a palette of white, pastel pink, and powder blue." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoB35YtssNgeEtVQIX9I1WEk90aEVlmll9NmIITg8ow7ynWIsHRD3d9YegPvDM7pOWBEMqszJr4-yqlrTrVVTQjJ9fq8ciKbL4GFeJ_ctUC7IwFbOjt9QWVTltQfpnSKbF3t7h39EHtkmVUdK1mSe5r9OwKpkAJVpohIH3mtlJkA5myETC55EmqPq9otyDhNmETrqi9CqSzxHn7X3eUBytBF8Mkzk_b8vKKrCGJ0tJXaqZFv7-gyNfhcZh5eumAcCIQjoYxaZt1oI">
+</div>
+<h3 class="font-headline-md text-body-md mb-xs">Kawaii Cat</h3>
+<button class="w-full bg-secondary-container text-primary py-xs rounded-lg font-label-sm hover:bg-primary-container hover:text-white transition-colors">View Pattern</button>
+</div>
+<!-- Card 3 -->
+<div class="bg-white p-sm rounded-xl bead-shadow transition-all hover:-translate-y-1">
+<div class="aspect-square rounded-lg overflow-hidden bg-secondary-container mb-sm">
+<img class="w-full h-full object-cover" data-alt="A friendly ghost perler bead pattern for Halloween, glowing with soft neon highlights. The colors are white, lilac, and a soft black for the eyes. The mood is spooky-cute rather than scary, set against a clean and airy digital canvas that feels modern and approachable." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYDWUVX23wd7qczfMHVoYaYLpgsluCvBsSCtsVZn_tSHKgj-P4XJ5OVCX4_UHITeWBFN4Fbd_gi7dOnzt2nGXdQGswbx8JMCGI0qH_3T-vcLHrbCYiiz3ddhrxiPkh2dZPBuef8CFusdS7P6Nosf_mdsNCZa_6J9pQLrNVOex0qsJ2w5leOSowj431dYgVLOAh_RImgO-Qz_Yp_ZbNqH7Ifab9dP79oeMNS6B5ryjb4V9mvKdlb8583TAAkCxZeRrtuL-kDicWCUE">
+</div>
+<h3 class="font-headline-md text-body-md mb-xs">Ghost Pattern</h3>
+<button class="w-full bg-secondary-container text-primary py-xs rounded-lg font-label-sm hover:bg-primary-container hover:text-white transition-colors">View Pattern</button>
+</div>
+<!-- Card 4 -->
+<div class="bg-white p-sm rounded-xl bead-shadow transition-all hover:-translate-y-1">
+<div class="aspect-square rounded-lg overflow-hidden bg-secondary-container mb-sm">
+<img class="w-full h-full object-cover" data-alt="An adorable panda eating ramen perler bead pattern. The design features high-contrast black and white beads for the panda and bright red and yellow for the ramen bowl. The digital representation has a slight 3D depth, making the beads look real and touchable under bright lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnXGzBQmEYyfSXzisPzlkb2KRsYVsjE49rGly67etcruVADdy4SROOCeObMkQXany_LPsJT0bNyyCvIYtub89vwoYX8ZjiUtoA78tVMsH1-l2Fxhbgmk-Zd2NRsw7wPCTj72ik75gNgTF5O9zgOFfcImQGlbRC2RfccAonoE37-7Ns-2qGhhfqGFY0APXYVD_GLmnwMF5-ERR9DWJEospDqI260VF-XON0vYhmR2dKktVGXUDkSKc7kcpcF2UN0e9gs8nm0MEg238">
+</div>
+<h3 class="font-headline-md text-body-md mb-xs">Panda Ramen</h3>
+<button class="w-full bg-secondary-container text-primary py-xs rounded-lg font-label-sm hover:bg-primary-container hover:text-white transition-colors">View Pattern</button>
+</div>
+<!-- Card 5 -->
+<div class="bg-white p-sm rounded-xl bead-shadow transition-all hover:-translate-y-1">
+<div class="aspect-square rounded-lg overflow-hidden bg-secondary-container mb-sm">
+<img class="w-full h-full object-cover" data-alt="A festive Christmas penguin wearing a tiny red scarf, designed as a perler bead pattern. The color scheme is holiday-themed with navy, white, and bright primary red. The lighting is crisp and clear, showcasing the intricate detail possible with PatternNest's AI generation tools." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBkHrHyo-iAUDP9j17ESnZwHiue-w3UYSdio8GicjGI6ExmTQWasc2BGXVGrrJfhXNE0LOFx8uo07VJ6Z1zGg0UguT7gpVl4n8kJJJznr0jrPGPeBoe3Q8OjgtGCj-daUM3rmdLOSVEHLlx3xYxt6RQWO3xAV12OUxnVYO0nU_LIdjve6SdrGkVAnPOFgW79aOQV7cbmaUT4LfeToUp4RNIdp1eJvMtB9KnVZsFlujuYoxjkVGLDENjaIk537Z2lNboXGGeeOnPqw">
+</div>
+<h3 class="font-headline-md text-body-md mb-xs">Christmas Penguin</h3>
+<button class="w-full bg-secondary-container text-primary py-xs rounded-lg font-label-sm hover:bg-primary-container hover:text-white transition-colors">View Pattern</button>
+</div>
+<!-- Card 6 -->
+<div class="bg-white p-sm rounded-xl bead-shadow transition-all hover:-translate-y-1">
+<div class="aspect-square rounded-lg overflow-hidden bg-secondary-container mb-sm">
+<img class="w-full h-full object-cover" data-alt="A strawberry bear perler bead design, showcasing a pink bear with small strawberry patterns on its tummy. The aesthetic is sweet and nostalgic, utilizing various shades of pink and a bright leafy green. The image is bright and professional, suggesting a high-quality SaaS interface for creators." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlponKu8fvQ9RawvPCBHNOC_O6vluHp3x_PgyanO_QfJGmpnJMsHW8n0jFGy-QF1NcZRqv2-S0fKRBC9ZOcntzHEDQhfTJ7Ns8lFxLFOVTl-jkX5f7i6g49aUs0_S9cOx_953VCppCwoNe_z1wOn72pVFApNPA544CAM_opu5eczuADofDRsX-pZSlVtEwDkIBe8TP8LdXeRWk7AkqGcVh7J65PiFKyA2nVyQPcMvvo3nddOihT4LjDJHAhzIX9omrKZP9fYRixbw">
+</div>
+<h3 class="font-headline-md text-body-md mb-xs">Strawberry Bear</h3>
+<button class="w-full bg-secondary-container text-primary py-xs rounded-lg font-label-sm hover:bg-primary-container hover:text-white transition-colors">View Pattern</button>
+</div>
+<!-- Card 7 -->
+<div class="bg-white p-sm rounded-xl bead-shadow transition-all hover:-translate-y-1">
+<div class="aspect-square rounded-lg overflow-hidden bg-secondary-container mb-sm">
+<img class="w-full h-full object-cover" data-alt="A pixel bunny perler bead pattern in soft lavender and cream colors. The design is symmetrical and clean, representing the modern minimalism of the PatternNest brand. Lighting is soft-box style, creating no harsh shadows and keeping the focus on the playful pattern." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxoYk69P9StN6wav9jZOzxbN3tooGoa8NBNY6dVjlSqxymcjfGByFd1U5exFJrBUsibmRYhOr2j102EcgExO0BAFk74xnzhq4XkIEx7KfW3KpoEoG2N7e1JcTql3AMAkKYfXhpmJqFoyvLvA1nlugjqTFoz1OG-IzV7z2ZxhzzzNm9IYeZVpQCvqyhVDmqYMBhuP8EyE7WJ0TZ_pwIIpDA_uZw9ZDyctW69HwQVA_TfkjqIbsHKWKoX6lnbDhykWATqbAoZ_RObWs">
+</div>
+<h3 class="font-headline-md text-body-md mb-xs">Pixel Bunny</h3>
+<button class="w-full bg-secondary-container text-primary py-xs rounded-lg font-label-sm hover:bg-primary-container hover:text-white transition-colors">View Pattern</button>
+</div>
+<!-- Card 8 -->
+<div class="bg-white p-sm rounded-xl bead-shadow transition-all hover:-translate-y-1">
+<div class="aspect-square rounded-lg overflow-hidden bg-secondary-container mb-sm">
+<img class="w-full h-full object-cover" data-alt="A bubble tea duck perler bead pattern, featuring a yellow duckling holding a bubble tea cup. The colors are bright yellow, soft brown, and a clean teal background. The image is designed to evoke delight and creativity, maintaining a consistent professional and playful brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAMUI6s1zmKtSNZgC241SX4TdAIFcvzAHkAK-6gP7PkDdyw494nlSN3eRumsT4SF_kS1ZsOlpRIA0w9Ivn_axf0GBMpTRky6QZCfed6QPDq1X_fvXnEUkfk-bSAjMp10OtRhircKvvLrMiCqS-xqE7IeuRY4V-UMx5v96cK92SXEQPVyIKYvzaEZvKL9784gZsssKleHkASSGvdS4W3E1fro3WuT3K6-tSt_CT1JTgS8Gxadia-rlnbMJoDKRboM0JBfjwPRN-Mcg">
+</div>
+<h3 class="font-headline-md text-body-md mb-xs">Bubble Tea Duck</h3>
+<button class="w-full bg-secondary-container text-primary py-xs rounded-lg font-label-sm hover:bg-primary-container hover:text-white transition-colors">View Pattern</button>
+</div>
+</div>
+</section>
+<!-- Categories Section -->
+<section class="px-margin-mobile md:px-margin-desktop py-xl">
+<h2 class="font-headline-md text-headline-md text-primary text-center mb-xl">Explore Categories</h2>
+<div class="grid grid-cols-2 md:grid-cols-6 gap-md">
+<div class="group cursor-pointer flex flex-col items-center">
+<div class="w-20 h-20 rounded-full bg-tertiary-container/10 flex items-center justify-center mb-sm group-hover:scale-110 transition-transform bg-accent/15">
+<span class="material-symbols-outlined text-tertiary text-3xl">pets</span>
+</div>
+<span class="font-headline-md text-body-md">Animals</span>
+</div>
+<div class="group cursor-pointer flex flex-col items-center">
+<div class="w-20 h-20 rounded-full bg-secondary-container/30 flex items-center justify-center mb-sm group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary text-3xl">favorite</span>
+</div>
+<span class="font-headline-md text-body-md">Kawaii</span>
+</div>
+<div class="group cursor-pointer flex flex-col items-center">
+<div class="w-20 h-20 rounded-full bg-surface-container-highest flex items-center justify-center mb-sm group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-secondary text-3xl">dark_mode</span>
+</div>
+<span class="font-headline-md text-body-md">Halloween</span>
+</div>
+<div class="group cursor-pointer flex flex-col items-center">
+<div class="w-20 h-20 rounded-full bg-error-container/30 flex items-center justify-center mb-sm group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-error text-3xl">ac_unit</span>
+</div>
+<span class="font-headline-md text-body-md">Christmas</span>
+</div>
+<div class="group cursor-pointer flex flex-col items-center">
+<div class="w-20 h-20 rounded-full bg-tertiary-fixed flex items-center justify-center mb-sm group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-on-tertiary-fixed-variant text-3xl">bakery_dining</span>
+</div>
+<span class="font-headline-md text-body-md">Food</span>
+</div>
+<div class="group cursor-pointer flex flex-col items-center">
+<div class="w-20 h-20 rounded-full bg-primary-fixed flex items-center justify-center mb-sm group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary text-3xl">videogame_asset</span>
+</div>
+<span class="font-headline-md text-body-md">Gaming</span>
+</div>
+</div>
+</section>
+<!-- How It Works -->
+<section class="px-margin-mobile md:px-margin-desktop py-xl bg-surface-container-low">
+<div class="max-w-6xl mx-auto">
+<h2 class="font-headline-md text-headline-md text-center mb-xl">How to Create Your Pattern</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-xl">
+<div class="text-center space-y-sm">
+<div class="w-16 h-16 bg-primary text-white font-display-lg text-headline-md rounded-full flex items-center justify-center mx-auto mb-md">1</div>
+<h3 class="font-headline-md text-headline-md">Describe Your Idea</h3>
+<p class="text-secondary">Type anything from "a space cat" to "pixel art roses" into our AI prompt box.</p>
+</div>
+<div class="text-center space-y-sm">
+<div class="w-16 h-16 bg-primary text-white font-display-lg text-headline-md rounded-full flex items-center justify-center mx-auto mb-md">2</div>
+<h3 class="font-headline-md text-headline-md">AI Generates Template</h3>
+<p class="text-secondary">Our AI calculates the perfect bead placement and creates a detailed 1:1 grid pattern.</p>
+</div>
+<div class="text-center space-y-sm">
+<div class="w-16 h-16 bg-primary text-white font-display-lg text-headline-md rounded-full flex items-center justify-center mx-auto mb-md">3</div>
+<h3 class="font-headline-md text-headline-md">Download &amp; Print</h3>
+<p class="text-secondary">Get a high-quality PDF template you can place right under your pegboard.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Featured Gallery (Masonry) -->
+<section class="px-margin-mobile md:px-margin-desktop py-xl">
+<h2 class="font-headline-md text-headline-md mb-lg text-center">Inspiration Gallery</h2>
+<div class="masonry-grid">
+<!-- Repeated Items with varying aspect ratios -->
+<div class="masonry-item bg-white rounded-xl overflow-hidden bead-shadow">
+<img class="w-full" data-alt="A vertical masonry-style perler bead pattern showing a tall sunflower with a smiling face. The colors are golden yellow, bright green, and chocolate brown. The background is a clean white, emphasizing the vibrant colors and the playful, handcrafted feel of the digital pattern in a professional UI context." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCq5A0OAvFhb371dF5UerEYoZrRWEfRXI7SONqpJ-zlCobtkbC8dUqLbIlzkChbYjkvDBsnUMnhLEUmok0EbpEwUlUN7R1dNnYQYnBctrz6Khii3QTN5sUTuCVDGl7Hr9rRmRrvK1T5ESSVtqX4mbhjbnmn68EC_alysazpGDInbYeifx7YYUoTJ5d8BJLodWET9zsnR9bmncIYZa602IPEi3Dq1xbo_ZrKZFdPXQGlsy2v2MRdfUXlND3xFLF1LTBRKg-6g5_khrg">
+</div>
+<div class="masonry-item bg-white rounded-xl overflow-hidden bead-shadow">
+<img class="w-full" data-alt="A square perler bead pattern of a sleeping Shiba Inu dog. The pattern uses warm cream, tan, and soft pink for the ears. The design is minimalist and modern, set in a bright, airy environment that reflects the PatternNest brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHAOCdLCFExFcb50kRpOBpSpAhCiXLh5szaJt5crPpk7HbYvUDA98zZdwgLmnFW-VZ-1emAOnHPVhJDQS60erBkN4ytiUKcpX5_QQl2iC6mPTOvCRjSMiL6dEojI_X25m2NnrVyzPB_yyrHyb0bq35Ay98fkUfl1zKifaxDXb9cvlEqx9xaR5WzMH7LNKUE_j4fhOdf5fsvSsjeaQTtoqqmpWtP6v52p-NUPieO5qnin_MsPjJ8KjxRMsdKnA1AGi8swIHPdCI6RE">
+</div>
+<div class="masonry-item bg-white rounded-xl overflow-hidden bead-shadow">
+<img class="w-full" data-alt="An intricate perler bead pattern of a retro gaming controller. The design uses light grey, dark grey, and vibrant red for the buttons. The presentation is clean and professional, showcasing the pattern in high detail under soft studio lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdfOtAF1zQXzEfrlFnpjZycfVyECcg71sRmNjdIR4udZbcLJemQkkz9KkyFs7jegyCCBziEtdVBhywv5GaDWiqHwN7DtMiVdHLRQGsFO_UfQEPOuuP8eb94oe__SmvPeOE0sMYAvr7jP11f4z-MoyZmaXVRQ8qecLdKb9l_Bann5mIVctQFJrc6WQhic2hDIAnREW66WuYitrn7f1YlCeYFmpM4fRT0E_ycldM6Qa78UJbihKs5zQBpYUHBtBYQdggs8S-v7gPo6o">
+</div>
+<div class="masonry-item bg-white rounded-xl overflow-hidden bead-shadow">
+<img class="w-full" data-alt="A tall masonry card featuring a stack of three pancakes with a pat of butter as a perler bead pattern. The colors are golden, beige, and yellow. The style is charming and pixelated, highlighting the creative possibilities of the PatternNest platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLBfgDuArJbv2kH8VsS-OwYal-bGD8D4nFmbCw9Rs3ng_pJ3S4bNVJABadpquNG97uC8LhK2juz8f0HpsO0RBi1SKgwEYKSb5Hq87eA3usRdnIYG8S7w7AKFyxfrFjFf7oSzy4MS2P5TK9z6gjwEFL272q25vdfZHqzuak4UPt6WF35StRwQmVa8nXioOBM_HxL0duJhQZZndnBYjdPoLrjFnbHxgnxWoh569-0-zWvHnsIpUDBwR0fShFBi_4U4XrHNK9ifvD0gc">
+</div>
+<div class="masonry-item bg-white rounded-xl overflow-hidden bead-shadow">
+<img class="w-full" data-alt="A wide perler bead pattern of a small ocean wave in the style of Japanese woodblock prints. The colors are deep blue, cyan, and white foam. The image is bright and crisp, designed to inspire digital creators on a modern SaaS landing page." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJHn3w4sSU2etnKICbDHbnswcP7U70DuR2gYLfHp2a3rl6HHZsFB3I5qEGy2ZowY53EUjvvMqvrJGKTzICBVY6kRMQgJiVA3r5BHhJv1jiwlLyDOyrl0F4tSI-j6EpUgiVjbeVXNe2IohA8rkrgY_nZ1TjqQnd_CeKbwsQtXF6BsO4_uwZcz1-tBU4DFt3JhN3gLFDmmhPQj1cBuI2Fz_qZKI6iosbJyeyi0W0lA58DnfW16UXS13logMCpehLCWddroCPZ3NOfDQ">
+</div>
+<div class="masonry-item bg-white rounded-xl overflow-hidden bead-shadow">
+<img class="w-full" data-alt="A delicate perler bead pattern of a cherry blossom branch. The soft pink and white flowers contrast beautifully with a dark brown branch. The digital rendering has a soft glow and very fine detail, presented against a pristine white background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxZjLeI75gb3SxyR53kHFnmHAmyxWV2TJ9u0L1UnUDpIouhgKYUVgDuYlF8Kuo_nBI1qLoJw-s4wH8bi4iTJ8QOiwgS6nhfX6mS7jy63nyPlj7J8lyNGl4hZudtHKikanxXEtJTXBUK0H1zMKB7i3RQlC3g9reRwdfK_0HNS2ey4bxvq7mgDzqldiIA_LP930mXrGGeAZm6NbayGACon0YDk1GG5MBfxdzYkffbfmXTDHlnUvHl_O1bQvgi9MwuQPP85zzzSen_vE">
+</div>
+<div class="masonry-item bg-white rounded-xl overflow-hidden bead-shadow">
+<img class="w-full" data-alt="A perler bead pattern of a cute little robot with heart eyes. The color palette is metallic silver, neon blue, and bright red. The style is modern-retro and perfectly aligns with a tech-savvy crafting audience." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUlBiQ9EnQHUUF7g2WsrXoVUB7p8Qk80n--4roaKU7Q9EWwfXqaAMV_hau9PbW0RGHwQWkWlxGIykSeCi-Ouu4tIeRNNxIR6wFcR72tfDKcjzSvW467TLvxoIgSCEdXhdOXUoeSqcQVBlNqeLEdYa74NIeEjpnCEWrvmEerZp31Ll9YV4pdYO6tOl0o6WKqn_ksNRXXWy-XcwITkL8Lu8LvUjyRDPdpp8n_281si0KK64DKbrSlk76FttKEFJxvroeVif2RO3h2ic">
+</div>
+<div class="masonry-item bg-white rounded-xl overflow-hidden bead-shadow">
+<img class="w-full" data-alt="A perler bead design of a small rainbow with clouds at the ends. The colors are vivid and cheerful, presented in a high-key lighting setup that emphasizes a clean and positive user experience." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQDRENZJ2EEbKo0IRZI8NCZGi44SlTvFWzOvsP_JSBucgmfNKZOrtQpgWkqcNhaFunGfIgobF_BHMfq-lcUFMTciFvZB88txlsTLlz9AP_VaXgdkN7C29FFUQD140cg7iEROmFpzz-8bABE4tda--hAK5lxnOhVdU2dqDUYhyQ4rhX94L3ud1HNtoY9TpsXMkiZfHxOyV2vPs24HwB6ddiukKRHAqdFk5TsPjL-rICKsBqq6PYnxCnnOx_OVQ0tRwq05LkS1dggos">
+</div>
+<div class="masonry-item bg-white rounded-xl overflow-hidden bead-shadow">
+<img class="w-full" data-alt="A detailed perler bead pattern of a slice of watermelon. Vibrant greens, reds, and black seeds create a refreshing summer look. The image is crisp and clear, perfect for a Pinterest-inspired gallery layout." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlIVGECYONoKluZa3_YCn049r1WlcnYP4JTDC7DK72nI_ghZOmMyw_HjvhYGr5DM8P-X18r7f5EKl-OE21YreHSNYNITcSVtn_HyUWJ47S0FZDqabwUbd0KnrfbLE8Eg2yus27Z1rX0bnWRFDNQTM91FyyQaYz9HmzHA-WWfrW1Kw6aRt6Gl69m40LJhdIioESUaafRFIhCL-9FMtW98lo9E-HywojxNRnft_Ftu1Zv3CtkHAqmUyVWE0C78WE12uooYfggujBClc">
+</div>
+<div class="masonry-item bg-white rounded-xl overflow-hidden bead-shadow">
+<img class="w-full" data-alt="A cute cactus in a pot perler bead pattern. The design uses varying shades of green and a bright terracotta orange for the pot. The image is brightly lit, showcasing the texture of each individual bead clearly." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAInhFiKNWY9K9bOSoxsChz9Qu4KQDuUpBivudRniQnnjTC4zUTA9fUW_sxSlvq76hAS1ebn9Bqj8T12B6jRahlZrTB11SILwz5NDAgggeyK2M1EeLCWr0BCJK0b_sHZ6ixz8N4h9X3bJCEoQAVOEFmF9UzMkGH4IUBdIVSCkJF8mqwEy_f_nT3fppHNlMw93Nbl89TUrBLJjeI2VZacIhU_rVRl5d06TJHdK9qZzmNBPep68mtiK5RLKzXe_MxDJ9YEi_0MLSsvj0">
+</div>
+<div class="masonry-item bg-white rounded-xl overflow-hidden bead-shadow">
+<img class="w-full" data-alt="A perler bead pattern of a moon and stars. The palette is navy blue, pale yellow, and sparkling silver. The design is peaceful and whimsical, fitting the 'nest' branding of PatternNest." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8qmnZRIkhL3_wbj0apImFztwqfNE2qo1Ajplf3KwjJJq-DK9tj0AG016zcondXwFLBNgBuJnck0-uDx783F1iZrOf4Lkaxrs8m8j4SHFgpGioDxjHCdYiIZXGCPWpi8H_mVrPIIcuCrKa-vhJw-eObXWbUe25EajWDqJXVaFyqqi3k8X2ldI5rUw7tC8a8AT_PMA8zXpoR-ssCojbidyw7PKpNm1DtMzBmbYxVbnuXOvkJh5PT6EQbAxfcp_gx3OzQv8LrFH2_xU">
+</div>
+<div class="masonry-item bg-white rounded-xl overflow-hidden bead-shadow">
+<img class="w-full" data-alt="A perler bead pattern of a small heart-shaped locket. The design uses metallic gold and deep red colors. The lighting is soft and diffused, creating a premium feel for this crafting tool showcase." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFTjPvlpmb_SxGffcCRQZf5nO6ZqoS4BCmSXXOLmQhzLTSe84XY2YW9IjzyJ5hwNQ4PwE3hGyThmrM-tORNHhkL8RM3HmD_MjJw79nRQzCWe4kshXFx3Ey6Ogai-9GTW_zKg4XIzJbzd7wHdcG4Rgfz6BIc1KKlPXhkPSK2Y7Fc4xOIZkrxcUNQtQ42hXJSOIWZILpwsjtUY3C4_JuN1WH92xSQVcefQ5t57an35ULsWGHQzb00DgdVNmfNTfi7M2l0YMxPbjgnZE">
+</div>
+</div>
+</section>
+<!-- SEO / Why Section -->
+<section class="px-margin-mobile md:px-margin-desktop py-xl bg-white border-y border-surface-container-high">
+<div class="max-w-4xl mx-auto text-center">
+<h2 class="font-headline-md text-display-lg-mobile text-primary-container mb-lg">Why Use AI Perler Bead Patterns?</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-lg text-left">
+<div class="flex gap-sm">
+<span class="material-symbols-outlined text-tertiary shrink-0">check_circle</span>
+<div>
+<h4 class="font-headline-md text-body-md">Beginner Friendly</h4>
+<p class="text-secondary font-body-md">No design skills needed. Just describe what you want and let the AI do the heavy lifting of grid mapping.</p>
+</div>
+</div>
+<div class="flex gap-sm">
+<span class="material-symbols-outlined text-tertiary shrink-0">check_circle</span>
+<div>
+<h4 class="font-headline-md text-body-md">Printable Templates</h4>
+<p class="text-secondary font-body-md">Our patterns are generated at exact physical scale. Print them out and place them directly under your pegboard.</p>
+</div>
+</div>
+<div class="flex gap-sm">
+<span class="material-symbols-outlined text-tertiary shrink-0">check_circle</span>
+<div>
+<h4 class="font-headline-md text-body-md">Pinterest-Ready Designs</h4>
+<p class="text-secondary font-body-md">Get the aesthetic you've always wanted. Our AI is trained on thousands of viral perler bead trends.</p>
+</div>
+</div>
+<div class="flex gap-sm">
+<span class="material-symbols-outlined text-tertiary shrink-0">check_circle</span>
+<div>
+<h4 class="font-headline-md text-body-md">Free Downloads</h4>
+<p class="text-secondary font-body-md">Start creating immediately with our free tier. Download high-resolution patterns instantly.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-xl px-margin-mobile md:px-margin-desktop bg-surface-container dark:bg-surface-container-highest grid grid-cols-1 md:grid-cols-3 gap-md items-start">
+<div class="space-y-sm">
+<div class="flex items-center gap-xs">
+<img alt="BeadPatternAI Logo" class="h-8 w-8 object-contain" src="https://lh3.googleusercontent.com/aida/AP1WRLvrVIKgtKTfLumW8gaMsC_UqmglrLH24mVFUAZVt8aYEWvyhavtvwgKd5aT4y6oOcoLHGRjzyDSbbKlG3C6I0CojD64kCLOBBi8niFBPmaOWeoHNwZ4DzwM12CKVY4wrOCFWFiCTs4ZQSitM33UZSJRsASrhB6inHxr7Z8ye4exJIZfvnEuF8Xs7Nk1kvBYIpQaYFY6TSP4tCutxaTlisfk-big9iUEZEgXZCEMlVeh88T92JfDziO_kcM">
+<span class="font-display-lg text-headline-md text-primary">BeadPatternAI</span>
+</div>
+<p class="text-secondary font-body-md max-w-xs">© 2024 BeadPatternAI. Crafting digital beads into infinite possibilities.</p>
+</div>
+<div class="grid grid-cols-2 gap-md">
+<div class="space-y-xs">
+<h4 class="font-headline-md text-body-md text-on-surface">Explore</h4>
+<nav class="flex flex-col gap-xs">
+<a class="text-secondary hover:text-primary transition-colors font-body-md" href="#">Documentation</a>
+<a class="text-secondary hover:text-primary transition-colors font-body-md" href="#">Community Guidelines</a>
+<a class="text-secondary hover:text-primary transition-colors font-body-md" href="#">Blog</a>
+</nav>
+</div>
+<div class="space-y-xs">
+<h4 class="font-headline-md text-body-md text-on-surface">Legal</h4>
+<nav class="flex flex-col gap-xs">
+<a class="text-secondary hover:text-primary transition-colors font-body-md" href="#">Terms of Service</a>
+<a class="text-secondary hover:text-primary transition-colors font-body-md" href="#">Privacy Policy</a>
+<a class="text-secondary hover:text-primary transition-colors font-body-md" href="#">Contact Us</a>
+</nav>
+</div>
+</div>
+<div class="space-y-sm">
+<h4 class="font-headline-md text-body-md text-on-surface">Join the Nest</h4>
+<p class="text-secondary font-body-md">© 2024 BeadPatternAI. Crafting digital beads into infinite possibilities.</p>
+<div class="flex gap-xs">
+<input class="flex-1 rounded-lg border-2 border-secondary-container focus:border-primary px-sm py-xs bg-white outline-none" placeholder="email@example.com" type="email">
+<button class="bg-primary text-white p-xs rounded-lg flex items-center justify-center hover:scale-105 transition-transform">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</div>
+</footer>
+<script>
+        // Micro-interactions and effects
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', () => btn.classList.add('scale-95'));
+            btn.addEventListener('mouseup', () => btn.classList.remove('scale-95'));
+        });
+
+        // Simple parallax for hero elements
+        window.addEventListener('mousemove', (e) => {
+            const collageItems = document.querySelectorAll('.hero-collage-item');
+            const mouseX = e.clientX / window.innerWidth;
+            const mouseY = e.clientY / window.innerHeight;
+            
+            collageItems.forEach((item, index) => {
+                const factor = (index + 1) * 10;
+                item.style.transform = `translate(${mouseX * factor}px, ${mouseY * factor}px)`;
+            });
+        });
+    </script>
+
+
+</body></html>

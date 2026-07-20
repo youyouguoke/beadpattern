@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BeadPatternAI | Discover &amp; Create Printable Bead Patterns</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            background-color: #f4fafd;
+            color: #161d1f;
+            overflow-x: hidden;
+        }
+        .pixel-grid-bg {
+            background-size: 20px 20px;
+            background-image: radial-gradient(circle, #dde4e6 1px, transparent 1px);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .pattern-masonry {
+            column-count: 2;
+            column-gap: 24px;
+        }
+        @media (min-width: 768px) {
+            .pattern-masonry {
+                column-count: 3;
+            }
+        }
+        @media (min-width: 1024px) {
+            .pattern-masonry {
+                column-count: 4;
+            }
+        }
+        .masonry-item {
+            break-inside: avoid;
+            margin-bottom: 24px;
+        }
+        .custom-shadow-l1 { box-shadow: 0px 4px 20px rgba(45, 52, 54, 0.05); }
+        .custom-shadow-l2 { box-shadow: 0px 12px 32px rgba(45, 52, 54, 0.08); }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                "on-secondary-fixed": "#2b151c",
+                "secondary": "#75565f",
+                "on-primary-fixed": "#400010",
+                "surface-variant": "#dde4e6",
+                "surface-container": "#e8eff1",
+                "on-error": "#ffffff",
+                "primary-fixed-dim": "#ffb2b9",
+                "tertiary-fixed": "#96f4da",
+                "on-primary": "#ffffff",
+                "error": "#ba1a1a",
+                "error-container": "#ffdad6",
+                "inverse-surface": "#2b3234",
+                "surface": "#f4fafd",
+                "on-primary-fixed-variant": "#8c1231",
+                "outline-variant": "#dfbfc1",
+                "primary-fixed": "#ffdadc",
+                "on-secondary": "#ffffff",
+                "tertiary-fixed-dim": "#79d7be",
+                "surface-dim": "#d4dbdd",
+                "on-secondary-container": "#795a63",
+                "surface-container-lowest": "#ffffff",
+                "surface-container-high": "#e2e9ec",
+                "secondary-fixed-dim": "#e4bcc6",
+                "on-surface-variant": "#584143",
+                "on-background": "#161d1f",
+                "secondary-container": "#fed5df",
+                "on-primary-container": "#6e0021",
+                "on-tertiary-container": "#003b30",
+                "inverse-on-surface": "#ebf2f4",
+                "surface-container-low": "#eef5f7",
+                "tertiary": "#006b58",
+                "on-tertiary": "#ffffff",
+                "background": "#f4fafd",
+                "tertiary-container": "#4dac95",
+                "inverse-primary": "#ffb2b9",
+                "on-surface": "#161d1f",
+                "on-tertiary-fixed-variant": "#005142",
+                "surface-tint": "#ad2d47",
+                "surface-bright": "#f4fafd",
+                "on-secondary-fixed-variant": "#5b3f47",
+                "on-error-container": "#93000a",
+                "primary-container": "#ff6b81",
+                "outline": "#8b7072",
+                "surface-container-highest": "#dde4e6",
+                "secondary-fixed": "#ffd9e2",
+                "on-tertiary-fixed": "#002019",
+                "primary": "#ad2d47"
+              },
+              "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "16px",
+                "xl": "24px",
+                "full": "9999px"
+              },
+              "spacing": {
+                "stack-lg": "48px",
+                "stack-md": "24px",
+                "container-max": "1280px",
+                "base": "8px",
+                "margin-mobile": "16px",
+                "stack-sm": "12px",
+                "gutter": "24px",
+                "margin-desktop": "48px"
+              },
+              "fontFamily": {
+                "headline-md": ["Plus Jakarta Sans"],
+                "label-lg": ["Inter"],
+                "body-md": ["Inter"],
+                "display-lg": ["Plus Jakarta Sans"],
+                "display-lg-mobile": ["Plus Jakarta Sans"],
+                "body-lg": ["Inter"],
+                "label-sm": ["Inter"],
+                "headline-lg": ["Plus Jakarta Sans"]
+              },
+              "fontSize": {
+                "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                "display-lg-mobile": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="font-body-md text-on-background">
+<!-- Top Navigation Bar -->
+<nav class="w-full top-0 sticky z-50 bg-surface/80 backdrop-blur-md">
+<div class="flex justify-between items-center px-margin-desktop py-base max-w-container-max mx-auto h-20">
+<div class="font-display-lg text-[28px] text-primary tracking-tight font-extrabold">BeadPatternAI</div>
+<!-- Desktop Nav -->
+<div class="hidden md:flex gap-8 items-center">
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-label-lg text-label-lg" href="#">Patterns</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-lg text-label-lg" href="#">Categories</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-lg text-label-lg" href="#">Collections</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-lg text-label-lg" href="#">Ideas</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-lg text-label-lg" href="#">Generator</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-lg text-label-lg" href="#">Blog</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+<button class="bg-primary-container text-on-primary-container px-6 py-2 rounded-lg font-label-lg text-label-lg hover:scale-105 transition-transform active:scale-95 shadow-sm">Sign In</button>
+</div>
+</div>
+</nav>
+<main>
+<!-- Hero Section -->
+<section class="relative overflow-hidden pixel-grid-bg pt-stack-lg pb-stack-lg">
+<div class="max-w-container-max mx-auto px-margin-desktop grid grid-cols-1 lg:grid-cols-2 gap-stack-lg items-center">
+<!-- Left Content -->
+<div class="z-10">
+<h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-6 leading-[1.1]">
+                        Discover Beautiful <span class="text-primary">Printable</span> Perler Bead Patterns
+                    </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-10 max-w-lg">
+                        Browse thousands of printable bead patterns. Can't find what you need? Create your own custom design with AI.
+                    </p>
+<div class="relative max-w-md mb-8 group">
+<div class="absolute inset-y-0 left-4 flex items-center pointer-events-none text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</div>
+<input class="w-full h-14 pl-12 pr-4 rounded-xl bg-surface-container border-none focus:ring-2 focus:ring-primary shadow-sm text-body-md transition-all group-hover:shadow-md" placeholder="Cute Frog" type="text"/>
+</div>
+<div class="flex flex-wrap gap-4">
+<button class="bg-primary-container text-on-primary-container px-8 py-4 rounded-lg font-label-lg text-label-lg font-bold hover:scale-105 transition-all shadow-md">
+                            Browse Patterns
+                        </button>
+<button class="bg-secondary-container text-primary px-8 py-4 rounded-lg font-label-lg text-label-lg font-bold hover:bg-opacity-80 transition-all">
+                            Create with AI
+                        </button>
+</div>
+</div>
+<!-- Right Content: Live Preview Card -->
+<div class="relative group perspective-1000">
+<div class="glass-card p-6 rounded-xl custom-shadow-l2 transform transition-all duration-500 group-hover:-translate-y-2 group-hover:rotate-1">
+<div class="aspect-square rounded-lg overflow-hidden mb-6 bg-surface-container-high relative">
+<img class="w-full h-full object-cover" data-alt="A vibrant pixel art pattern of a stylized orange fox face designed for Perler beads. The image shows the fox centered on a clean white pegboard grid with soft natural lighting, highlighting the individual bead textures. The colors include warm oranges, creamy whites, and deep black bead accents, maintaining a high-end, premium creative aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGlQdlKNigBmj62YhfT-JkYV4G92eQSMNOVomQINnbvJM_DP3rNNsalwrHJrKtiFrFvnDnYGDdlXA1opjhyh0FdVMjfqcvJUZCol1myo-s5qQe149uzCipNnpAsJmN22C_4vfjdPr3m1toeE8W4lboeE2uDgYhqzodR2lGgsifQLS_KZmmLOWqM0LHGDygqD9ZIH2Gf_Pw4WZ-AP4JJOSIOgj5GBQjSg_6zE_5zfuF_ncMYppS-KxT517fYLfPUemZ-q2Hj0Hmkc4m"/>
+<div class="absolute top-4 right-4 bg-primary text-on-primary px-3 py-1 rounded-full text-label-sm font-bold shadow-lg">New Design</div>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<h3 class="font-headline-md text-headline-md text-on-surface">Forest Fox Mini</h3>
+<div class="flex gap-1">
+<div class="w-4 h-4 rounded-full bg-[#FF6B81] shadow-sm"></div>
+<div class="w-4 h-4 rounded-full bg-[#FF9A8B] shadow-sm"></div>
+<div class="w-4 h-4 rounded-full bg-[#FFFFFF] border border-outline-variant shadow-sm"></div>
+<div class="w-4 h-4 rounded-full bg-[#2D3436] shadow-sm"></div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 py-4 border-y border-outline-variant/30">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="grid_on">grid_on</span>
+<div>
+<p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-bold">Grid Size</p>
+<p class="font-label-lg text-label-lg">29 x 29</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="palette">palette</span>
+<div>
+<p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-bold">Colors</p>
+<p class="font-label-lg text-label-lg">6 Colors</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="category">category</span>
+<div>
+<p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-bold">Total Beads</p>
+<p class="font-label-lg text-label-lg">841 Beads</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="bolt">bolt</span>
+<div>
+<p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-bold">Difficulty</p>
+<p class="font-label-lg text-label-lg">Intermediate</p>
+</div>
+</div>
+</div>
+<button class="w-full bg-primary text-on-primary py-4 rounded-lg font-bold hover:bg-primary-container transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+                                Download PDF Pattern
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Trending Today -->
+<section class="py-stack-lg overflow-hidden">
+<div class="max-w-container-max mx-auto px-margin-desktop mb-8 flex justify-between items-end">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">Trending Today</h2>
+<p class="text-on-surface-variant">The most popular patterns in the community right now.</p>
+</div>
+<button class="text-primary font-bold hover:underline">View all</button>
+</div>
+<div class="flex gap-gutter px-margin-desktop overflow-x-auto pb-8 no-scrollbar scroll-smooth">
+<!-- Trending Cards -->
+<div class="min-w-[280px] bg-surface-container-lowest rounded-xl custom-shadow-l1 hover:custom-shadow-l2 transition-all p-4">
+<img class="w-full aspect-square object-cover rounded-lg mb-4" data-alt="A cute pixel art cat pattern with light pink and white beads, sitting in a playful pose. The design is displayed on a clean digital grid background with a soft, warm atmosphere and vibrant, premium lighting that emphasizes the rounded bead shapes." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCi0bTBzB3n3fWGjBDO-NFWwfYNBXALQ7XQu3sRr_SYSAaLv2Mni4fMBWZxntdFbhH_7N_ude3u3fvvYqg7GwaqbsM7FMYSiB2XJ0E-vSQNPtihFohZTc0qdI9dvDjyxSN1rBfe5nW9WgCKJ_NXo74uU605-K3ffgDBDSi4l_EgDBExocpIGc9k-IwlZCjG5tZGpPZlEoOtvIlHj9xKNOeboR7ATkXVTITCDnGbEGdIlWnXcqnO76Bj9-vRu9NMUMX-bxWV4w9VZ-J5"/>
+<h4 class="font-label-lg text-label-lg mb-1">Cherry Blossom Kitty</h4>
+<p class="text-label-sm text-on-surface-variant">12 Colors • Easy</p>
+</div>
+<div class="min-w-[280px] bg-surface-container-lowest rounded-xl custom-shadow-l1 hover:custom-shadow-l2 transition-all p-4">
+<img class="w-full aspect-square object-cover rounded-lg mb-4" data-alt="A detailed pixel art pattern of a vibrant green avocado with a dark brown pit, designed for fuse beads. The image uses a soft, minimalist aesthetic with a light background and bright, cheerful lighting to highlight the individual green and brown bead colors." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdaPCZWrwYgpOJo-kUwjBUTKB0atuBlcBQOZIqd2HU_WOWbWbRkWHahq-u057NOQSqltssCxXGIiUBsHLa9Eq-OkDYbnA8nwUA9MwlinMBhKD-7jloF0duoRc0RtVoAjlLa9FZ1GvZqVxkMySsLLb7I9MImb2omLGEXRbhU0_-xDJwO8wMqjpf4JQJ86mjTVcu9jEJyW8A7xFhOE_n1SkSx4Gfgzb4v47CW5RP64NHWUHfn08orWv4HTVOetxDLVZLbn_7Og0ucOEF"/>
+<h4 class="font-label-lg text-label-lg mb-1">Happy Avocado</h4>
+<p class="text-label-sm text-on-surface-variant">4 Colors • Very Easy</p>
+</div>
+<div class="min-w-[280px] bg-surface-container-lowest rounded-xl custom-shadow-l1 hover:custom-shadow-l2 transition-all p-4">
+<img class="w-full aspect-square object-cover rounded-lg mb-4" data-alt="A retro 8-bit style pixel art space shuttle launch pattern for beads. The design features warm orange and red flame trails and a clean white shuttle body against a subtle dark grey grid, using a modern creative style with premium finishing." src="https://lh3.googleusercontent.com/aida-public/AB6AXuALbwRjkSKrsvr62Xnh5pV2X3Uwykpbx4P8YHNLJSe7k2gURz6RuF0GmzRQJhkE68lhzac4MOzesaDhtwmyYDC7Iic9rezWRZaNo-YtCONX_zUMmP49sMkn5mkR3WMtRJIDZ8nJ49KOs2GklqSltni8-a1jO9bCt-4HqSpWTRlrT1mLguJmRy88KkeEsJ3yi2deC3GTNnSYSKYyWeVPmE3-KzPA0MJUzFfVsEDtZiz1YVqqlhlEtXapGWoANqjb7U6QW0DItqp6BwOJ"/>
+<h4 class="font-label-lg text-label-lg mb-1">Retro Rocketship</h4>
+<p class="text-label-sm text-on-surface-variant">8 Colors • Medium</p>
+</div>
+<div class="min-w-[280px] bg-surface-container-lowest rounded-xl custom-shadow-l1 hover:custom-shadow-l2 transition-all p-4">
+<img class="w-full aspect-square object-cover rounded-lg mb-4" data-alt="A colorful pixel art rainbow pattern with soft pastel beads, arched over two fluffy white clouds. The lighting is airy and bright, creating a cheerful, discovery-focused atmosphere that showcases the tactile nature of the beads." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6SwA5dxVyw02tkdMk7iBK71zK5UV7gC7akkFx_DLB3X6ElbpY3fm6it1s83OAq7YCgJZJ6yrWo7rLTLbST8es5a5hufrD2A5snBInfGsfVQjaFnLJo9nmSo75d5pVsiCnCWZmMvcLmRpKfC_Mb6f2PD9hyUq-zxd_50eXuFnUvetvO_67f3DaBW4a2zYGvdkMN1uKn3CyNotU0b-hTPiI4Yb6wjae5sVut7vqrIwZZ2n545LNOojlzhCdPA3YybovwncCZ_gLboWa"/>
+<h4 class="font-label-lg text-label-lg mb-1">Pastel Rainbow</h4>
+<p class="text-label-sm text-on-surface-variant">7 Colors • Easy</p>
+</div>
+<div class="min-w-[280px] bg-surface-container-lowest rounded-xl custom-shadow-l1 hover:custom-shadow-l2 transition-all p-4">
+<img class="w-full aspect-square object-cover rounded-lg mb-4" data-alt="A stylized pixel art cactus in a small clay pot, using various shades of emerald and mint green beads. The design is displayed in a bright gallery-like setting with soft shadows and high-end photographic quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtWmZD_bLiHafaGfC-oDew6Mb5PBmFgzBw5FVjBSjMNmSZDfJJYb6kU0d-U91VS90Bf_Pgc-fpuCCsQM6auRJo8AqvIXjBmLtc6qCGQzKITpyXgMBmCUvhDhBVcj3Gquzc64vrBHYzF0-ooJdBcFmbdbnUW_Tmmj9JLro3GYwrocLBpf1d9BSnmKUTs0fUM-G_jhhf8gkq5r20EYQTmc9dVOXmY9miXOws7Lq4aVp0_LhxX3hnhe_03cSZtdNCBXga1FrWXisMm7N3"/>
+<h4 class="font-label-lg text-label-lg mb-1">Prickly Pear Mini</h4>
+<p class="text-label-sm text-on-surface-variant">5 Colors • Medium</p>
+</div>
+</div>
+</section>
+<!-- Popular Collections -->
+<section class="py-stack-lg bg-surface-container-low">
+<div class="max-w-container-max mx-auto px-margin-desktop">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-8">Popular Collections</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Collection Cards -->
+<div class="group relative aspect-[4/5] rounded-xl overflow-hidden custom-shadow-l1 cursor-pointer">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="A collage of various cute pixel art animal faces including a panda, dog, and hamster, all created with Perler beads. The lighting is high-key and soft, and the colors are vibrant, fitting a modern premium creative aesthetic for a collection cover." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDB15vu5SRqVQ_F3uvyJLD73gStsFcCBCKOijSBhOmfQyOA8l6R7WLknOT1ksHcSZcN9DezcQqLsbpLn1GnCd_CbYk2GEHZzNKPFnvfYpa5dW4xvjzvSvAUQrCC0XByCrt70fXbAGb2Je3q242rEpqWQxwMjU1j_FCzfC-9cr9TC8dsvkLtTcozQgOutNCTD6O08UJRoeb3tqjX0l-sEghvnFc8QyXq2nRPPU2GbaxXBH2faFybKBsloLi3FKkJpfLh7L89ztutkRSi"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+<div class="absolute bottom-6 left-6">
+<h3 class="text-white font-headline-md text-headline-md mb-1">Cute Animals</h3>
+<p class="text-white/80 font-label-sm text-label-sm">450+ Patterns</p>
+</div>
+</div>
+<div class="group relative aspect-[4/5] rounded-xl overflow-hidden custom-shadow-l1 cursor-pointer">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="A collection of colorful pixel art food items such as pizza slices, donuts, and cupcakes made with beads. The style is bright and playful, with each pattern having distinct textures and professional studio lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEQtusn447x72bLNohx6g1VoFQ1iXb252cns5kDQi5ERderGE6Gxh7ihsrZXWp9i8aueaNKkxcb7ZnnNzcraNjyAiDgJbJn-bL0tVS6Gjl8QJJiy9OjKCrGWXO8WFRIvjLAEvgya4ssyO1PmWHdKyajNlH61zRruwrWlTNbGs62AT3aR8xq6vjBfOuWUMA4cAtUnH6wl1usBaZJxbtQCJhp1zzc3QDNP6tdHSe1p-REf0l41yXmpBt36xpBTpM4c4Nn5Mx--SfMfH1"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+<div class="absolute bottom-6 left-6">
+<h3 class="text-white font-headline-md text-headline-md mb-1">Tasty Treats</h3>
+<p class="text-white/80 font-label-sm text-label-sm">320+ Patterns</p>
+</div>
+</div>
+<div class="group relative aspect-[4/5] rounded-xl overflow-hidden custom-shadow-l1 cursor-pointer">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="A spooky yet cute collection of Halloween bead patterns featuring jack-o-lanterns, ghosts, and bats. The palette uses deep oranges and purples with high-contrast lighting to create a sophisticated, festive vibe." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxqiqhqMobfPp_6DLeandxGky6XoRRqphTJ0FvqidDc2KKBIKghTNSoTd3ZuTpu3JMWgMSMUAjNdpmlPvMJw5dABh2dDAE-jI9rsIWvvOlP5LnRO-nphLvBJh8locmzWFuTjb1L8gTn7IfXPGVlMKDxh9Vs4QNTfulTES6mn14ygJL_Gczk-o9TFQ9eboMGn2k3JqhXpzvcoDIy1XEDtZIebYRy6F6z6-YJpPleR5Hz9bpSMgT4r_GKjTLWBSoyFjDeVmFK7FWi3va"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+<div class="absolute bottom-6 left-6">
+<h3 class="text-white font-headline-md text-headline-md mb-1">Halloween</h3>
+<p class="text-white/80 font-label-sm text-label-sm">180+ Patterns</p>
+</div>
+</div>
+<div class="group relative aspect-[4/5] rounded-xl overflow-hidden custom-shadow-l1 cursor-pointer">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="Cozy Christmas-themed bead patterns including snowflakes, tiny trees, and reindeer. The lighting is warm and festive, with a pristine white background that makes the vibrant holiday colors pop." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuCV7mKCYkqnExiZqxbrkunlaVKhYe4_DjdhVx_vR6Y5ioTDdxeitH1RRN2-tHfHfEKc9FqHBX--h3xIEfdIUzHYos8tsZ9_hN61q7qW8pjI31RakqF5wfhkPQ1XCGuc33lgBexoaW2snD3JqNrYcufLWBZlPiWH04hz0TIJYTF-9wh28gy1z2suU8nurooY_sWNuBuxm3MS9NcKXHiR3CNVJaqQIx1vgT2N0ycEKFW8Be-OQ39miV5eGStHyZMA0lCFVsBW_zg0A3"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+<div class="absolute bottom-6 left-6">
+<h3 class="text-white font-headline-md text-headline-md mb-1">Christmas</h3>
+<p class="text-white/80 font-label-sm text-label-sm">240+ Patterns</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Browse Categories -->
+<section class="py-stack-lg">
+<div class="max-w-container-max mx-auto px-margin-desktop">
+<div class="flex items-center justify-between mb-8">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Browse Categories</h2>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
+<div class="bg-surface-container rounded-xl p-6 flex items-center gap-4 hover:bg-primary-container hover:text-on-primary-container transition-all cursor-pointer group">
+<div class="w-12 h-12 rounded-lg bg-surface flex items-center justify-center text-primary group-hover:bg-on-primary group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="pets">pets</span>
+</div>
+<div>
+<h4 class="font-label-lg text-label-lg">Animals</h4>
+<p class="text-label-sm opacity-70">1,240 items</p>
+</div>
+</div>
+<div class="bg-surface-container rounded-xl p-6 flex items-center gap-4 hover:bg-primary-container hover:text-on-primary-container transition-all cursor-pointer group">
+<div class="w-12 h-12 rounded-lg bg-surface flex items-center justify-center text-primary group-hover:bg-on-primary group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="restaurant">restaurant</span>
+</div>
+<div>
+<h4 class="font-label-lg text-label-lg">Food</h4>
+<p class="text-label-sm opacity-70">890 items</p>
+</div>
+</div>
+<div class="bg-surface-container rounded-xl p-6 flex items-center gap-4 hover:bg-primary-container hover:text-on-primary-container transition-all cursor-pointer group">
+<div class="w-12 h-12 rounded-lg bg-surface flex items-center justify-center text-primary group-hover:bg-on-primary group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="nature">nature</span>
+</div>
+<div>
+<h4 class="font-label-lg text-label-lg">Nature</h4>
+<p class="text-label-sm opacity-70">650 items</p>
+</div>
+</div>
+<div class="bg-surface-container rounded-xl p-6 flex items-center gap-4 hover:bg-primary-container hover:text-on-primary-container transition-all cursor-pointer group">
+<div class="w-12 h-12 rounded-lg bg-surface flex items-center justify-center text-primary group-hover:bg-on-primary group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="celebration">celebration</span>
+</div>
+<div>
+<h4 class="font-label-lg text-label-lg">Holiday</h4>
+<p class="text-label-sm opacity-70">430 items</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Inspiration Gallery (Masonry) -->
+<section class="py-stack-lg">
+<div class="max-w-container-max mx-auto px-margin-desktop">
+<div class="text-center mb-12">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-4">Inspiration Gallery</h2>
+<p class="text-on-surface-variant max-w-2xl mx-auto">See what others are making and get inspired for your next project.</p>
+</div>
+<div class="pattern-masonry">
+<!-- Item 1 -->
+<div class="masonry-item group relative overflow-hidden rounded-xl custom-shadow-l1 hover:custom-shadow-l2 transition-all">
+<img class="w-full" data-alt="A beautiful, detailed pixel art sunflower pattern made with beads. The sunflower is vibrant yellow with a textured brown center, set against a soft blue digital background with premium, artistic lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZj0ZDx2fogp-aVLoZAr0QB2toES7avk4OKa_mK4o5hu1-T9kFSPHKidktYWnGISIks3axt_64A0Md_dE2LUjlpmfVuggDg1vNfhI_rCfJmsSZUSBL6BRCzt3W2SF9t6iKZbUtDfG96vkiGAsYrUR-W-oczPt3hKd-Y0LtXFdrvjnhPiffSIw3qDTZUovVgRel8pTO2puthw5r3VdRvk8NbW-G-H67G4hdzVFoB9LUwPX745483x9T8rr0ROvL4ps55bkr1_O14Jdy"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
+<p class="text-white font-bold">Radiant Sunflower</p>
+<button class="text-white/80 text-sm flex items-center gap-1 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="download">download</span> Save Pattern
+                            </button>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="masonry-item group relative overflow-hidden rounded-xl custom-shadow-l1 hover:custom-shadow-l2 transition-all">
+<img class="w-full" data-alt="A cute pixel art Shiba Inu dog pattern for Perler beads. The dog has a happy expression with warm tan and white colors, displayed on a clean grid with professional soft-shadow lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoKLaQDcRL3r2_FmlJbNz4d-mFJoZ4mtHuMkZQkUFagkzDKUg58phEstvQlptw3ahMcaraeeu73kC02KEVNiLupw_T5aeRlwJuUq-r71g0jg9jlb5NABTSea0RaObgHkswvwQzZd9jn91pckBQLLRuUioEeBEM5B7wbpQr652JGUSIFd8sGAIXFSGgd5tMbtOZAKSeQlEKM9tnUdRDR_Olojs-ZmnlOsPeszucJi8Yzpf3R-1HMyS5UucQeiH4y_5fN418nXdjKdPF"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
+<p class="text-white font-bold">Shiba Puppy</p>
+<button class="text-white/80 text-sm flex items-center gap-1 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="download">download</span> Save Pattern
+                            </button>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="masonry-item group relative overflow-hidden rounded-xl custom-shadow-l1 hover:custom-shadow-l2 transition-all">
+<img class="w-full" data-alt="A high-quality pixel art pattern of a juicy watermelon slice, using bright pink and deep green beads. The lighting emphasizes the glossy texture of the beads on a minimalist white backdrop." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDeu3_XM3bK0w92mbs_0bMKce5WZproAzgh6Su6UE_H-Ay5MMO0eWsIT2GbsG3l77LX8oIFdfk7zFzATQLqPGvkU-yDV34hR8kr3xg6-yQCVhrwh8BX6l5XYHOmirssA-MSCRay4HM8-StSrcSTwqwIzksg6OPcHpOwS_os4asKwxM2ncGdAkVbsxHdA8RoSWbW8ul7FfDTtE8oseLCRWGPxzIHT8lfp8yE03Sm1NPxA85HDt8tKPxi_EherqTZCDLwL24jXIjq_nXb"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
+<p class="text-white font-bold">Summer Slice</p>
+<button class="text-white/80 text-sm flex items-center gap-1 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="download">download</span> Save Pattern
+                            </button>
+</div>
+</div>
+<!-- Item 4 -->
+<div class="masonry-item group relative overflow-hidden rounded-xl custom-shadow-l1 hover:custom-shadow-l2 transition-all">
+<img class="w-full" data-alt="An intricate pixel art owl pattern for bead art, featuring various shades of brown, cream, and large yellow eyes. The style is sophisticated and detailed, with a soft blur effect on the grid background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPcYRCqgJzomqp6TBivnpCiP0CBxtbskO8VHWtNNG7zJo9j3z-0PfzZ_Ja3eI67j-lNHR3XO4Mj5oyEu65Awvy6b7F6xkAb0ysFVcSsSK_gDwoYs50m25WuLo-dAfbfWc2LJskxXt3u3leDUsnVSj0LfwW2zsTzNNoFX2uEUtGr61CQNQSRM5DcferiM5a1QO_aJlGezi9oRgbLgBTOsiaW2-0Fc_al9iCdWyHuOWdWQFflI_31V8EbPVovVHD5IJS_ib9OnvKAWhn"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
+<p class="text-white font-bold">Night Owl</p>
+<button class="text-white/80 text-sm flex items-center gap-1 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="download">download</span> Save Pattern
+                            </button>
+</div>
+</div>
+<!-- More items can be added -->
+<div class="masonry-item group relative overflow-hidden rounded-xl custom-shadow-l1 hover:custom-shadow-l2 transition-all">
+<img class="w-full" data-alt="A colorful pixel art hot air balloon floating over soft clouds, created using a diverse bead palette. The scene is bright and airy, with high-end digital art aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2xLZdHomf9CTpRYZeqbx_IKbA165F0afP3ZhU9vG6D1rh_yc2p-EYmxslhYXMAwTtCr78_NCLeZy8zkTTtSlh93lYiXjN6XAl85drBbR1_AQMX7MWfF96d04-WB09tKxzM1pMjlqvgHNvzpq0WZA4LvDwFpJT8J-LHH8WUwCJ0Lep3v0VIvrrctSivLVPbZhguM2I--MTNdOCla087bie3fXp5M8JChImHjdGsT71jUwgGQDdKUb1fsEApTdmsxuju24nXC0a8tug"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
+<p class="text-white font-bold">Sky Dreamer</p>
+<button class="text-white/80 text-sm flex items-center gap-1 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="download">download</span> Save Pattern
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- AI Generator CTA -->
+<section class="py-stack-lg">
+<div class="max-w-container-max mx-auto px-margin-desktop">
+<div class="bg-primary rounded-[32px] p-12 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
+<!-- Background Accent -->
+<div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
+<div class="z-10 text-center md:text-left max-w-xl">
+<h2 class="font-display-lg text-white text-headline-lg-mobile md:text-headline-lg mb-4">Can't find your pattern? Create one with AI</h2>
+<p class="text-white/90 font-body-lg text-body-lg mb-8">Transform any idea into a printable bead pattern in seconds. Just type what you want and let our AI do the work.</p>
+<div class="flex flex-col sm:flex-row gap-4">
+<input class="flex-1 h-14 px-6 rounded-xl bg-white border-none focus:ring-2 focus:ring-on-primary-fixed shadow-lg text-body-md" placeholder="A magical purple dragon..." type="text"/>
+<button class="bg-on-primary-fixed text-white px-8 py-4 rounded-xl font-bold hover:bg-black transition-all shadow-lg">Generate</button>
+</div>
+</div>
+<div class="w-full md:w-1/3 aspect-square glass-card rounded-2xl flex items-center justify-center p-8 z-10">
+<div class="text-center">
+<span class="material-symbols-outlined text-[64px] text-white mb-4 animate-pulse" data-icon="auto_awesome">auto_awesome</span>
+<p class="text-white font-headline-md">AI Pattern Magic</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- How It Works -->
+<section class="py-stack-lg">
+<div class="max-w-container-max mx-auto px-margin-desktop">
+<h2 class="font-headline-lg text-headline-lg text-on-surface text-center mb-12">How It Works</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<div class="text-center p-8 rounded-xl bg-surface-container-low hover:-translate-y-2 transition-transform custom-shadow-l1">
+<div class="w-20 h-20 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center mx-auto mb-6">
+<span class="material-symbols-outlined text-[40px]" data-icon="search">search</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-4">Search</h3>
+<p class="text-on-surface-variant">Find patterns by keyword, category, or difficulty level in our huge library.</p>
+</div>
+<div class="text-center p-8 rounded-xl bg-surface-container-low hover:-translate-y-2 transition-transform custom-shadow-l1">
+<div class="w-20 h-20 rounded-full bg-secondary-container text-primary flex items-center justify-center mx-auto mb-6">
+<span class="material-symbols-outlined text-[40px]" data-icon="brush">brush</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-4">Generate</h3>
+<p class="text-on-surface-variant">Use our AI tool to turn any description into a perfect bead-ready template.</p>
+</div>
+<div class="text-center p-8 rounded-xl bg-surface-container-low hover:-translate-y-2 transition-transform custom-shadow-l1">
+<div class="w-20 h-20 rounded-full bg-tertiary-container text-on-tertiary flex items-center justify-center mx-auto mb-6">
+<span class="material-symbols-outlined text-[40px]" data-icon="print">print</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-4">Print &amp; Create</h3>
+<p class="text-on-surface-variant">Download your high-resolution PDF with full color codes and start building.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- SEO Editorial Content -->
+<section class="py-stack-lg bg-surface-container-highest/30">
+<div class="max-w-container-max mx-auto px-margin-desktop">
+<article class="prose prose-lg max-w-none text-on-surface-variant">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-8">The Ultimate Guide to Perler Bead Patterns and Design</h2>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-stack-md font-body-md leading-relaxed">
+<div class="space-y-4">
+<p>Perler beads, also known as fuse beads or Hama beads, have evolved from a simple children's craft into a sophisticated form of pixel art. At BeadPatternAI, we celebrate this transformation by providing a platform where creativity meets technology. Whether you're a seasoned "beader" or just starting your journey, having access to high-quality, printable patterns is essential for creating beautiful designs.</p>
+<p>Our platform specializes in creating templates that are perfectly scaled for standard large and small pegboards. We understand the frustration of finding a beautiful image only to realize it doesn't translate well to the grid. That's why every pattern on BeadPatternAI is specifically optimized for bead placement, color matching, and structural integrity.</p>
+<h3 class="text-headline-md text-on-surface mt-8 mb-4">How to Choose the Right Pattern</h3>
+<p>When selecting a pattern, consider the "Grid Density." A smaller grid like 29x29 is perfect for keychains or magnets, while larger 58x58 designs allow for incredible detail but require multiple interlocking pegboards. Our AI generator allows you to specify the complexity level, ensuring you never feel overwhelmed by a project that's too large for your current setup.</p>
+<p>Color count is another critical factor. Professional bead artists often use hundreds of shades, but most beginners start with a standard bucket of 22,000 beads. Our search filters allow you to find patterns based on the specific bead brands you own, such as Perler, Artkal, or Hama, ensuring your physical beads match the digital pattern perfectly.</p>
+</div>
+<div class="space-y-4">
+<h3 class="text-headline-md text-on-surface mb-4">The Power of AI in Bead Art</h3>
+<p>The true revolution in bead crafting is the advent of AI generation. Traditionally, creating a custom pattern required meticulous manual work in a pixel editor. Now, with BeadPatternAI, you can simply describe your vision. Want a "Cyberpunk-style neon cat"? Our AI interprets that aesthetic and translates it into a palette of available bead colors, placing each "pixel" where it makes the most sense visually and structurally.</p>
+<p>This technology doesn't just create images; it creates instructions. Our printable PDFs include a detailed color key with bead IDs, an estimated bead count for each color, and a full-size template that can be placed directly under a clear pegboard for easy "tracing" with your beads.</p>
+<h3 class="text-headline-md text-on-surface mt-8 mb-4">Tips for Perfect Fusing</h3>
+<p>Once your beads are placed, the ironing process (fusing) is where the magic happens. Use high-quality parchment paper—never wax paper—and apply gentle, circular pressure with a medium-heat iron. The "Flat Melt" versus the "Open Hole" look is a matter of personal preference, but consistency is key across the entire design. Our patterns include tips specific to the design's density to help you achieve the perfect fuse every time.</p>
+<p>Join our community of thousands of creators today. Explore our vast gallery of user-generated patterns, participate in monthly design challenges, and take your bead art to the next level with the precision of AI and the passion of the crafting community.</p>
+</div>
+</div>
+</article>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-low border-t border-outline-variant">
+<div class="max-w-container-max mx-auto px-margin-desktop py-stack-lg">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-gutter mb-12">
+<div class="col-span-2 md:col-span-1">
+<div class="font-headline-md text-headline-md text-primary mb-6">BeadPatternAI</div>
+<p class="text-on-surface-variant text-label-sm mb-6">The world's largest collection of AI-powered bead patterns. Made for creators, by creators.</p>
+<div class="flex gap-4">
+<a class="text-primary hover:opacity-80 transition-opacity" href="#">
+<span class="material-symbols-outlined" data-icon="public">public</span>
+</a>
+<a class="text-primary hover:opacity-80 transition-opacity" href="#">
+<span class="material-symbols-outlined" data-icon="share">share</span>
+</a>
+</div>
+</div>
+<div>
+<h5 class="font-label-lg text-label-lg text-on-surface mb-6">Explore</h5>
+<ul class="space-y-4">
+<li><a class="text-on-surface-variant hover:text-primary transition-colors text-label-sm" href="#">Popular Patterns</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-colors text-label-sm" href="#">Categories</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-colors text-label-sm" href="#">Collections</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-colors text-label-sm" href="#">New Arrivals</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-label-lg text-label-lg text-on-surface mb-6">Resources</h5>
+<ul class="space-y-4">
+<li><a class="text-on-surface-variant hover:text-primary transition-colors text-label-sm" href="#">Guides</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-colors text-label-sm" href="#">Blog</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-colors text-label-sm" href="#">Bead Chart</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-colors text-label-sm" href="#">Printing Tips</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-label-lg text-label-lg text-on-surface mb-6">Legal</h5>
+<ul class="space-y-4">
+<li><a class="text-on-surface-variant hover:text-primary transition-colors text-label-sm" href="#">Privacy Policy</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-colors text-label-sm" href="#">Terms of Service</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-colors text-label-sm" href="#">Cookie Policy</a></li>
+</ul>
+</div>
+</div>
+<div class="pt-8 border-t border-outline-variant flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="text-on-surface-variant text-label-sm">© 2024 BeadPatternAI. All rights reserved.</p>
+<div class="flex items-center gap-2">
+<span class="text-on-surface-variant text-label-sm">Built with</span>
+<span class="material-symbols-outlined text-primary text-[16px]" data-icon="favorite" style="font-variation-settings: 'FILL' 1;">favorite</span>
+<span class="text-on-surface-variant text-label-sm">for the crafting community</span>
+</div>
+</div>
+</div>
+</footer>
+<script>
+        // Smooth horizontal scroll for trending
+        const scrollContainer = document.querySelector('.no-scrollbar');
+        if (scrollContainer) {
+            scrollContainer.addEventListener('wheel', (evt) => {
+                evt.preventDefault();
+                scrollContainer.scrollLeft += evt.deltaY;
+            });
+        }
+        
+        // Simple intersection observer for reveal animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100');
+                    entry.target.classList.remove('opacity-0', 'translate-y-10');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('section').forEach(section => {
+            section.classList.add('transition-all', 'duration-700', 'opacity-0', 'translate-y-10');
+            observer.observe(section);
+        });
+    </script>
+</body></html>

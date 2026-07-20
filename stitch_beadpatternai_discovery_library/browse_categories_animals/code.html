@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Animals - BeadPatternAI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Plus+Jakarta+Sans:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed": "#2b151c",
+                    "secondary": "#75565f",
+                    "on-primary-fixed": "#400010",
+                    "surface-variant": "#dde4e6",
+                    "surface-container": "#e8eff1",
+                    "on-error": "#ffffff",
+                    "primary-fixed-dim": "#ffb2b9",
+                    "tertiary-fixed": "#96f4da",
+                    "on-primary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "error-container": "#ffdad6",
+                    "inverse-surface": "#2b3234",
+                    "surface": "#f4fafd",
+                    "on-primary-fixed-variant": "#8c1231",
+                    "outline-variant": "#dfbfc1",
+                    "primary-fixed": "#ffdadc",
+                    "on-secondary": "#ffffff",
+                    "tertiary-fixed-dim": "#79d7be",
+                    "surface-dim": "#d4dbdd",
+                    "on-secondary-container": "#795a63",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-high": "#e2e9ec",
+                    "secondary-fixed-dim": "#e4bcc6",
+                    "on-surface-variant": "#584143",
+                    "on-background": "#161d1f",
+                    "secondary-container": "#fed5df",
+                    "on-primary-container": "#6e0021",
+                    "on-tertiary-container": "#003b30",
+                    "inverse-on-surface": "#ebf2f4",
+                    "surface-container-low": "#eef5f7",
+                    "tertiary": "#006b58",
+                    "on-tertiary": "#ffffff",
+                    "background": "#f4fafd",
+                    "tertiary-container": "#4dac95",
+                    "inverse-primary": "#ffb2b9",
+                    "on-surface": "#161d1f",
+                    "on-tertiary-fixed-variant": "#005142",
+                    "surface-tint": "#ad2d47",
+                    "surface-bright": "#f4fafd",
+                    "on-secondary-fixed-variant": "#5b3f47",
+                    "on-error-container": "#93000a",
+                    "primary-container": "#ff6b81",
+                    "outline": "#8b7072",
+                    "surface-container-highest": "#dde4e6",
+                    "secondary-fixed": "#ffd9e2",
+                    "on-tertiary-fixed": "#002019",
+                    "primary": "#ad2d47"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-lg": "48px",
+                    "stack-md": "24px",
+                    "container-max": "1280px",
+                    "base": "8px",
+                    "margin-mobile": "16px",
+                    "stack-sm": "12px",
+                    "gutter": "24px",
+                    "margin-desktop": "48px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "label-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "display-lg": ["Plus Jakarta Sans"],
+                    "display-lg-mobile": ["Plus Jakarta Sans"],
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-lg": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "display-lg-mobile": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .pattern-card-shadow {
+            box-shadow: 0px 4px 20px rgba(45, 52, 54, 0.05);
+            transition: all 0.3s ease;
+        }
+        .pattern-card-shadow:hover {
+            box-shadow: 0px 12px 32px rgba(45, 52, 54, 0.08);
+            transform: translateY(-4px) scale(1.02);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #dde4e6;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container font-body-md text-body-md overflow-x-hidden">
+<!-- Top Navigation Bar -->
+<header class="w-full top-0 sticky z-50 bg-surface">
+<nav class="flex justify-between items-center px-margin-desktop py-base max-w-container-max mx-auto">
+<div class="flex items-center gap-stack-md">
+<a class="font-display-lg text-display-lg text-primary tracking-tight" href="#">BeadPatternAI</a>
+<div class="hidden md:flex items-center gap-6 ml-8">
+<a class="text-on-surface-variant font-label-lg text-label-lg hover:text-primary transition-colors duration-200" href="#">Patterns</a>
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-label-lg text-label-lg transition-colors duration-200" href="#">Categories</a>
+<a class="text-on-surface-variant font-label-lg text-label-lg hover:text-primary transition-colors duration-200" href="#">Collections</a>
+<a class="text-on-surface-variant font-label-lg text-label-lg hover:text-primary transition-colors duration-200" href="#">Ideas</a>
+<a class="text-on-surface-variant font-label-lg text-label-lg hover:text-primary transition-colors duration-200" href="#">Generator</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<input class="bg-surface-container-low border-none rounded-xl px-4 py-2 w-64 focus:ring-2 focus:ring-primary-container transition-all" placeholder="Search patterns..." type="text"/>
+<span class="material-symbols-outlined absolute right-3 top-2.5 text-on-surface-variant">search</span>
+</div>
+<button class="active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-primary text-2xl">search</span>
+</button>
+</div>
+</nav>
+</header>
+<!-- Hero Section -->
+<section class="px-margin-desktop py-stack-lg max-w-container-max mx-auto">
+<div class="flex flex-col md:flex-row items-center gap-stack-lg">
+<div class="w-full md:w-1/2">
+<h1 class="font-display-lg text-display-lg text-on-surface mb-4">Wild & Wonderful Animals</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">
+                    Discover a vibrant collection of bead patterns inspired by the natural world. From intricate geometric wolves to playful pastel butterflies, find your next masterpiece right here.
+                </p>
+<div class="flex gap-4 mt-8">
+<button class="bg-primary text-on-primary px-8 py-3 rounded-xl font-label-lg text-label-lg hover:opacity-90 transition-all shadow-lg shadow-primary/20">Featured Wildlife</button>
+<button class="bg-secondary-container text-primary px-8 py-3 rounded-xl font-label-lg text-label-lg hover:bg-secondary-fixed transition-all">Submit Pattern</button>
+</div>
+</div>
+<div class="w-full md:w-1/2 relative h-[400px]">
+<div class="absolute inset-0 bg-primary-container/10 rounded-[32px] overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A macro photography shot of a vibrant, multi-colored beaded bird pattern, featuring deep crimson, teal, and gold glass beads meticulously arranged to form a detailed feather texture. The lighting is soft and natural, emphasizing the glossy texture of the beads against a warm, cream-colored surface. The overall aesthetic is artisanal and high-end, celebrating craftsmanship and color." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8a_ZpsyJZXn9xQWh6qKtyAEfeDuzhvmKhrU73O2Il-HkvH215JrqvAz2f3ZRUvre4eBht2CcQMlY4mRWdDzTk7yvMixn9Hl5pb2_YEVIrLkZhBWFSjIK7Mo9TlBPLudrWBO8I8PqBRcQmHr7ICvofrdVoUydArWm7VE8vObmARezM0owcg7ntmHSupFbhlv6REHmXrYC9i2uVOVGCJ2fZLYcHXJ696YkjqG7yyXUj0Z1PIjYDUarG6ZgI8I3-B_qnai1YVAUmS7wS"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Content & Filters Shell -->
+<main class="px-margin-desktop max-w-container-max mx-auto pb-stack-lg">
+<!-- Filter Toolbar -->
+<div class="flex flex-wrap items-center justify-between gap-4 mb-stack-md">
+<div class="flex flex-wrap gap-3">
+<div class="relative group">
+<button class="flex items-center gap-2 bg-surface-container-low px-4 py-2 rounded-xl text-label-lg font-label-lg hover:bg-surface-container-high transition-colors">
+                        Difficulty
+                        <span class="material-symbols-outlined text-sm">keyboard_arrow_down</span>
+</button>
+</div>
+<div class="relative group">
+<button class="flex items-center gap-2 bg-surface-container-low px-4 py-2 rounded-xl text-label-lg font-label-lg hover:bg-surface-container-high transition-colors">
+                        Grid Size
+                        <span class="material-symbols-outlined text-sm">keyboard_arrow_down</span>
+</button>
+</div>
+<div class="relative group">
+<button class="flex items-center gap-2 bg-surface-container-low px-4 py-2 rounded-xl text-label-lg font-label-lg hover:bg-surface-container-high transition-colors">
+                        Theme
+                        <span class="material-symbols-outlined text-sm">keyboard_arrow_down</span>
+</button>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-on-surface-variant font-label-sm">Sort by:</span>
+<select class="bg-transparent border-none font-label-lg focus:ring-0 cursor-pointer">
+<option>Most Recent</option>
+<option>Most Popular</option>
+<option>Difficulty: Low to High</option>
+</select>
+</div>
+</div>
+<!-- Pattern Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-gutter">
+<!-- Pattern Card Template x12 -->
+<script>
+                const animals = [
+                    { title: "Majestic Red Fox", difficulty: "Intermediate", beads: "1,200", img: "A highly detailed bead pattern of a red fox face, using vibrant orange and white beads with deep black accents for the eyes and nose. Soft museum lighting." },
+                    { title: "Azure Kingfisher", difficulty: "Advanced", beads: "2,450", img: "A stunning kingfisher bird bead pattern with iridescent blue and bright orange plumage, captured in a dynamic flying pose against a soft bokeh background." },
+                    { title: "Sleepy Panda", difficulty: "Beginner", beads: "450", img: "A minimalist and cute bead pattern of a panda resting on a bamboo branch, using stark black and white beads with soft green accents." },
+                    { title: "Tropical Toucan", difficulty: "Intermediate", beads: "1,800", img: "A vibrant toucan bead pattern with a large colorful beak featuring gradients of yellow, orange, and red. Glossy high-end product photography." },
+                    { title: "Geometric Wolf", difficulty: "Advanced", beads: "3,200", img: "An intricate geometric wolf head pattern made of silver, charcoal, and icy blue beads. Symmetrical and modern aesthetic." },
+                    { title: "Golden Honeybee", difficulty: "Beginner", beads: "600", img: "A delicate honeybee bead pattern using gold metallic beads and translucent white beads for the wings. Warm sunlight lighting." },
+                    { title: "Monarch Butterfly", difficulty: "Intermediate", beads: "950", img: "A classic monarch butterfly bead pattern with intricate black veining on bright orange wings. Realistic and detailed." },
+                    { title: "Emerald Turtle", difficulty: "Intermediate", beads: "1,400", img: "A sea turtle bead pattern with a shell composed of various shades of emerald and forest green beads. Underwater light refractions." },
+                    { title: "Lavender Lynx", difficulty: "Advanced", beads: "2,900", img: "A stylized lynx pattern using a unique palette of lavender, violet, and deep plum beads. Dreamy and artistic." },
+                    { title: "Coral Flamingo", difficulty: "Intermediate", beads: "1,100", img: "A graceful flamingo bead pattern in shades of soft coral and bright pink. Minimalist white background." },
+                    { title: "Ebony Stallion", difficulty: "Advanced", beads: "4,100", img: "A powerful black horse head bead pattern using matte and shiny black beads to create depth and muscle definition." },
+                    { title: "Arctic Polar Bear", difficulty: "Beginner", beads: "800", img: "A simple yet elegant polar bear bead pattern using pearlescent white and soft grey beads. Cool, crisp lighting." }
+                ];
+
+                document.write(animals.map(animal => `
+                    <div class="bg-surface-container-lowest rounded-[16px] overflow-hidden pattern-card-shadow flex flex-col h-full group">
+                        <div class="h-64 overflow-hidden relative">
+                            <img src="placeholder" data-alt="${animal.img}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                            <button class="absolute top-4 right-4 bg-surface/80 backdrop-blur-md p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                                <span class="material-symbols-outlined text-primary">favorite</span>
+                            </button>
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="font-headline-md text-headline-md text-on-surface">${animal.title}</h3>
+                            </div>
+                            <div class="flex flex-wrap gap-2 mb-6">
+                                <span class="px-3 py-1 bg-surface-container rounded-lg text-label-sm font-label-sm text-on-surface-variant">${animal.difficulty}</span>
+                                <span class="px-3 py-1 bg-surface-container rounded-lg text-label-sm font-label-sm text-on-surface-variant">${animal.beads} beads</span>
+                            </div>
+                            <div class="mt-auto">
+                                <button class="w-full bg-primary-container text-on-primary-container font-label-lg py-3 rounded-xl active:scale-95 transition-transform">Get Pattern</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join(''));
+            </script>
+</div>
+<!-- Pagination -->
+<div class="mt-stack-lg flex justify-center items-center gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container-low hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-xl bg-primary text-on-primary font-bold">1</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container-low hover:bg-surface-container-high transition-colors">2</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container-low hover:bg-surface-container-high transition-colors">3</button>
+<span class="px-2">...</span>
+<button class="w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container-low hover:bg-surface-container-high transition-colors">12</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container-low hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</main>
+<!-- FAQ & SEO Content -->
+<section class="bg-surface-container-low py-stack-lg border-t border-outline-variant">
+<div class="px-margin-desktop max-w-container-max mx-auto">
+<div class="grid md:grid-cols-2 gap-stack-lg">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-6">About Animal Patterns</h2>
+<div class="prose prose-sm text-on-surface-variant">
+<p class="mb-4">BeadPatternAI offers a curated selection of high-quality animal bead patterns for artists of all levels. Our "Animals" category is our most popular, featuring everything from domestic pets like cats and dogs to exotic wildlife and mythical creatures.</p>
+<p class="mb-4">Every pattern is generated using our proprietary AI model, specifically trained on traditional beadwork techniques. This ensures that the color palettes are practical for real-world bead brands like Miyuki, Toho, and Preciosa.</p>
+<p>Whether you are creating a simple keychain or a massive wall hanging, our animal patterns provide the perfect blueprint for your creative journey.</p>
+</div>
+</div>
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-6">Frequently Asked Questions</h2>
+<div class="space-y-4">
+<div class="bg-surface-container-lowest p-5 rounded-2xl">
+<h4 class="font-label-lg text-on-surface mb-2">Are these patterns suitable for beginners?</h4>
+<p class="text-label-sm text-on-surface-variant">Yes! Use the "Difficulty" filter to find patterns labeled as 'Beginner'. These typically use fewer colors and have simpler geometries.</p>
+</div>
+<div class="bg-surface-container-lowest p-5 rounded-2xl">
+<h4 class="font-label-lg text-on-surface mb-2">What bead sizes do you support?</h4>
+<p class="text-label-sm text-on-surface-variant">Our patterns are versatile but optimized for 11/0 seed beads. The grid sizes can be adjusted in our generator tool.</p>
+</div>
+<div class="bg-surface-container-lowest p-5 rounded-2xl">
+<h4 class="font-label-lg text-on-surface mb-2">Can I sell items made from these patterns?</h4>
+<p class="text-label-sm text-on-surface-variant">Absolutely! We encourage artists to sell their physical creations. However, the digital pattern files themselves cannot be resold.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="w-full mt-stack-lg border-t border-outline-variant bg-surface-container-low">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-gutter px-margin-desktop py-stack-lg max-w-container-max mx-auto">
+<div class="col-span-2 md:col-span-1">
+<span class="font-headline-md text-headline-md text-primary mb-6 block">BeadPatternAI</span>
+<p class="text-on-surface-variant text-label-sm max-w-xs">The world's leading platform for AI-assisted bead design and creative pattern discovery.</p>
+</div>
+<div>
+<h4 class="font-label-lg text-label-lg text-on-surface mb-4">Explore</h4>
+<ul class="space-y-2">
+<li><a class="text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Popular Patterns</a></li>
+<li><a class="text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Categories</a></li>
+<li><a class="text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Collections</a></li>
+<li><a class="text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Guides</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-label-lg text-label-lg text-on-surface mb-4">Support</h4>
+<ul class="space-y-2">
+<li><a class="text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Blog</a></li>
+<li><a class="text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a></li>
+<li><a class="text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Terms of Service</a></li>
+<li><a class="text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Contact Us</a></li>
+</ul>
+</div>
+<div class="col-span-2 md:col-span-1">
+<h4 class="font-label-lg text-label-lg text-on-surface mb-4">Newsletter</h4>
+<div class="flex gap-2">
+<input class="bg-surface px-4 py-2 rounded-xl text-label-sm w-full border-none focus:ring-2 focus:ring-primary-container" placeholder="Email address" type="email"/>
+<button class="bg-primary text-on-primary p-2 rounded-xl">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</div>
+</div>
+<div class="px-margin-desktop py-6 max-w-container-max mx-auto border-t border-outline-variant/30 flex justify-between items-center">
+<span class="text-label-sm text-on-surface-variant opacity-80">© 2024 BeadPatternAI. All rights reserved.</span>
+<div class="flex gap-4">
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">share</span></a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">photo_camera</span></a>
+</div>
+</div>
+</footer>
+<script>
+        // Micro-interaction for pattern card hovering logic can be extended here
+        document.querySelectorAll('.pattern-card-shadow').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                // Potential for dynamic color shift on hover
+            });
+        });
+    </script>
+</body></html>

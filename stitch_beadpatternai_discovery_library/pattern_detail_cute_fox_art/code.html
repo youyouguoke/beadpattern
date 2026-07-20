@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pattern Detail - BeadPatternAI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed": "#2b151c",
+                    "secondary": "#75565f",
+                    "on-primary-fixed": "#400010",
+                    "surface-variant": "#dde4e6",
+                    "surface-container": "#e8eff1",
+                    "on-error": "#ffffff",
+                    "primary-fixed-dim": "#ffb2b9",
+                    "tertiary-fixed": "#96f4da",
+                    "on-primary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "error-container": "#ffdad6",
+                    "inverse-surface": "#2b3234",
+                    "surface": "#f4fafd",
+                    "on-primary-fixed-variant": "#8c1231",
+                    "outline-variant": "#dfbfc1",
+                    "primary-fixed": "#ffdadc",
+                    "on-secondary": "#ffffff",
+                    "tertiary-fixed-dim": "#79d7be",
+                    "surface-dim": "#d4dbdd",
+                    "on-secondary-container": "#795a63",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-high": "#e2e9ec",
+                    "secondary-fixed-dim": "#e4bcc6",
+                    "on-surface-variant": "#584143",
+                    "on-background": "#161d1f",
+                    "secondary-container": "#fed5df",
+                    "on-primary-container": "#6e0021",
+                    "on-tertiary-container": "#003b30",
+                    "inverse-on-surface": "#ebf2f4",
+                    "surface-container-low": "#eef5f7",
+                    "tertiary": "#006b58",
+                    "on-tertiary": "#ffffff",
+                    "background": "#f4fafd",
+                    "tertiary-container": "#4dac95",
+                    "inverse-primary": "#ffb2b9",
+                    "on-surface": "#161d1f",
+                    "on-tertiary-fixed-variant": "#005142",
+                    "surface-tint": "#ad2d47",
+                    "surface-bright": "#f4fafd",
+                    "on-secondary-fixed-variant": "#5b3f47",
+                    "on-error-container": "#93000a",
+                    "primary-container": "#ff6b81",
+                    "outline": "#8b7072",
+                    "surface-container-highest": "#dde4e6",
+                    "secondary-fixed": "#ffd9e2",
+                    "on-tertiary-fixed": "#002019",
+                    "primary": "#ad2d47"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-lg": "48px",
+                    "stack-md": "24px",
+                    "container-max": "1280px",
+                    "base": "8px",
+                    "margin-mobile": "16px",
+                    "stack-sm": "12px",
+                    "gutter": "24px",
+                    "margin-desktop": "48px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "label-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "display-lg": ["Plus Jakarta Sans"],
+                    "display-lg-mobile": ["Plus Jakarta Sans"],
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-lg": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "display-lg-mobile": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .pattern-card-shadow {
+            box-shadow: 0px 4px 20px rgba(45, 52, 54, 0.05);
+            transition: all 0.3s ease;
+        }
+        .pattern-card-shadow:hover {
+            box-shadow: 0px 12px 32px rgba(45, 52, 54, 0.08);
+            transform: scale(1.02);
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md antialiased">
+<!-- TopNavBar -->
+<header class="w-full top-0 sticky z-50 bg-surface dark:bg-background">
+<nav class="flex justify-between items-center px-margin-desktop py-base max-w-container-max mx-auto">
+<div class="font-display-lg text-display-lg text-primary dark:text-primary-container tracking-tight">BeadPatternAI</div>
+<div class="hidden md:flex items-center gap-stack-md">
+<a class="font-label-lg text-label-lg text-primary dark:text-primary-container font-bold border-b-2 border-primary pb-1" href="#">Patterns</a>
+<a class="font-label-lg text-label-lg text-on-surface-variant dark:text-on-secondary-fixed-variant hover:text-primary transition-colors" href="#">Categories</a>
+<a class="font-label-lg text-label-lg text-on-surface-variant dark:text-on-secondary-fixed-variant hover:text-primary transition-colors" href="#">Collections</a>
+<a class="font-label-lg text-label-lg text-on-surface-variant dark:text-on-secondary-fixed-variant hover:text-primary transition-colors" href="#">Ideas</a>
+<a class="font-label-lg text-label-lg text-on-surface-variant dark:text-on-secondary-fixed-variant hover:text-primary transition-colors" href="#">Generator</a>
+<a class="font-label-lg text-label-lg text-on-surface-variant dark:text-on-secondary-fixed-variant hover:text-primary transition-colors" href="#">Blog</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-primary p-2">search</button>
+</div>
+</nav>
+</header>
+<main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-stack-md md:py-stack-lg">
+<!-- Breadcrumbs -->
+<nav class="flex items-center gap-2 mb-8 opacity-60">
+<a class="text-label-sm font-label-sm hover:text-primary" href="#">Patterns</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<a class="text-label-sm font-label-sm hover:text-primary" href="#">Floral Collection</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-label-sm font-label-sm text-on-surface">Summer Blossom Loom</span>
+</nav>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<!-- Hero Image Section -->
+<section class="lg:col-span-7 space-y-6">
+<div class="rounded-[24px] overflow-hidden pattern-card-shadow bg-surface-container-lowest">
+<img class="w-full aspect-square object-cover" data-alt="A high-resolution, close-up photograph of a professional beadwork loom pattern featuring a vibrant summer blossom design. The beads are translucent and opaque in shades of coral pink, golden yellow, and mint green, creating a sophisticated floral texture. Soft, cinematic lighting highlights the individual cylindrical beads and the precision of the grid. The background is a clean, minimalist white, reflecting a premium creative tool aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHN9ACgmBsdyhRB_vZGRKCjoqp20_byaJp7qMEV_zopbZNmUNIBHKxGidOeoZ3GSPTHSNwskWwAzU3l8oHb5cFgw91fc4vlAJpQi2hzSJWJXB5mVrP1Jal6WuKChQo1R6-iat_H1X9wmHhMXd34ecQUknAFBgteEcS848iwE5M8Oh-FExlO0-OxHO8HKWWchn5rJwFRXdpie8UFfVzDDmicy2WHRMovncUmxyiUAceRUfpY3v7XsNg3k7UfVgbVPcF_5MPf016Dxux"/>
+</div>
+<!-- Share/Pinterest Card -->
+<div class="flex items-center justify-between p-6 bg-surface-container-low rounded-[16px]">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">favorite</span>
+<p class="font-label-lg text-label-lg">4.2k people saved this pattern</p>
+</div>
+<button class="flex items-center gap-2 bg-[#BD081C] text-white px-6 py-2.5 rounded-full font-label-lg hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-[20px]">push_pin</span>
+                        Save to Pinterest
+                    </button>
+</div>
+</section>
+<!-- Pattern Info & Actions -->
+<aside class="lg:col-span-5 space-y-gutter sticky top-24">
+<div class="space-y-4">
+<h1 class="font-display-lg-mobile md:font-headline-lg text-display-lg-mobile md:text-headline-lg text-on-surface">Summer Blossom Loom Pattern</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">A sophisticated loom weaving pattern inspired by Mediterranean summer gardens. Designed for professional finish and effortless color transitions.</p>
+</div>
+<!-- Stats Grid -->
+<div class="grid grid-cols-2 gap-4">
+<div class="p-6 bg-surface-container-low rounded-[20px] flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Grid Size</span>
+<span class="font-headline-md text-headline-md">48 x 120</span>
+</div>
+<div class="p-6 bg-surface-container-low rounded-[20px] flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Difficulty</span>
+<div class="flex items-center gap-2">
+<span class="font-headline-md text-headline-md text-primary">Intermediate</span>
+</div>
+</div>
+<div class="p-6 bg-surface-container-low rounded-[20px] flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Bead Count</span>
+<span class="font-headline-md text-headline-md">5,760</span>
+</div>
+<div class="p-6 bg-surface-container-low rounded-[20px] flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Technique</span>
+<span class="font-headline-md text-headline-md">Loom</span>
+</div>
+</div>
+<!-- Color Palette -->
+<div class="p-8 bg-surface-container-low rounded-[20px] space-y-6">
+<h3 class="font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider">Palette (12 Colors)</h3>
+<div class="flex flex-wrap gap-3">
+<div class="group relative">
+<div class="w-10 h-10 rounded-full bg-[#FF6B81] border-2 border-white ring-2 ring-primary"></div>
+<span class="absolute -top-10 left-1/2 -translate-x-1/2 bg-on-surface text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">DB-2101</span>
+</div>
+<div class="w-10 h-10 rounded-full bg-[#FFD6E0] border-2 border-white"></div>
+<div class="w-10 h-10 rounded-full bg-[#4dac95] border-2 border-white"></div>
+<div class="w-10 h-10 rounded-full bg-[#79d7be] border-2 border-white"></div>
+<div class="w-10 h-10 rounded-full bg-[#ffffff] border-2 border-outline-variant"></div>
+<div class="w-10 h-10 rounded-full bg-[#ad2d47] border-2 border-white"></div>
+<div class="w-10 h-10 rounded-full bg-[#ffd9e2] border-2 border-white"></div>
+<div class="w-10 h-10 rounded-full bg-[#75565f] border-2 border-white"></div>
+<button class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant font-label-sm">
+                            +4
+                        </button>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="flex flex-col gap-4">
+<button class="w-full bg-[#FF6B81] text-white py-5 rounded-[12px] font-label-lg flex items-center justify-center gap-3 hover:shadow-xl transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined">download</span>
+                        Download PDF Pattern
+                    </button>
+<button class="w-full bg-[#FFD6E0] text-[#FF6B81] py-5 rounded-[12px] font-label-lg flex items-center justify-center gap-3 hover:bg-[#ffc2d1] transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined">image</span>
+                        Download PNG Grid
+                    </button>
+<button class="w-full border-2 border-outline-variant text-on-surface py-5 rounded-[12px] font-label-lg flex items-center justify-center gap-3 hover:bg-surface-container-high transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined">auto_awesome</span>
+                        Generate Similar Patterns
+                    </button>
+</div>
+</aside>
+</div>
+<!-- Tutorial Section -->
+<section class="mt-stack-lg py-stack-lg border-t border-outline-variant">
+<h2 class="font-headline-lg text-headline-lg mb-stack-md">Crafting Instructions</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<div class="space-y-4 p-8 bg-surface-container-lowest rounded-[24px] pattern-card-shadow">
+<div class="w-12 h-12 bg-secondary-container text-on-secondary-container rounded-full flex items-center justify-center font-bold">1</div>
+<h3 class="font-headline-md text-headline-md">Setup Your Loom</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Warp your loom with 49 threads. We recommend using a high-tension silk or bonded nylon thread for durability.</p>
+</div>
+<div class="space-y-4 p-8 bg-surface-container-lowest rounded-[24px] pattern-card-shadow">
+<div class="w-12 h-12 bg-secondary-container text-on-secondary-container rounded-full flex items-center justify-center font-bold">2</div>
+<h3 class="font-headline-md text-headline-md">The First Row</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Start from the bottom-left corner. The pattern uses Miyuki Delica 11/0 beads for the most consistent finish.</p>
+</div>
+<div class="space-y-4 p-8 bg-surface-container-lowest rounded-[24px] pattern-card-shadow">
+<div class="w-12 h-12 bg-secondary-container text-on-secondary-container rounded-full flex items-center justify-center font-bold">3</div>
+<h3 class="font-headline-md text-headline-md">Finishing</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Tuck your remaining thread ends back through 3-4 rows of beads to ensure the pattern doesn't unravel over time.</p>
+</div>
+</div>
+</section>
+<!-- Generate Similar CTA (Visual Banner) -->
+<section class="mt-stack-lg relative overflow-hidden rounded-[32px] p-12 bg-primary-container text-on-primary">
+
+<div class="relative z-10 max-w-2xl space-y-6">
+<h2 class="font-display-lg text-display-lg text-white">Love this style?</h2>
+<p class="font-body-lg text-body-lg text-white/90">Our AI can analyze the colors and geometric flow of "Summer Blossom" to generate 10 unique, matching variations just for you.</p>
+<button class="bg-white text-primary px-10 py-5 rounded-full font-headline-md shadow-xl hover:scale-105 transition-transform">
+                    Generate Similar Variations
+                </button>
+</div>
+</section>
+<!-- Related Patterns Grid -->
+<section class="mt-stack-lg space-y-stack-md">
+<div class="flex justify-between items-end">
+<h2 class="font-headline-lg text-headline-lg">More from Floral Collection</h2>
+<a class="text-primary font-label-lg flex items-center gap-1 hover:underline" href="#">View All <span class="material-symbols-outlined text-[18px]">arrow_forward</span></a>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
+<div class="group cursor-pointer">
+<div class="aspect-[3/4] rounded-[20px] overflow-hidden pattern-card-shadow mb-4 bg-surface-container-low">
+<img class="w-full h-full object-cover" data-alt="A detailed beadwork pattern for a bracelet featuring a tropical hibiscus motif. Soft pastel blues and intense magentas dominate the palette. Styled as a premium digital product listing on a clean white background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhklZDGzExYJyaS224llAi78ffJ6MzsKpbZRLsB-K_RBiPRI48LwxUkO2SCEPRy55eEuX5SdCdsjmOOZHDz3oRMYkx7T5aHCOpA6kHLXthgA6KRpJXVEYyQPkn8GwXzM5zUE-IWrbnl406g3FwkBajRvt4YZ8PuMO6kWHJ__-n7GyATmt7Go3SPexGsmrqvUkFg0eLhNZQ_7NBKJ0isKolOhqzCIPgIXozQ2_VoMcPPDwJd1uPk3cEzeAp1Qh6yN5llkoQjWgDfWau"/>
+</div>
+<h4 class="font-headline-md text-[18px]">Midnight Rose</h4>
+<p class="font-label-sm text-on-surface-variant">Intermediate • Loom</p>
+</div>
+<div class="group cursor-pointer">
+<div class="aspect-[3/4] rounded-[20px] overflow-hidden pattern-card-shadow mb-4 bg-surface-container-low">
+<img class="w-full h-full object-cover" data-alt="A delicate beadweaving design of small daisy flowers on a sage green background. The style is vintage cottagecore, rendered with a professional matte finish. High-end lifestyle creative product photography aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvQg-Z_nKj8m467EB6hlSjsOEajiA3RObmRI4-HAwm_0yn3Rt4ZbyFC1a6Hel_6pEU00bYHJEjhUs6lJsZlKgXEMj3FHpH9MKklajaIRJuTJ067vV9AInHxiYdWNxxMjtCewxoMH7gzoyptVSx2gktBoEFEaW2k09kW4EFyA3P0JMB-D-3zRiDENNPDxA5lk40LzvtYcTnB7X6M7u3Fl7fHpL0603mq7cF5Kc-G8ikJzsXZZMzgiwWJLmPQGxmnEW4j_g0TiHFMSyO"/>
+</div>
+<h4 class="font-headline-md text-[18px]">Daisy Chain</h4>
+<p class="font-label-sm text-on-surface-variant">Beginner • Brick Stitch</p>
+</div>
+<div class="group cursor-pointer">
+<div class="aspect-[3/4] rounded-[20px] overflow-hidden pattern-card-shadow mb-4 bg-surface-container-low">
+<img class="w-full h-full object-cover" data-alt="A complex geometric bead pattern featuring sunflower fractals. Vibrant ochre, burnt orange, and chocolate brown beads. Intricate detail, professional loom weaving software rendering." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbx3F4gDGJGIck8cN5qgqF8CbL8QYXN7VJjzTZ96qMZnPZkB4GTlY4JJF3PwXjHQbnVMXOm4Yp1zCh1gWt14uPbABjUPwGsgsz_hGIzmSbuVKqnNtGyD1NFndjxWGsVKw7bEDj-tk0wpBVHJmP480p07_Tk_yNzpysUtLgc4Nj4sBVGk-SZAcAcsbOjz2pay3P8dgh0FLEG3hdPsWmGgTdScduS17HBVHVpBJaJj7sQIr_oyFJHf13fq0p1HyjRr3bRLORcEm11INo"/>
+</div>
+<h4 class="font-headline-md text-[18px]">Golden Fractal</h4>
+<p class="font-label-sm text-on-surface-variant">Advanced • Loom</p>
+</div>
+<div class="group cursor-pointer">
+<div class="aspect-[3/4] rounded-[20px] overflow-hidden pattern-card-shadow mb-4 bg-surface-container-low">
+<img class="w-full h-full object-cover" data-alt="A minimalist lavender sprig bead pattern. Soft purple tones and silver lining beads create a sophisticated, elegant look. Minimalist modern creative design aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFmbrBXNvwek7h16I9yAVuBRJlfSMUIHemni6VPZVFSIYCzzBZhd1EpUHJtk4EG0iNxfdX-jwnLJu54ja9y7wC25eqCrPG9sNxFREm_adD5dcD0QprTB8s_nqQsNwFPkU2qO3cPYPly25LnUiqIGkiTKHpKPKSUn3kOPX4wFXJRFmQiFqShGsOO3xCn8KIxQku6NpgdgD2I1ZBIlj2ShGDodW-Lm_R5OMC-Gl7OrsrtFagAtdjc39PiGaPMR4WXwe1A91OzbPmm27r"/>
+</div>
+<h4 class="font-headline-md text-[18px]">Silver Lavender</h4>
+<p class="font-label-sm text-on-surface-variant">Intermediate • Loom</p>
+</div>
+</div>
+</section>
+<!-- FAQ Section -->
+<section class="mt-stack-lg py-stack-lg bg-surface-container rounded-[32px] px-margin-desktop">
+<h2 class="font-headline-lg text-headline-lg mb-8 text-center">Frequently Asked Questions</h2>
+<div class="max-w-3xl mx-auto space-y-4">
+<details class="group bg-surface-container-lowest p-6 rounded-[16px] cursor-pointer">
+<summary class="flex justify-between items-center font-headline-md text-[18px] list-none">
+                        What bead brand should I use?
+                        <span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<p class="mt-4 text-on-surface-variant font-body-md">This pattern is specifically optimized for Miyuki Delica 11/0 beads. Their perfectly cylindrical shape ensures the grid remains precise. Using rounded seed beads may cause the pattern to warp.</p>
+</details>
+<details class="group bg-surface-container-lowest p-6 rounded-[16px] cursor-pointer">
+<summary class="flex justify-between items-center font-headline-md text-[18px] list-none">
+                        Is the thread count included in the PDF?
+                        <span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<p class="mt-4 text-on-surface-variant font-body-md">Yes! The downloadable PDF includes a full bead legend, row-by-row word chart, and a visual high-resolution grid for reference.</p>
+</details>
+<details class="group bg-surface-container-lowest p-6 rounded-[16px] cursor-pointer">
+<summary class="flex justify-between items-center font-headline-md text-[18px] list-none">
+                        Can I use this for Peoyte stitch?
+                        <span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<p class="mt-4 text-on-surface-variant font-body-md">This is a square-grid loom pattern. While it can be adapted for Peyote stitch, the alignment will shift by half a bead per row. We recommend using our Generator to convert this to a Peyote-specific grid.</p>
+</details>
+</div>
+</section>
+<!-- SEO Long Content -->
+<section class="mt-stack-lg prose max-w-none px-margin-desktop border-t border-outline-variant pt-stack-lg">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-stack-lg">
+<div class="space-y-6">
+<h3 class="font-headline-md text-headline-md">Mastering Loom Weaving with BeadPatternAI</h3>
+<p class="font-body-md text-on-surface-variant">Loom weaving is one of the oldest and most satisfying methods of beadwork. Our AI-generated patterns, like the Summer Blossom, are designed to take the guesswork out of complex designs. By utilizing a 48x120 grid, this pattern provides enough detail for professional-grade jewelry while remaining manageable for intermediate crafters.</p>
+<p class="font-body-md text-on-surface-variant">When choosing your colors, remember that the lighting affects how beads look. The "Summer Blossom" palette relies on a mix of matte and luster finishes to create depth. We suggest using a matte mint for the foliage and a high-luster coral for the flower petals to make the design truly pop.</p>
+</div>
+<div class="space-y-6">
+<h3 class="font-headline-md text-headline-md">The Future of Jewelry Design</h3>
+<p class="font-body-md text-on-surface-variant">At BeadPatternAI, we believe technology should empower creativity, not replace it. Our platform uses advanced machine learning to study thousands of traditional beadwork styles, identifying the geometric principles that make a design "work." This ensures every pattern you download is not only beautiful but also structurally sound for physical crafting.</p>
+<p class="font-body-md text-on-surface-variant">Whether you are a professional jewelry designer selling on Etsy or a hobbyist making gifts for friends, our high-resolution PDF and PNG exports ensure you have the highest quality reference possible. Explore our collections today and find your next masterpiece.</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full mt-stack-lg bg-surface-container-low dark:bg-surface-container-lowest border-t border-outline-variant dark:border-outline">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-gutter px-margin-desktop py-stack-lg max-w-container-max mx-auto">
+<div class="col-span-2 md:col-span-1 space-y-4">
+<div class="font-headline-md text-headline-md text-primary">BeadPatternAI</div>
+<p class="font-body-md text-on-surface-variant">Elevating the art of beadwork through intelligent design and premium curation.</p>
+</div>
+<div class="space-y-4">
+<h5 class="font-label-lg text-label-lg text-on-surface uppercase tracking-widest">Explore</h5>
+<ul class="space-y-2">
+<li><a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Popular Patterns</a></li>
+<li><a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Categories</a></li>
+<li><a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Collections</a></li>
+</ul>
+</div>
+<div class="space-y-4">
+<h5 class="font-label-lg text-label-lg text-on-surface uppercase tracking-widest">Resources</h5>
+<ul class="space-y-2">
+<li><a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Guides</a></li>
+<li><a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Blog</a></li>
+<li><a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Support</a></li>
+</ul>
+</div>
+<div class="space-y-4">
+<h5 class="font-label-lg text-label-lg text-on-surface uppercase tracking-widest">Newsletter</h5>
+<div class="flex flex-col gap-2">
+<input class="bg-surface p-3 rounded-[8px] border-none focus:ring-2 focus:ring-primary font-body-md" placeholder="Enter email" type="email"/>
+<button class="bg-primary text-white py-3 rounded-[8px] font-label-lg">Subscribe</button>
+</div>
+</div>
+</div>
+<div class="px-margin-desktop py-8 border-t border-outline-variant/30 flex justify-between items-center max-w-container-max mx-auto">
+<span class="font-label-sm text-label-sm text-on-surface-variant">© 2024 BeadPatternAI. All rights reserved.</span>
+<div class="flex gap-6">
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary" href="#">Privacy Policy</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary" href="#">Terms of Service</a>
+</div>
+</div>
+</footer>
+<script>
+        // Micro-interactions for buttons
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('mousedown', () => {
+                button.style.transform = 'scale(0.96)';
+            });
+            button.addEventListener('mouseup', () => {
+                button.style.transform = '';
+            });
+            button.addEventListener('mouseleave', () => {
+                button.style.transform = '';
+            });
+        });
+
+        // Simple Fade in for page content
+        window.addEventListener('load', () => {
+            document.body.style.opacity = '1';
+        });
+        document.body.style.opacity = '0';
+        document.body.style.transition = 'opacity 0.6s ease';
+    </script>
+</body></html>

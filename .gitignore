@@ -1,0 +1,57 @@
+# Dependencies
+node_modules/
+*/node_modules/
+.pnp
+.pnp.*
+
+# Build outputs
+.next/
+.open-next/
+dist/
+out/
+build/
+
+# Environment files
+.env
+.env.*
+!.env.example
+.dev.vars
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Hermes local
+.hermes/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Wrangler state
+.wrangler/state/
+
+# Local cache
+.cache/
+*.local
+
+# Temporary files
+tmp/
+temp/
+
+# Nested sub-projects (managed in their own repositories)
+bead-pattern-ai-backend/
+built/my-app/
