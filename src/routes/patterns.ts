@@ -721,13 +721,14 @@ patterns.get('/:slug/download/png', async (c) => {
 
   const db = getDB(env);
   const slug = c.req.param('slug');
+  const scale = Math.min(5, Math.max(1, Math.floor(Number(c.req.query('scale') ?? 1))));
   const pattern = await db.queryOne<Pattern>(
     'SELECT id, title, description, grid_data, color_palette, color_count, estimated_beads, grid_size FROM patterns WHERE slug = ?',
     [slug]
   );
   if (!pattern) throw new AppError('Pattern not found', 'PATTERN_NOT_FOUND', 404);
 
-  const key = `patterns/${slug}/pattern.svg`;
+  const key = `patterns/${slug}/pattern-${scale}x.svg`;
   let svgUrl: string | undefined;
 
   try {
@@ -747,6 +748,7 @@ patterns.get('/:slug/download/png', async (c) => {
       grid_size: pattern.grid_size,
       estimated_beads: pattern.estimated_beads,
       color_count: pattern.color_count,
+      scale,
     });
 
     const svgBuffer = new TextEncoder().encode(svg);
@@ -765,7 +767,7 @@ patterns.get('/:slug/download/png', async (c) => {
 
   return c.json(success({
     url: svgUrl,
-    filename: `${pattern.title.replace(/\s+/g, '-').toLowerCase()}.svg`,
+    filename: `${pattern.title.replace(/\s+/g, '-').toLowerCase()}-${scale}x.svg`,
     content_type: 'image/svg+xml',
   }));
 });
@@ -777,13 +779,14 @@ patterns.get('/:slug/download/pdf', async (c) => {
 
   const db = getDB(env);
   const slug = c.req.param('slug');
+  const scale = Math.min(5, Math.max(1, Math.floor(Number(c.req.query('scale') ?? 1))));
   const pattern = await db.queryOne<Pattern>(
     'SELECT id, title, description, grid_data, color_palette, color_count, estimated_beads, grid_size FROM patterns WHERE slug = ?',
     [slug]
   );
   if (!pattern) throw new AppError('Pattern not found', 'PATTERN_NOT_FOUND', 404);
 
-  const key = `pdfs/${slug}.pdf`;
+  const key = `pdfs/${slug}-${scale}x.pdf`;
   let pdfUrl: string | undefined;
 
   try {
@@ -806,6 +809,7 @@ patterns.get('/:slug/download/pdf', async (c) => {
       color_count: pattern.color_count ?? 0,
       estimated_beads: pattern.estimated_beads ?? 0,
       grid_size: pattern.grid_size,
+      scale,
     });
 
     await env.R2.put(key, pdfBytes, {
@@ -823,7 +827,7 @@ patterns.get('/:slug/download/pdf', async (c) => {
 
   return c.json(success({
     url: pdfUrl,
-    filename: `${pattern.title.replace(/\s+/g, '-').toLowerCase()}.pdf`,
+    filename: `${pattern.title.replace(/\s+/g, '-').toLowerCase()}-${scale}x.pdf`,
     content_type: 'application/pdf',
   }));
 });

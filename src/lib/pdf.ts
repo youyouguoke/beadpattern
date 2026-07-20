@@ -54,11 +54,14 @@ export interface PatternForPdf {
   color_count: number;
   estimated_beads: number;
   grid_size?: string | null;
+  scale?: number;
 }
 
 export async function generatePatternPdf(pattern: PatternForPdf): Promise<Uint8Array> {
   const doc = await PDFDocument.create();
-  const page = doc.addPage([612, 792]); // US Letter
+  const scale = Math.max(1, Math.min(5, Math.floor(pattern.scale ?? 1)));
+  const basePage = [612, 792] as const;
+  const page = doc.addPage([basePage[0] * scale, basePage[1] * scale]);
   const { width, height } = page.getSize();
   const font = await doc.embedFont(StandardFonts.Helvetica);
   const bold = await doc.embedFont(StandardFonts.HelveticaBold);
@@ -170,7 +173,7 @@ export async function generatePatternPdf(pattern: PatternForPdf): Promise<Uint8A
       y -= 18;
       if (y < margin + 40) {
         // add a new page if needed
-        const newPage = doc.addPage([612, 792]);
+        const newPage = doc.addPage([612 * scale, 792 * scale]);
         y = newPage.getSize().height - margin;
       }
     }

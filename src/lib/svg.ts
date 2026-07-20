@@ -5,13 +5,15 @@ function generateSvgPattern(pattern: {
   grid_size?: string | null;
   estimated_beads?: number | null;
   color_count?: number | null;
+  scale?: number;
 }): string {
   const grid = (pattern.grid_data || []) as string[][];
   if (!grid.length || !grid[0].length) return '';
 
   const rows = grid.length;
   const cols = grid[0].length;
-  const cellSize = 16;
+  const scale = Math.max(1, Math.floor(pattern.scale ?? 1));
+  const cellSize = 16 * scale;
   const width = cols * cellSize;
   const height = rows * cellSize;
   const margin = 40;
