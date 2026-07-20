@@ -155,13 +155,20 @@ export async function searchPatterns(params: { q: string; page?: number; limit?:
   const res = await fetchPublicApi<SearchResult>(`/search?${search.toString()}`);
   if (res.success && res.data) {
     const data = res.data as unknown as Record<string, unknown>;
+    const rawPatterns = data.patterns;
+    let patternList: unknown[] = [];
+    if (Array.isArray(rawPatterns)) {
+      patternList = rawPatterns;
+    } else if (rawPatterns && typeof rawPatterns === "object" && Array.isArray((rawPatterns as Record<string, unknown>).data)) {
+      patternList = (rawPatterns as Record<string, unknown>).data as unknown[];
+    }
     return {
-      patterns: Array.isArray(data.patterns) ? data.patterns.map((p) => mapPattern(p as Record<string, unknown>)) : [],
+      patterns: patternList.map((p) => mapPattern(p as Record<string, unknown>)),
       categories: Array.isArray(data.categories) ? data.categories : [] as Category[],
       collections: Array.isArray(data.collections) ? data.collections : [] as Collection[],
       tags: Array.isArray(data.tags) ? data.tags : [] as Tag[],
       query: (data.query as string) || params.q,
-      total: Number(data.total ?? 0),
+      total: Number(data.total ?? (data.patterns && typeof data.patterns === "object" ? (data.patterns as Record<string, unknown>).total : 0) ?? 0),
     } as SearchResult;
   }
   return {
@@ -174,16 +181,31 @@ export async function searchPatterns(params: { q: string; page?: number; limit?:
   };
 }
 
+function mapCategory(input: Record<string, unknown>): Category {
+  return {
+    id: String(input.id || ""),
+    name: String(input.name || ""),
+    slug: String(input.slug || ""),
+    description: String(input.description || ""),
+    displayOrder: Number(input.display_order || input.displayOrder || 0),
+    createdAt: String(input.created_at || input.createdAt || ""),
+    updatedAt: String(input.updated_at || input.updatedAt || ""),
+    patternCount: Number(input.pattern_count || input.patternCount || input.count || 0),
+    count: Number(input.pattern_count || input.patternCount || input.count || 0),
+    icon: String(input.icon || ""),
+  } as Category;
+}
+
 export async function getCategories(): Promise<Category[]> {
   const res = await fetchPublicApi<Category[]>("/categories");
-  return res.success ? res.data : [];
+  return res.success && res.data ? (res.data as unknown as Record<string, unknown>[]).map(mapCategory) : [];
 }
 
 export async function getCategoryBySlug(slug: string): Promise<{ category: Category; patterns: Pattern[] } | null> {
-  const res = await fetchPublicApi<{ category: Category; patterns: Record<string, unknown>[] }>(`/categories/${slug}`);
+  const res = await fetchPublicApi<{ category: Record<string, unknown>; patterns: Record<string, unknown>[] }>(`/categories/${slug}`);
   if (res.success && res.data) {
     return {
-      category: res.data.category,
+      category: mapCategory(res.data.category),
       patterns: res.data.patterns.map(mapPattern),
     };
   }
@@ -247,14 +269,14 @@ export interface PatternDownloadPdfResponse {
   note?: string;
 }
 
-export async function downloadPatternPng(slug: string): Promise<PatternDownload> {
-  const res = await fetchPublicApi<PatternDownloadPngResponse>(`/patterns/${encodeURIComponent(slug)}/download/png`);
+export async function downloadPatternPng(slug: string, scale = 1): Promise<PatternDownload> {
+  const res = await fetchPublicApi<PatternDownloadPngResponse>(`/patterns/${encodeURIComponent(slug)}/download/png?scale=${scale}`);
   if (!res.success || !res.data) throw new Error(res.error?.message || "PNG download unavailable");
   return { url: res.data.url, filename: res.data.filename, contentType: res.data.content_type || "image/svg+xml" };
 }
 
-export async function downloadPatternPdf(slug: string): Promise<PatternDownload> {
-  const res = await fetchPublicApi<PatternDownloadPdfResponse>(`/patterns/${encodeURIComponent(slug)}/download/pdf`);
+export async function downloadPatternPdf(slug: string, scale = 1): Promise<PatternDownload> {
+  const res = await fetchPublicApi<PatternDownloadPdfResponse>(`/patterns/${encodeURIComponent(slug)}/download/pdf?scale=${scale}`);
   if (!res.success || !res.data) throw new Error(res.error?.message || "PDF download unavailable");
   return { url: res.data.url, filename: res.data.filename, contentType: res.data.content_type || "application/pdf", note: res.data.note };
 }
