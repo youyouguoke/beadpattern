@@ -7,6 +7,7 @@ import type { Pattern } from "@/types";
 import { getCategories, getPublishedPatterns, searchPatterns } from "@/lib/publicApiService";
 import { getPatternImage } from "@/lib/patternImage";
 import type { Category } from "@/types";
+import SearchSuggestions from "./SearchSuggestions";
 
 function getPageNumbers(currentPage: number, totalPages: number, maxVisible = 7): (number | string)[] {
   if (totalPages <= maxVisible) return Array.from({ length: totalPages }, (_, i) => i + 1);
@@ -72,6 +73,7 @@ export default function PatternArchive({ searchQuery = "", collectionSlug = "", 
   const [selectedDiffs, setSelectedDiffs] = useState<Record<string, boolean>>({ easy: true, medium: true, hard: true });
   const [sort, setSort] = useState("newest");
   const [currentPage, setCurrentPage] = useState(1);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const itemsPerPage = 12;
 
   // Sync local query with URL/props without setState in effect
@@ -116,6 +118,7 @@ export default function PatternArchive({ searchQuery = "", collectionSlug = "", 
     setSelectedSize(null);
     setSelectedDiffs({ easy: true, medium: true, hard: true });
     setQuery("");
+    setShowSuggestions(false);
   };
 
   const filteredPatterns = useMemo(() => {
@@ -153,7 +156,7 @@ export default function PatternArchive({ searchQuery = "", collectionSlug = "", 
   return (
     <div className="flex flex-col gap-10">
       <section className="text-center md:text-left">
-        <div className="max-w-3xl">
+        <div className="max-w-3xl relative">
           <h1 className="font-quicksand text-headline-lg-mobile md:text-headline-lg text-on-surface mb-4">
             {query ? `Search: "${query}"` : "Browse Patterns"}
           </h1>
@@ -164,10 +167,10 @@ export default function PatternArchive({ searchQuery = "", collectionSlug = "", 
             onSubmit={(e) => {
               e.preventDefault();
               if (query.trim()) {
-                window.location.href = `/patterns?q=${encodeURIComponent(query.trim())}`;
+                window.location.href = `/search?q=${encodeURIComponent(query.trim())}`;
               }
             }}
-            className="flex w-full max-w-xl bg-surface-container-lowest rounded-full p-1.5 border border-outline-variant shadow-sm"
+            className="flex w-full max-w-xl bg-surface-container-lowest rounded-full p-1.5 border border-outline-variant shadow-sm relative"
           >
             <div className="flex-1 flex items-center px-4">
               <span className="material-symbols-outlined text-on-surface-variant mr-2">sparkle</span>
@@ -176,12 +179,18 @@ export default function PatternArchive({ searchQuery = "", collectionSlug = "", 
                 placeholder="Search patterns, e.g. frog, ghost..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
+                onFocus={() => setShowSuggestions(true)}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
               />
             </div>
             <button type="submit" className="bg-primary text-on-primary px-6 py-2.5 rounded-full text-label-md font-bold hover:bg-primary-container hover:text-on-primary-container transition-colors">
               Search
             </button>
           </form>
+          {showSuggestions && <SearchSuggestions query={query} onSelect={(q) => {
+            setQuery(q);
+            window.location.href = `/search?q=${encodeURIComponent(q)}`;
+          }} />}
         </div>
       </section>
 

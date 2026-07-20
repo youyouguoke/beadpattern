@@ -1,16 +1,20 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import BeadPatternGeneratorBeta from "@/components/generate/BeadPatternGeneratorBeta";
 import JsonLd from "@/components/seo/JsonLd";
+
+export const dynamic = "force-dynamic";
 
 const SITE_URL = "https://beadpatternai.com";
 const PAGE_URL = `${SITE_URL}/generate`;
 
 export const metadata: Metadata = {
   title: "AI Bead Pattern Generator | BeadPatternAI",
-  description: "Generate Perler bead patterns with AI. Customize grid size, palette, and style to create printable bead templates.",
+  description: "Generate Perler bead patterns with AI. Search existing templates or preview a custom bead-by-bead design before saving.",
   keywords: ["AI bead pattern generator", "perler bead AI", "generate fuse bead patterns", "pixel art generator", "bead pattern maker"],
   openGraph: {
     title: "AI Bead Pattern Generator | BeadPatternAI",
-    description: "Generate Perler bead patterns with AI. Customize grid size, palette, and style to create printable bead templates.",
+    description: "Generate Perler bead patterns with AI. Search existing templates or preview a custom bead-by-bead design before saving.",
     url: PAGE_URL,
     siteName: "BeadPatternAI",
     type: "website",
@@ -18,7 +22,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "AI Bead Pattern Generator | BeadPatternAI",
-    description: "Generate Perler bead patterns with AI. Customize grid size, palette, and style to create printable bead templates.",
+    description: "Generate Perler bead patterns with AI. Search existing templates or preview a custom bead-by-bead design before saving.",
   },
   alternates: { canonical: PAGE_URL },
 };
@@ -34,27 +38,16 @@ const breadcrumbSchema = {
 
 export default function GeneratePage() {
   return (
-    <main className="min-h-screen flex items-center justify-center px-4 md:px-12 py-20 bg-surface">
+    <main className="min-h-screen bg-surface">
       <JsonLd data={breadcrumbSchema} />
-      <div className="max-w-xl w-full text-center space-y-6">
-        <div className="w-20 h-20 rounded-3xl bg-primary text-on-primary flex items-center justify-center mx-auto">
-          <span className="material-symbols-outlined text-4xl">auto_awesome</span>
-        </div>
-        <h1 className="font-quicksand font-bold text-3xl md:text-4xl text-primary">
-          AI Pattern Generator
-        </h1>
-        <p className="text-on-surface-variant text-lg">
-          We&apos;re building something amazing here. The AI pattern generator is not ready yet — please check back soon.
-        </p>
-        <div className="pt-4">
-          <a
-            href="/"
-            className="inline-flex items-center gap-2 bg-primary text-on-primary px-6 py-3 rounded-full font-label-md font-bold hover:bg-primary-container hover:text-on-primary-container transition-colors"
-          >
-            <span className="material-symbols-outlined">home</span>
-            Browse Patterns
-          </a>
-        </div>
+      <div className="max-w-[1280px] mx-auto px-4 md:px-12 py-8 pt-28">
+        <nav className="text-body-sm text-on-surface-variant mb-6">
+          <Link href="/" className="hover:text-primary transition-colors">Home</Link>
+          <span className="mx-2">/</span>
+          <span className="text-on-surface">Generate</span>
+        </nav>
+
+        <BeadPatternGeneratorBeta />
       </div>
     </main>
   );
