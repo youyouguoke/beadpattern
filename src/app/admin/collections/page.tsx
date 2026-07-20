@@ -4,14 +4,24 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { adminService, AdminCollection } from "@/lib/adminService";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { AdminCard } from "@/components/admin/AdminCard";
+import { AdminButton } from "@/components/admin/AdminButton";
+import { AdminBadge } from "@/components/admin/AdminBadge";
+import { AdminSkeleton } from "@/components/admin/AdminSkeleton";
 
 export default function CollectionsPage() {
   const [items, setItems] = useState<AdminCollection[]>([]);
   const [q, setQ] = useState("");
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   const load = useCallback(() => {
-    adminService.listCollections({ q }).then((res: any) => setItems(res.data || []));
+    setLoading(true);
+    adminService.listCollections({ q }).then((res: any) => {
+      setItems(res.data || []);
+      setLoading(false);
+    });
   }, [q]);
 
   useEffect(() => {
@@ -26,55 +36,71 @@ export default function CollectionsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="font-display-md text-2xl text-primary-container">Collections</h1>
-        <Link href="/admin/collections/new" className="bg-primary-container text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-primary transition">
-          + Create Collection
-        </Link>
-      </div>
+      <AdminPageHeader
+        title="Collections"
+        description="Manage curated collections and seasonal groups."
+        actions={
+          <AdminButton href="/admin/collections/new">
+            <span className="material-symbols-outlined text-base">add</span>
+            Create Collection
+          </AdminButton>
+        }
+      />
 
-      <div className="bg-white rounded-2xl border border-secondary-container p-4 flex gap-3">
+      <AdminCard>
         <input
-          className="border border-secondary-container rounded-xl px-3 py-2 text-sm outline-none focus:border-primary-container"
+          className="bg-surface-container-lowest border border-outline-variant rounded-xl px-3 py-2 text-sm outline-none focus:border-primary text-on-surface placeholder:text-on-surface-variant w-full sm:w-80"
           placeholder="Search collections..."
           value={q}
           onChange={(e) => setQ(e.target.value)}
         />
-      </div>
+      </AdminCard>
 
-      <div className="bg-white rounded-2xl border border-secondary-container overflow-hidden">
-        <table className="w-full text-sm text-left">
-          <thead className="bg-surface-container text-secondary uppercase text-xs">
-            <tr>
-              <th className="px-4 py-3">Title</th>
-              <th className="px-4 py-3">Slug</th>
-              <th className="px-4 py-3">Patterns</th>
-              <th className="px-4 py-3">Order</th>
-              <th className="px-4 py-3">Published</th>
-              <th className="px-4 py-3 text-right">Action</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-secondary-container">
-            {items.map((c) => (
-              <tr key={c.id} className="hover:bg-surface-container/50">
-                <td className="px-4 py-3 font-medium">{c.title}</td>
-                <td className="px-4 py-3 text-secondary">{c.slug}</td>
-                <td className="px-4 py-3">{c.patternCount}</td>
-                <td className="px-4 py-3">{c.displayOrder}</td>
-                <td className="px-4 py-3">
-                  <span className={`text-xs px-2 py-1 rounded-full ${c.published ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}`}>
-                    {c.published ? "Yes" : "No"}
-                  </span>
-                </td>
-                <td className="px-4 py-3 text-right">
-                  <button onClick={() => router.push(`/admin/collections/${c.id}`)} className="text-primary-container hover:underline">Edit</button>
-                  <button onClick={() => remove(c.id)} className="ml-3 text-red-600 hover:underline">Delete</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <AdminCard className="overflow-hidden p-0">
+        {loading ? (
+          <div className="p-6">
+            <AdminSkeleton count={5} />
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left">
+              <thead className="bg-surface-container-low text-on-surface-variant uppercase text-xs">
+                <tr>
+                  <th className="px-4 py-3">Title</th>
+                  <th className="px-4 py-3">Slug</th>
+                  <th className="px-4 py-3">Patterns</th>
+                  <th className="px-4 py-3">Order</th>
+                  <th className="px-4 py-3">Published</th>
+                  <th className="px-4 py-3 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-outline-variant/20">
+                {items.map((c) => (
+                  <tr key={c.id} className="hover:bg-surface-container-low-container-low/50 transition-colors">
+                    <td className="px-4 py-3 font-medium text-on-surface">{c.title}</td>
+                    <td className="px-4 py-3 text-on-surface-variant">{c.slug}</td>
+                    <td className="px-4 py-3 text-on-surface">{c.patternCount ?? 0}</td>
+                    <td className="px-4 py-3 text-on-surface">{c.displayOrder}</td>
+                    <td className="px-4 py-3">
+                      <AdminBadge variant={c.published ? "success" : "neutral"}>
+                        {c.published ? "Yes" : "No"}
+                      </AdminBadge>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <AdminButton onClick={() => router.push(`/admin/collections/${c.id}`)} variant="ghost">
+                        Edit
+                      </AdminButton>
+                      <AdminButton onClick={() => remove(c.id)} variant="ghost" className="text-error hover:text-error">
+                        Delete
+                      </AdminButton>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </AdminCard>
     </div>
   );
 }

@@ -8,7 +8,8 @@ const navLinks = [
   { label: "Patterns", href: "/patterns" },
   { label: "Categories", href: "/categories" },
   { label: "Collections", href: "/collections" },
-  { label: "Ideas", href: "/inspiration" },
+  { label: "Inspiration", href: "/inspiration" },
+  { label: "Blog", href: "/blog" },
   { label: "Generator", href: "/generate" },
 ];
 
@@ -22,9 +23,9 @@ export default function Navigation() {
   };
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant/30">
-      <nav className="max-w-[1280px] mx-auto flex justify-between items-center px-4 md:px-12 h-20">
-        <Link href="/" className="font-display-lg text-[28px] text-primary tracking-tight font-extrabold">
+    <header className="fixed top-0 left-0 w-full z-50 glass-nav border-b border-outline-variant/30">
+      <nav className="container-main flex justify-between items-center h-20">
+        <Link href="/" className="font-quicksand text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight font-bold">
           BeadPatternAI
         </Link>
 
@@ -35,17 +36,30 @@ export default function Navigation() {
               href={link.href}
               className={
                 isActive(link.href)
-                  ? "text-primary font-bold border-b-2 border-primary pb-1 font-label-lg text-label-lg"
-                  : "text-on-surface-variant hover:text-primary transition-colors font-label-lg text-label-lg"
+                  ? "text-primary font-bold border-b-2 border-primary pb-1 font-label-md text-label-md"
+                  : "text-on-surface-variant hover:text-primary transition-colors duration-200 font-label-md text-label-md"
               }
             >
               {link.label}
             </Link>
           ))}
+          <Link
+            href="/generate"
+            className="bg-primary text-on-primary px-5 py-2.5 rounded-full font-label-md text-label-md hover:bg-primary-container hover:text-on-primary-container transition-colors duration-200 active:scale-95"
+          >
+            Create Pattern
+          </Link>
+          <Link
+            href="/search"
+            className="w-10 h-10 rounded-full border border-outline-variant text-on-surface-variant hover:text-primary hover:border-primary flex items-center justify-center transition-colors"
+            aria-label="Search"
+          >
+            <span className="material-symbols-outlined">search</span>
+          </Link>
         </div>
 
         <button
-          className="md:hidden p-2 rounded-lg text-on-surface-variant hover:bg-surface-container"
+          className="md:hidden p-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors"
           onClick={() => setMenuOpen((o) => !o)}
           aria-label="Toggle menu"
         >
@@ -57,17 +71,17 @@ export default function Navigation() {
 
       {menuOpen && (
         <div className="md:hidden absolute top-20 left-0 w-full bg-surface/95 backdrop-blur-md border-b border-outline-variant/30 shadow-lg">
-          <div className="px-4 py-4 space-y-2">
+          <div className="container-main py-4 space-y-2">
             {navLinks.map((link) => (
               <Link
                 key={link.label}
                 href={link.href}
                 onClick={() => setMenuOpen(false)}
                 className={
-                  "block px-4 py-3 rounded-lg font-label-lg text-label-lg " +
+                  "block px-4 py-3 rounded-lg font-label-md text-label-md " +
                   (isActive(link.href)
                     ? "bg-primary-container text-on-primary-container font-bold"
-                    : "text-on-surface-variant hover:bg-surface-container hover:text-primary")
+                    : "text-on-surface-variant hover:bg-surface-container-low hover:text-primary")
                 }
               >
                 {link.label}

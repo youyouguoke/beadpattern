@@ -13,8 +13,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const pattern = await getPatternBySlug(slug);
   if (!pattern) return { title: "Pattern Not Found | BeadPatternAI" };
 
-  const title = pattern.seoTitle || `${pattern.title} - Perler Bead Pattern | BeadPatternAI`;
-  const description = pattern.seoDescription || `Download ${pattern.title} Perler bead pattern. ${pattern.gridSize} grid, ${pattern.estimatedBeads} beads, ${pattern.difficulty} difficulty.`;
+  const title = pattern.seoTitle || `${pattern.title} | Free Perler Bead Pattern | BeadPatternAI`;
+  const description = pattern.seoDescription || `Download ${pattern.title} Perler bead pattern. ${pattern.gridSize} grid, ${pattern.estimatedBeads} beads, ${pattern.difficulty} difficulty. Free printable PDF and color guide.`;
   const url = `${SITE_URL}/pattern/${pattern.slug}`;
   const image = pattern.coverImage || pattern.finishedImage;
 
@@ -63,14 +63,16 @@ export default async function PatternDetailPage({ params }: { params: Promise<{ 
   }
 
   const finishedImage = getPatternImage(pattern, { width: 560, height: 560 });
+  const pageUrl = `${SITE_URL}/pattern/${pattern.slug}`;
+  const category = pattern.categories?.[0];
 
-  const structuredData = {
+  const creativeWork = {
     "@context": "https://schema.org",
     "@type": "CreativeWork",
     name: pattern.title,
     description: pattern.description,
     image: pattern.coverImage || pattern.finishedImage,
-    url: `${SITE_URL}/pattern/${pattern.slug}`,
+    url: pageUrl,
     learningResourceType: "Perler bead pattern",
     educationalLevel: pattern.difficulty,
     datePublished: pattern.publishedAt,
@@ -78,18 +80,60 @@ export default async function PatternDetailPage({ params }: { params: Promise<{ 
     author: { "@type": "Organization", name: "BeadPatternAI" },
   };
 
+  const breadcrumbList = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "Patterns", item: `${SITE_URL}/patterns` },
+      ...(category
+        ? [{ "@type": "ListItem", position: 3, name: category.name, item: `${SITE_URL}/category/${category.slug}` }]
+        : []),
+      { "@type": "ListItem", position: category ? 4 : 3, name: pattern.title, item: pageUrl },
+    ],
+  };
+
+  const itemList = related.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: related.map((p, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `${SITE_URL}/pattern/${p.slug}`,
+      name: p.title,
+    })),
+  } : null;
+
+  const faqPage = pattern.faqs?.length ? {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: pattern.faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
+    })),
+  } : null;
+
   return (
-    <main className="px-4 md:px-12 py-8 pt-28 max-w-screen-2xl mx-auto min-h-screen bg-surface">
-      <JsonLd data={structuredData} />
-      <Suspense fallback={<div className="pt-28 text-center">Loading pattern...</div>}>
-        <PatternPageClient
-          slug={slug}
-          pattern={pattern}
-          related={related}
-          relatedImages={relatedImages}
-          finishedImage={finishedImage}
-        />
-      </Suspense>
+    <main className="min-h-screen bg-surface">
+      <div className="container-main py-8 pt-28">
+        <JsonLd data={creativeWork} />
+        <JsonLd data={breadcrumbList} />
+        {itemList && <JsonLd data={itemList} />}
+        {faqPage && <JsonLd data={faqPage} />}
+        <Suspense fallback={<div className="pt-28 text-center text-on-surface-variant">Loading pattern...</div>}>
+          <PatternPageClient
+            slug={slug}
+            pattern={pattern}
+            related={related}
+            relatedImages={relatedImages}
+            finishedImage={finishedImage}
+          />
+        </Suspense>
+      </div>
     </main>
   );
 }

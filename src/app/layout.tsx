@@ -6,11 +6,11 @@ import Footer from "@/components/Footer";
 const GA_ID = "G-6PQKQYXEB3";
 
 export const metadata: Metadata = {
-  title: "BeadPatternAI | AI Perler Bead Pattern Generator",
-  description: "Create, discover and download beautiful AI-generated Perler bead patterns. Generate printable PDF templates and pixel art designs instantly.",
+  title: "BeadPatternAI | Cute Perler Bead Patterns & Printable Grids",
+  description: "Discover thousands of cute Perler bead patterns. Download free printable bead grids, color guides, and step-by-step instructions for animals, food, kawaii characters, and pixel art.",
   openGraph: {
-    title: "BeadPatternAI | AI Perler Bead Pattern Generator",
-    description: "Create, discover and download beautiful AI-generated Perler bead patterns. Generate printable PDF templates and pixel art designs instantly.",
+    title: "BeadPatternAI | Cute Perler Bead Patterns & Printable Grids",
+    description: "Discover thousands of cute Perler bead patterns. Download free printable bead grids, color guides, and step-by-step instructions for animals, food, kawaii characters, and pixel art.",
     url: "https://beadpatternai.com",
     siteName: "BeadPatternAI",
     images: [
@@ -26,8 +26,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "BeadPatternAI | AI Perler Bead Pattern Generator",
-    description: "Create, discover and download beautiful AI-generated Perler bead patterns. Generate printable PDF templates and pixel art designs instantly.",
+    title: "BeadPatternAI | Cute Perler Bead Patterns & Printable Grids",
+    description: "Discover thousands of cute Perler bead patterns. Download free printable bead grids, color guides, and step-by-step instructions.",
     images: ["https://beadpatternai.com/og-beadpatternai.png"],
   },
 };
@@ -41,8 +41,10 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth antialiased">
       <head>
         <link rel="icon" type="image/png" href="https://beadpatternai.com/icon.png?v=3" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Quicksand:wght@700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
           rel="stylesheet"
         />
 

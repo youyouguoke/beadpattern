@@ -19,12 +19,12 @@ function difficultyLabel(diff: string) {
   return diff ? diff.charAt(0).toUpperCase() + diff.slice(1).toLowerCase() : "";
 }
 
-export default function TrendingPatterns() {
+export default function NewPatterns() {
   const [patterns, setPatterns] = useState<Pattern[]>([]);
   const [images, setImages] = useState<Record<string, { type: "image" | "svg"; src: string; svg?: string }>>({});
 
   useEffect(() => {
-    getPublishedPatterns({ sort: "popular", limit: 8 }).then((ps) => {
+    getPublishedPatterns({ sort: "newest", limit: 8 }).then((ps) => {
       setPatterns(ps);
       const map: Record<string, { type: "image" | "svg"; src: string; svg?: string }> = {};
       for (const p of ps) {
@@ -37,14 +37,14 @@ export default function TrendingPatterns() {
   if (!patterns.length) return null;
 
   return (
-    <section className="bg-surface py-16 md:py-24" id="trending">
+    <section className="bg-surface-container-low py-16 md:py-24" id="new">
       <div className="container-main">
         <div className="flex items-center justify-between mb-10">
           <div>
-            <h2 className="section-title text-primary">Trending Today</h2>
-            <p className="section-subtitle mt-2">Most downloaded this week</p>
+            <h2 className="section-title text-primary">New Patterns</h2>
+            <p className="section-subtitle mt-2">Fresh designs added this week</p>
           </div>
-          <Link href="/patterns?sort=popular" className="text-label-md text-on-surface-variant hover:text-primary flex items-center gap-1">
+          <Link href="/patterns?sort=newest" className="text-label-md text-on-surface-variant hover:text-primary flex items-center gap-1">
             View All <span className="material-symbols-outlined">arrow_forward</span>
           </Link>
         </div>

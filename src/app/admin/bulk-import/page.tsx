@@ -48,42 +48,42 @@ export default function BulkImportPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="font-display-md text-2xl text-primary-container">Bulk Import</h1>
+      <h1 className="font-display-md text-2xl text-primary">Bulk Import</h1>
 
       <div className="flex items-center gap-2">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className={`flex items-center gap-2 text-sm ${step >= i ? "text-primary-container font-medium" : "text-secondary"}`}>
+          <div key={i} className={`flex items-center gap-2 text-sm ${step >= i ? "text-primary font-medium" : "text-on-surface-variant"}`}>
             <span className="w-6 h-6 rounded-full flex items-center justify-center border text-xs">{i}</span>
             {stepLabels[i]}
-            {i < 4 && <span className="text-secondary mx-2">→</span>}
+            {i < 4 && <span className="text-on-surface-variant mx-2">→</span>}
           </div>
         ))}
       </div>
 
       {step === 1 && (
-        <div className="bg-white rounded-2xl border border-secondary-container p-8 text-center">
-          <p className="text-secondary mb-4">Upload a CSV with columns: title, slug, description, tags, difficulty, grid, beads</p>
+        <div className="bg-surface-container-lowest rounded-3xl border border-outline-variant/20 p-8 text-center">
+          <p className="text-on-surface-variant mb-4">Upload a CSV with columns: title, slug, description, tags, difficulty, grid, beads</p>
           <input type="file" accept=".csv" onChange={onUpload} className="mx-auto" />
         </div>
       )}
 
       {step === 2 && (
-        <div className="bg-white rounded-2xl border border-secondary-container p-6">
+        <div className="bg-surface-container-lowest rounded-3xl border border-outline-variant/20 p-6">
           <p className="mb-4 font-medium">Validation Results</p>
-          {errors.length === 0 ? <p className="text-green-600 text-sm">✔ No errors</p> : <ul className="text-red-600 text-sm">{errors.map((e, i) => <li key={i}>{e}</li>)}</ul>}
-          {warnings.length > 0 && <ul className="text-yellow-600 text-sm mt-2">{warnings.map((w, i) => <li key={i}>⚠ {w}</li>)}</ul>}
+          {errors.length === 0 ? <p className="text-secondary text-sm">✔ No errors</p> : <ul className="text-error text-sm">{errors.map((e, i) => <li key={i}>{e}</li>)}</ul>}
+          {warnings.length > 0 && <ul className="text-tertiary text-sm mt-2">{warnings.map((w, i) => <li key={i}>⚠ {w}</li>)}</ul>}
           <div className="flex gap-2 mt-4">
-            <button onClick={() => setStep(1)} className="px-4 py-2 rounded-xl text-sm border border-secondary-container">Back</button>
-            <button onClick={validate} className="px-4 py-2 rounded-xl text-sm bg-primary-container text-white">Continue</button>
+            <button onClick={() => setStep(1)} className="px-4 py-2 rounded-xl text-sm border border-outline-variant/20">Back</button>
+            <button onClick={validate} className="px-4 py-2 rounded-xl text-sm bg-primary text-white">Continue</button>
           </div>
         </div>
       )}
 
       {step === 3 && (
-        <div className="bg-white rounded-2xl border border-secondary-container p-6">
+        <div className="bg-surface-container-lowest rounded-3xl border border-outline-variant/20 p-6">
           <p className="font-medium mb-4">Preview</p>
           <table className="w-full text-sm text-left">
-            <thead className="bg-surface-container text-secondary"><tr><th className="px-3 py-2">Title</th><th className="px-3 py-2">Slug</th><th className="px-3 py-2">Tags</th></tr></thead>
+            <thead className="bg-surface-container text-on-surface-variant"><tr><th className="px-3 py-2">Title</th><th className="px-3 py-2">Slug</th><th className="px-3 py-2">Tags</th></tr></thead>
             <tbody className="divide-y divide-secondary-container">
               {rows.map((r, i) => <tr key={i}><td className="px-3 py-2">{r.title}</td><td className="px-3 py-2">{r.slug}</td><td className="px-3 py-2">{r.tags}</td></tr>)}
             </tbody>
@@ -93,26 +93,26 @@ export default function BulkImportPage() {
             <label htmlFor="pub" className="text-sm">Publish Now</label>
           </div>
           <div className="flex gap-2 mt-4">
-            <button onClick={() => setStep(2)} className="px-4 py-2 rounded-xl text-sm border border-secondary-container">Back</button>
-            <button onClick={runImport} className="px-4 py-2 rounded-xl text-sm bg-primary-container text-white">Import</button>
+            <button onClick={() => setStep(2)} className="px-4 py-2 rounded-xl text-sm border border-outline-variant/20">Back</button>
+            <button onClick={runImport} className="px-4 py-2 rounded-xl text-sm bg-primary text-white">Import</button>
           </div>
         </div>
       )}
 
       {step === 4 && (
-        <div className="bg-white rounded-2xl border border-secondary-container p-6">
-          <p className="text-green-600 font-medium">Import job started!</p>
-          <button onClick={() => setStep(1)} className="mt-4 px-4 py-2 rounded-xl text-sm bg-primary-container text-white">Import Another</button>
+        <div className="bg-surface-container-lowest rounded-3xl border border-outline-variant/20 p-6">
+          <p className="text-secondary font-medium">Import job started!</p>
+          <button onClick={() => setStep(1)} className="mt-4 px-4 py-2 rounded-xl text-sm bg-primary text-white">Import Another</button>
         </div>
       )}
 
-      <div className="bg-white rounded-2xl border border-secondary-container p-5">
+      <div className="bg-surface-container-lowest rounded-3xl border border-outline-variant/20 p-5">
         <h2 className="font-headline-md text-lg mb-4">Latest Bulk Jobs</h2>
         <div className="divide-y divide-secondary-container">
           {jobs.map((j) => (
             <div key={j.id} className="py-3 flex items-center justify-between text-sm">
-              <div><p className="font-medium">{j.name}</p><p className="text-secondary text-xs">{j.status}</p></div>
-              <div className="text-right"><p>{j.processed}/{j.total}</p><p className="text-xs text-secondary">{j.errors} errors · {j.warnings} warnings</p></div>
+              <div><p className="font-medium">{j.name}</p><p className="text-on-surface-variant text-xs">{j.status}</p></div>
+              <div className="text-right"><p>{j.processed}/{j.total}</p><p className="text-xs text-on-surface-variant">{j.errors} errors · {j.warnings} warnings</p></div>
             </div>
           ))}
         </div>

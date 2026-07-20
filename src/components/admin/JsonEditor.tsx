@@ -29,7 +29,7 @@ export function JsonEditor<T>({ value, onChange, placeholder, rows = 8 }: JsonEd
   return (
     <div className="space-y-1">
       <textarea
-        className="w-full border border-secondary-container rounded-xl px-3 py-2 text-sm font-mono"
+        className="w-full border border-outline-variant/20 rounded-xl px-3 py-2 text-sm font-mono"
         rows={rows}
         value={text}
         placeholder={placeholder}

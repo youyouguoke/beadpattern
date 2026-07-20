@@ -76,24 +76,24 @@ export default function Footer() {
   };
 
   return (
-    <footer className="w-full py-16 px-4 md:px-12 bg-surface-container dark:bg-surface-container-highest">
+    <footer className="w-full py-16 px-4 md:px-12 bg-surface-container-low">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 xl:grid-cols-6 gap-10">
         <div className="lg:col-span-1 xl:col-span-2 space-y-4">
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-primary-container flex items-center justify-center text-white font-display-lg text-sm">
+            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center text-on-primary font-quicksand font-bold text-sm">
               BP
             </div>
-            <span className="font-display-lg text-headline-md text-primary">BeadPatternAI</span>
+            <span className="font-quicksand font-bold text-headline-md text-primary">BeadPatternAI</span>
           </div>
-          <p className="text-secondary font-body-md max-w-sm">
+          <p className="text-on-surface-variant max-w-sm">
             The world&apos;s largest searchable library of printable Perler bead patterns. Browse, download, and create with AI.
           </p>
-          <p className="text-secondary font-body-md">
+          <p className="text-on-surface-variant">
             Contact: <a href="mailto:hello@beadpatternai.com" className="text-primary hover:underline">hello@beadpatternai.com</a>
           </p>
           <form onSubmit={handleSubmit} className="flex gap-2">
             <input
-              className="flex-1 rounded-lg border-2 border-secondary-container focus:border-primary px-4 py-2 bg-white outline-none"
+              className="flex-1 rounded-full border border-outline-variant focus:border-primary px-4 py-2 bg-surface-container-lowest outline-none"
               placeholder="email@example.com"
               type="email"
               value={email}
@@ -106,7 +106,7 @@ export default function Footer() {
             <button
               type="submit"
               disabled={status === "loading"}
-              className="bg-primary text-white p-2 rounded-lg flex items-center justify-center hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-primary text-on-primary p-2.5 rounded-full flex items-center justify-center hover:bg-primary-container hover:text-on-primary-container transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label="Subscribe to newsletter"
               data-testid="newsletter-submit"
             >
@@ -114,7 +114,7 @@ export default function Footer() {
             </button>
           </form>
           {status !== "idle" && status !== "loading" && (
-            <p data-testid="newsletter-message" className={`text-sm ${status === "success" ? "text-success" : "text-error"}`}>
+            <p data-testid="newsletter-message" className={`text-sm ${status === "success" ? "text-secondary" : "text-error"}`}>
               {message}
             </p>
           )}
@@ -122,13 +122,13 @@ export default function Footer() {
 
         {Object.entries(footerLinks).map(([title, links]) => (
           <div className="space-y-3" key={title}>
-            <h4 className="font-headline-md text-body-md text-on-surface">{title}</h4>
+            <h4 className="font-quicksand font-bold text-body-md text-on-surface">{title}</h4>
             <nav className="flex flex-col gap-2">
               {links.map((link) => (
                 <Link
                   key={link.label}
                   href={link.href}
-                  className="text-secondary hover:text-primary transition-colors font-body-md"
+                  className="text-on-surface-variant hover:text-primary transition-colors"
                 >
                   {link.label}
                 </Link>
@@ -138,7 +138,7 @@ export default function Footer() {
         ))}
       </div>
 
-      <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-surface-container-high flex flex-col md:flex-row justify-between items-center gap-4 text-secondary text-sm">
+      <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-outline-variant/20 flex flex-col md:flex-row justify-between items-center gap-4 text-on-surface-variant text-sm">
         <p>© 2026 BeadPatternAI. All rights reserved.</p>
         <div className="flex gap-6">
           <Link href="/terms" className="hover:text-primary transition-colors">Terms of Service</Link>

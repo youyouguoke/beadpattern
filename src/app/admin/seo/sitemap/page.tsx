@@ -14,27 +14,27 @@ export default function SitemapPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="font-display-md text-2xl text-primary-container">Sitemap</h1>
+      <h1 className="font-display-md text-2xl text-primary">Sitemap</h1>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white rounded-2xl border border-secondary-container p-5">
-          <p className="text-sm text-secondary">Patterns</p>
+        <div className="bg-surface-container-lowest rounded-3xl border border-outline-variant/20 p-5">
+          <p className="text-sm text-on-surface-variant">Patterns</p>
           <p className="text-2xl font-bold">{stats.patterns}</p>
         </div>
-        <div className="bg-white rounded-2xl border border-secondary-container p-5">
-          <p className="text-sm text-secondary">Collections</p>
+        <div className="bg-surface-container-lowest rounded-3xl border border-outline-variant/20 p-5">
+          <p className="text-sm text-on-surface-variant">Collections</p>
           <p className="text-2xl font-bold">{stats.collections}</p>
         </div>
-        <div className="bg-white rounded-2xl border border-secondary-container p-5">
-          <p className="text-sm text-secondary">Tags</p>
+        <div className="bg-surface-container-lowest rounded-3xl border border-outline-variant/20 p-5">
+          <p className="text-sm text-on-surface-variant">Tags</p>
           <p className="text-2xl font-bold">{stats.tags}</p>
         </div>
       </div>
-      <div className="bg-white rounded-2xl border border-secondary-container p-5 flex items-center justify-between">
+      <div className="bg-surface-container-lowest rounded-3xl border border-outline-variant/20 p-5 flex items-center justify-between">
         <div>
           <p className="font-medium">Last Generated</p>
-          <p className="text-sm text-secondary">{lastGenerated}</p>
+          <p className="text-sm text-on-surface-variant">{lastGenerated}</p>
         </div>
-        <button onClick={regenerate} className="px-4 py-2 rounded-xl text-sm bg-primary-container text-white">Regenerate</button>
+        <button onClick={regenerate} className="px-4 py-2 rounded-xl text-sm bg-primary text-white">Regenerate</button>
       </div>
     </div>
   );

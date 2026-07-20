@@ -53,6 +53,7 @@ const menu = [
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [open, setOpen] = useState<Record<string, boolean>>({
     Content: true,
     Assets: true,
@@ -65,11 +66,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className="min-h-screen bg-surface text-on-surface flex">
-      <aside className="w-64 bg-surface-container border-r border-secondary-container fixed inset-y-0 left-0 z-40 overflow-y-auto">
-        <div className="p-4 border-b border-secondary-container">
-          <Link href="/admin" className="font-display-md text-lg text-primary-container">
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-surface-container-lowest border-r border-outline-variant/30 transform transition-transform duration-200 lg:translate-x-0 ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="p-4 border-b border-outline-variant/30 flex items-center justify-between">
+          <Link href="/admin" className="font-quicksand font-bold text-xl text-primary">
             BeadPatternAI Studio
           </Link>
+          <button
+            className="lg:hidden p-1 rounded-lg text-on-surface-variant hover:bg-surface-container-low-container"
+            onClick={() => setSidebarOpen(false)}
+            aria-label="Close sidebar"
+          >
+            <span className="material-symbols-outlined">close</span>
+          </button>
         </div>
         <nav className="p-3 space-y-1">
           {menu.map((item) =>
@@ -77,7 +89,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <div key={item.name}>
                 <button
                   onClick={() => setOpen((prev) => ({ ...prev, [item.name]: !prev[item.name] }))}
-                  className="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg hover:bg-surface-container-high text-on-surface"
+                  className="w-full flex items-center gap-3 px-3 py-2 text-sm font-bold rounded-xl hover:bg-surface-container-low-container text-on-surface transition-colors"
                 >
                   <span className="material-symbols-outlined">{item.icon}</span>
                   {item.name}
@@ -91,10 +103,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                       <Link
                         key={child.href}
                         href={child.href}
-                        className={`flex items-center gap-3 px-3 py-2 text-sm rounded-lg ${
+                        onClick={() => setSidebarOpen(false)}
+                        className={`flex items-center gap-3 px-3 py-2 text-sm rounded-xl transition-colors ${
                           isActive(child.href)
-                            ? "bg-primary-container text-white"
-                            : "text-secondary hover:bg-surface-container-high"
+                            ? "bg-primary text-on-primary font-bold"
+                            : "text-on-surface-variant hover:bg-surface-container-low-container hover:text-on-surface"
                         }`}
                       >
                         <span className="material-symbols-outlined text-base">{child.icon}</span>
@@ -108,10 +121,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg ${
+                className={`flex items-center gap-3 px-3 py-2 text-sm font-bold rounded-xl transition-colors ${
                   isActive(item.href!)
-                    ? "bg-primary-container text-white"
-                    : "text-on-surface hover:bg-surface-container-high"
+                    ? "bg-primary text-on-primary"
+                    : "text-on-surface hover:bg-surface-container-low-container"
                 }`}
               >
                 <span className="material-symbols-outlined">{item.icon}</span>
@@ -122,14 +135,23 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </nav>
       </aside>
 
-      <div className="flex-1 ml-64">
-        <header className="h-16 bg-surface border-b border-secondary-container flex items-center justify-end px-6 gap-4">
-          <span className="text-sm text-secondary">Admin</span>
-          <div className="w-8 h-8 rounded-full bg-primary-container text-white flex items-center justify-center text-sm font-medium">
-            A
+      <div className="flex-1 lg:ml-64">
+        <header className="h-16 bg-surface border-b border-outline-variant/30 flex items-center justify-between px-4 lg:px-6 sticky top-0 z-30">
+          <button
+            className="lg:hidden p-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low-container-low"
+            onClick={() => setSidebarOpen(true)}
+            aria-label="Open sidebar"
+          >
+            <span className="material-symbols-outlined">menu</span>
+          </button>
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-on-surface-variant hidden sm:inline">Admin Console</span>
+            <div className="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center text-sm font-bold">
+              A
+            </div>
           </div>
         </header>
-        <main className="p-6 max-w-7xl mx-auto">{children}</main>
+        <main className="p-4 lg:p-8 max-w-7xl mx-auto">{children}</main>
       </div>
     </div>
   );

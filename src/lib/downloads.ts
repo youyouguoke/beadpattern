@@ -1,7 +1,7 @@
 import { downloadPatternPng, downloadPatternPdf, recordAnalytics } from "@/lib/publicApiService";
 
-export async function downloadPng(slug: string) {
-  const result = await downloadPatternPng(slug);
+export async function downloadPng(slug: string, scale = 1) {
+  const result = await downloadPatternPng(slug, scale);
   await recordAnalytics(slug, "download");
   const a = document.createElement("a");
   a.href = result.url;
@@ -11,8 +11,8 @@ export async function downloadPng(slug: string) {
   a.click();
 }
 
-export async function downloadPdf(slug: string) {
-  const result = await downloadPatternPdf(slug);
+export async function downloadPdf(slug: string, scale = 1) {
+  const result = await downloadPatternPdf(slug, scale);
   await recordAnalytics(slug, "download");
   window.open(result.url, "_blank");
 }

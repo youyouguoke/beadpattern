@@ -94,25 +94,25 @@ export default function SeedImportPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-display-md text-2xl text-primary-container">Seed Import</h1>
+        <h1 className="font-display-md text-2xl text-primary">Seed Import</h1>
         <div className="flex items-center gap-3">
           <button
             onClick={loadPublicSamples}
             disabled={loading}
-            className="px-4 py-2 rounded-xl text-sm border border-secondary-container hover:bg-surface-container disabled:opacity-50"
+            className="px-4 py-2 rounded-xl text-sm border border-outline-variant/20 hover:bg-surface-container-low-container disabled:opacity-50"
           >
             {loading ? "Loading..." : "Load 20 Sample Patterns"}
           </button>
           {loadStatus === "success" && (
-            <span className="text-xs text-green-600">Loaded 20 samples</span>
+            <span className="text-xs text-secondary">Loaded 20 samples</span>
           )}
           {loadStatus === "error" && (
-            <span className="text-xs text-red-600">{loadError}</span>
+            <span className="text-xs text-error">{loadError}</span>
           )}
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-secondary-container p-6 space-y-4">
+      <div className="bg-surface-container-lowest rounded-3xl border border-outline-variant/20 p-6 space-y-4">
         <div className="flex items-center gap-4">
           <input type="file" accept=".json" onChange={(e) => e.target.files?.[0] && handleFileChange(e.target.files[0])} />
           <label className="flex items-center gap-2 text-sm">
@@ -121,31 +121,31 @@ export default function SeedImportPage() {
           </label>
         </div>
         <textarea
-          className="w-full border border-secondary-container rounded-xl px-3 py-2 text-sm font-mono"
+          className="w-full border border-outline-variant/20 rounded-xl px-3 py-2 text-sm font-mono"
           rows={12}
           value={jsonText}
           placeholder={`[\n  {\n    "title": "Pumpkin Cat",\n    "slug": "pumpkin-cat",\n    "difficulty": "easy",\n    "grid_size": "32x32"\n  }\n]`}
           onChange={(e) => setJsonText(e.target.value)}
         />
         <div className="flex items-center gap-3">
-          <button onClick={runImport} disabled={loading} className="px-4 py-2 rounded-xl text-sm bg-primary-container text-white hover:bg-primary disabled:opacity-50">
+          <button onClick={runImport} disabled={loading} className="px-4 py-2 rounded-xl text-sm bg-primary text-white hover:bg-primary disabled:opacity-50">
             {loading ? "Processing..." : dryRun ? "Preview" : "Import"}
           </button>
           {runStatus === "success" && (
-            <span className="text-xs text-green-600">{runMessage}</span>
+            <span className="text-xs text-secondary">{runMessage}</span>
           )}
           {runStatus === "error" && (
-            <span className="text-xs text-red-600">{runMessage}</span>
+            <span className="text-xs text-error">{runMessage}</span>
           )}
         </div>
       </div>
 
       {preview && (
-        <div ref={resultRef} className="bg-white rounded-2xl border border-secondary-container p-6 space-y-4">
+        <div ref={resultRef} className="bg-surface-container-lowest rounded-3xl border border-outline-variant/20 p-6 space-y-4">
           <h2 className="font-headline-md text-lg">Result</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="p-4 bg-surface-container rounded-xl">
-              <div className="text-xs text-secondary">Total</div>
+              <div className="text-xs text-on-surface-variant">Total</div>
               <div className="text-xl font-bold">{preview.total}</div>
             </div>
             <div className="p-4 bg-green-50 rounded-xl">
@@ -164,7 +164,7 @@ export default function SeedImportPage() {
           {preview.results && preview.results.length > 0 && (
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
-                <thead className="bg-surface-container text-secondary uppercase text-xs">
+                <thead className="bg-surface-container text-on-surface-variant uppercase text-xs">
                   <tr>
                     <th className="px-4 py-2">#</th>
                     <th className="px-4 py-2">Slug</th>
@@ -180,11 +180,11 @@ export default function SeedImportPage() {
                       <td className="px-4 py-2">{row.slug}</td>
                       <td className="px-4 py-2">{row.title}</td>
                       <td className="px-4 py-2">
-                        <span className={`text-xs px-2 py-1 rounded-full ${row.status === "created" ? "bg-green-100 text-green-800" : "bg-blue-100 text-blue-800"}`}>
+                        <span className={`text-xs px-2 py-1 rounded-full ${row.status === "created" ? "bg-secondary-container text-green-800" : "bg-primary-fixed text-blue-800"}`}>
                           {row.status}
                         </span>
                       </td>
-                      <td className="px-4 py-2 text-red-600">{row.errors?.join(", ")}</td>
+                      <td className="px-4 py-2 text-error">{row.errors?.join(", ")}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -193,16 +193,16 @@ export default function SeedImportPage() {
           )}
           {preview.errors && preview.errors.length > 0 && (
             <div className="space-y-1">
-              <h3 className="text-sm font-medium text-red-600">Errors</h3>
+              <h3 className="text-sm font-medium text-error">Errors</h3>
               {(preview.errors || []).map((err: string, i: number) => (
-                <div key={i} className="text-sm text-red-600 bg-red-50 p-2 rounded-lg">{err}</div>
+                <div key={i} className="text-sm text-error bg-red-50 p-2 rounded-lg">{err}</div>
               ))}
             </div>
           )}
           {preview.createdSlugs && (preview.createdSlugs || []).length > 0 && (
             <div>
               <h3 className="text-sm font-medium mb-1">Created Slugs</h3>
-              <div className="text-sm text-secondary">{preview.createdSlugs.join(", ")}</div>
+              <div className="text-sm text-on-surface-variant">{preview.createdSlugs.join(", ")}</div>
             </div>
           )}
         </div>
