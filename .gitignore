@@ -1,11 +1,45 @@
 # Generated seed data SQL files
 scripts/content-seed/data/*.sql
 
+# Dependencies
+node_modules/
+
+# Wrangler / OpenNext
 .wrangler/
 .open-next/
+
+# Env files (all variants, including scripts)
 .env
+.env.*
+!.env.example
 .dev.vars
+scripts/image-gen/.env
+scripts/image-gen/.env.*
+
+# Logs
 *.log
+
+# Build output
 dist/
+
+# Local files
 *.local
 .DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Artifacts
+scripts/image-gen/data/
+scripts/image-gen-v3/data/
+scripts/image-gen/v*/output/
+scripts/image-gen/v*/data/
+
+# OS files
+Thumbs.db
+
+# Artifacts
+\": \"/"

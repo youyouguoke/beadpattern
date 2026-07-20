@@ -1,0 +1,17 @@
+{
+  "id": "lion",
+  "name": "Lion",
+  "category": "animals",
+  "subject": "lion",
+  "canvas": { "width": 32, "height": 32 },
+  "recommended_sizes": ["32x32", "40x40"],
+  "default_palette": {
+    "gold": "#ffca28",
+    "brown": "#795548",
+    "tan": "#d7ccc8",
+    "black": "#1a1a1a",
+    "pink": "#f06292"
+  },
+  "layers": ["mane", "face", "ears", "eyes", "nose", "mouth"],
+  "quality_rules": { "required": ["mane", "ears", "eyes", "nose"], "min_colors": 4, "symmetry": true }
+}

@@ -1,0 +1,65 @@
+[
+  {
+    "id": "cute",
+    "name": "Cute",
+    "params": {
+      "head_scale": 1.2,
+      "eye_style": "large",
+      "mouth": "small_smile",
+      "blush": true,
+      "outline": "standard",
+      "shadow": true
+    }
+  },
+  {
+    "id": "sleepy",
+    "name": "Sleepy",
+    "params": {
+      "head_scale": 1.0,
+      "eye_style": "closed_line",
+      "mouth": "tiny_smile",
+      "blush": false,
+      "outline": "standard",
+      "shadow": true
+    }
+  },
+  {
+    "id": "kawaii",
+    "name": "Kawaii",
+    "params": {
+      "head_scale": 1.25,
+      "eye_style": "sparkle",
+      "mouth": "small_o",
+      "blush": true,
+      "bow": true,
+      "outline": "standard",
+      "shadow": true
+    }
+  },
+  {
+    "id": "simple",
+    "name": "Simple",
+    "params": {
+      "head_scale": 1.0,
+      "eye_style": "dot",
+      "mouth": "none",
+      "blush": false,
+      "outline": "thin",
+      "shadow": false
+    }
+  },
+  {
+    "id": "detailed",
+    "name": "Detailed",
+    "params": {
+      "head_scale": 1.0,
+      "eye_style": "realistic",
+      "mouth": "small_smile",
+      "blush": false,
+      "outline": "standard",
+      "shadow": true,
+      "texture": true,
+      "grid": 48
+    }
+  }
+]

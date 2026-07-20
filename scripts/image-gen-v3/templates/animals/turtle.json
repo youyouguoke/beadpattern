@@ -1,0 +1,17 @@
+{
+  "id": "turtle",
+  "name": "Turtle",
+  "category": "animals",
+  "subject": "turtle",
+  "canvas": { "width": 40, "height": 32 },
+  "recommended_sizes": ["40x32", "32x32"],
+  "default_palette": {
+    "green": "#4caf50",
+    "dark_green": "#2e7d32",
+    "tan": "#d7ccc8",
+    "black": "#1a1a1a",
+    "brown": "#795548"
+  },
+  "layers": ["shell", "head", "legs", "eyes", "shell_pattern"],
+  "quality_rules": { "required": ["shell", "head", "eyes"], "min_colors": 4, "symmetry": true }
+}

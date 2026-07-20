@@ -1,0 +1,17 @@
+{
+  "id": "frog",
+  "name": "Frog",
+  "category": "animals",
+  "subject": "frog",
+  "canvas": { "width": 32, "height": 32 },
+  "recommended_sizes": ["32x32"],
+  "default_palette": {
+    "green": "#4caf50",
+    "light_green": "#a5d6a7",
+    "black": "#1a1a1a",
+    "pink": "#f06292",
+    "white": "#f5f5f5"
+  },
+  "layers": ["silhouette", "eyes", "mouth", "cheeks"],
+  "quality_rules": { "required": ["eyes", "mouth"], "min_colors": 4, "symmetry": true }
+}

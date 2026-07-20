@@ -1,0 +1,8 @@
+{
+  "name": "pixel-character-composer-v3",
+  "version": "3.0.0",
+  "type": "module",
+  "scripts": {
+    "test:cat": "npx tsx test-cat.ts"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "rabbit",
+  "name": "Rabbit",
+  "category": "animals",
+  "subject": "rabbit",
+  "canvas": { "width": 32, "height": 40 },
+  "recommended_sizes": ["32x40", "32x32"],
+  "default_palette": {
+    "white": "#f5f5f5",
+    "pink": "#f06292",
+    "black": "#1a1a1a",
+    "shadow": "#bdbdbd"
+  },
+  "layers": ["silhouette", "ears", "eyes", "nose", "teeth"],
+  "quality_rules": { "required": ["ears", "eyes", "nose"], "min_colors": 4, "symmetry": true }
+}

@@ -1,0 +1,17 @@
+{
+  "id": "bear",
+  "name": "Bear",
+  "category": "animals",
+  "subject": "bear",
+  "canvas": { "width": 32, "height": 32 },
+  "recommended_sizes": ["32x32"],
+  "default_palette": {
+    "brown": "#795548",
+    "tan": "#d7ccc8",
+    "black": "#1a1a1a",
+    "shadow": "#5d4037",
+    "pink": "#f06292"
+  },
+  "layers": ["silhouette", "ears", "eyes", "nose", "snout"],
+  "quality_rules": { "required": ["ears", "eyes", "nose"], "min_colors": 4, "symmetry": true }
+}
