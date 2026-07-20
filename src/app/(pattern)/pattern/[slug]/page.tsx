@@ -62,7 +62,7 @@ export default async function PatternDetailPage({ params }: { params: Promise<{ 
     relatedImages[p.slug] = getPatternImage(p, { width: 240, height: 240, preferGrid: true });
   }
 
-  const finishedImage = getPatternImage(pattern, { width: 560, height: 560, preferGrid: true });
+  const finishedImage = getPatternImage(pattern, { width: 560, height: 560 });
 
   const structuredData = {
     "@context": "https://schema.org",
