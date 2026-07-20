@@ -26,13 +26,26 @@ function makeBackendPattern(i: number, overrides: Partial<any> = {}) {
   };
 }
 
-function mockPatternsResponse(items: any[]) {
+function mockResponse(body: unknown) {
   return {
     ok: true,
     status: 200,
-    json: async () => ({ success: true, data: { items, meta: { page: 1, limit: 20, total: items.length, totalPages: 1 } } }),
-    text: async () => "{}",
+    json: async () => body,
+    text: async () => JSON.stringify(body),
   } as Response;
+}
+
+function mockPatternsResponse(items: any[]) {
+  return mockResponse({ success: true, data: { items, meta: { page: 1, limit: 20, total: items.length, totalPages: 1 } } });
+}
+
+function mockCategoriesResponse() {
+  return mockResponse({
+    success: true,
+    data: [
+      { id: "1", name: "Animals", slug: "animals", description: "", display_order: 1, created_at: "", updated_at: "", pattern_count: 5 },
+    ],
+  });
 }
 
 describe("PatternArchive", () => {
@@ -41,20 +54,25 @@ describe("PatternArchive", () => {
   });
 
   it("renders the search query heading", async () => {
-    (global.fetch as jest.Mock).mockResolvedValue(mockPatternsResponse([makeBackendPattern(0)]));
+    (global.fetch as jest.Mock).mockImplementation((input: RequestInfo | URL) => {
+      const url = typeof input === "string" ? input : input.toString();
+      if (url.includes("/categories")) return Promise.resolve(mockCategoriesResponse());
+      return Promise.resolve(mockPatternsResponse([makeBackendPattern(0)]));
+    });
 
     render(<PatternArchive searchQuery="frog" />);
 
     await waitFor(() => {
-      expect(screen.getByRole("heading", { name: /Search Results for "frog"/i })).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: /Search: "frog"/i })).toBeInTheDocument();
     });
   });
 
   it("fetches and displays patterns", async () => {
-    (global.fetch as jest.Mock).mockResolvedValue(mockPatternsResponse([
-      makeBackendPattern(0),
-      makeBackendPattern(1),
-    ]));
+    (global.fetch as jest.Mock).mockImplementation((input: RequestInfo | URL) => {
+      const url = typeof input === "string" ? input : input.toString();
+      if (url.includes("/categories")) return Promise.resolve(mockCategoriesResponse());
+      return Promise.resolve(mockPatternsResponse([makeBackendPattern(0), makeBackendPattern(1)]));
+    });
 
     render(<PatternArchive />);
 
@@ -65,9 +83,9 @@ describe("PatternArchive", () => {
   });
 
   it("filters by category when categorySlug is provided", async () => {
-    // The API is expected to filter server-side when categorySlug is passed.
     (global.fetch as jest.Mock).mockImplementation(async (input: RequestInfo | URL) => {
       const url = typeof input === "string" ? input : input.toString();
+      if (url.includes("/categories")) return mockCategoriesResponse();
       if (url.includes("category=animals")) {
         return mockPatternsResponse([makeBackendPattern(1, { tags: [{ name: "Animals", slug: "animals" }] })]);
       }

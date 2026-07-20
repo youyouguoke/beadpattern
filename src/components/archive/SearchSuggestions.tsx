@@ -54,7 +54,7 @@ export default function SearchSuggestions({ query, onSelect }: SearchSuggestions
     return combined.filter((item) => item.toLowerCase().includes(q) && item.toLowerCase() !== q).slice(0, 6);
   }, [query, history]);
 
-  if (!query.trim() || filtered.length === 0 || !show) return null;
+  if (!query.trim() || filtered.length === 0) return null;
 
   return (
     <div
