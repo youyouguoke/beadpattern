@@ -3,10 +3,10 @@
 import Link from "next/link";
 
 const heroImages = {
-  hero: "https://pub-98e050954fa34ccebe6d2e8911f520a3.r2.dev/covers/cute-cat.png",
-  panda: "https://pub-98e050954fa34ccebe6d2e8911f520a3.r2.dev/covers/detailed-panda.png",
-  food: "https://pub-98e050954fa34ccebe6d2e8911f520a3.r2.dev/covers/cupcake-cherry.png",
-  collage: "https://pub-98e050954fa34ccebe6d2e8911f520a3.r2.dev/covers/cute-fox.png",
+  hero: "https://pub-98e050954fa34ccebe6d2e8911f520a3.r2.dev/covers/cute-cat.png?v=2",
+  panda: "https://pub-98e050954fa34ccebe6d2e8911f520a3.r2.dev/covers/detailed-panda.png?v=2",
+  food: "https://pub-98e050954fa34ccebe6d2e8911f520a3.r2.dev/covers/cupcake-cherry.png?v=2",
+  collage: "https://pub-98e050954fa34ccebe6d2e8911f520a3.r2.dev/covers/cute-fox.png?v=2",
 };
 
 export default function HeroSection() {

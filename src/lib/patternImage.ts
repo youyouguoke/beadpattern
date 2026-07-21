@@ -144,17 +144,25 @@ export function getPatternImage(
       return { type: "image", src: finishedSrc! };
     }
     if (isRealImage(pattern.coverImage)) {
-      return { type: "image", src: pattern.coverImage! };
+      return { type: "image", src: bustCache(pattern.coverImage!) };
     }
     if (isRealImage(pattern.cover_image)) {
-      return { type: "image", src: pattern.cover_image! };
+      return { type: "image", src: bustCache(pattern.cover_image!) };
     }
     if (isRealImage(pattern.img)) {
-      return { type: "image", src: pattern.img! };
+      return { type: "image", src: bustCache(pattern.img!) };
     }
     if (isRealImage(pattern.finished)) {
-      return { type: "image", src: pattern.finished! };
+      return { type: "image", src: bustCache(pattern.finished!) };
     }
+  }
+
+  function bustCache(src: string): string {
+    const R2_PUBLIC_HOST = "pub-98e050954fa34ccebe6d2e8911f520a3.r2.dev";
+    if (src.includes(R2_PUBLIC_HOST) && !src.includes("?")) {
+      return `${src}?v=2`;
+    }
+    return src;
   }
 
   const palette: string[] = [];

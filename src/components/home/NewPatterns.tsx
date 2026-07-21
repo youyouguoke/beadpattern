@@ -28,7 +28,7 @@ export default function NewPatterns() {
       setPatterns(ps);
       const map: Record<string, { type: "image" | "svg"; src: string; svg?: string }> = {};
       for (const p of ps) {
-        map[p.slug] = getPatternImage(p, { width: 320, height: 320, preferGrid: true });
+        map[p.slug] = getPatternImage(p, { width: 320, height: 320 });
       }
       setImages(map);
     });
